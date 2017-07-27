@@ -1,0 +1,14 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div>
+  <ol>
+    <li *ngFor="let message of messages">
+      {{ message }}
+    </li>
+
+    <em *ngIf="messages.length == 0">
+      There are no messages to show :(
+    </em>
+  </ol>
+
+  <input #message (keyup.enter)="onEnter(message.value); message.value=''">
+</div>

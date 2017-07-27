@@ -1,0 +1,17 @@
+{
+  "name": "chat-app",
+  "author": "Brian Hang",
+  "version": "1.0.0",
+  "description": "Brian's first chat app",
+  "scripts": {
+    "postinstall": "cd chat-app && npm install",
+    "build": "cd chat-app && ng build",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongodb": "^2.2.30"
+  },
+  "license": "MIT"
+}
