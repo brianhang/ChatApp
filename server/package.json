@@ -1,0 +1,25 @@
+{
+  "name": "chat-app-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mongodb": "^2.2.30",
+    "socket.io": "^2.0.3"
+  },
+  "keywords": [],
+  "author": "Brian Hang",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^8.0.17",
+    "nodemon": "^1.11.0",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2"
+  },
+  "scripts": {
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec .\\\\node_modules\\\\.bin\\\\ts-node src/index.ts"
+  },
+  "description": ""
+}

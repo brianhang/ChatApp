@@ -1,65 +1,76 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { User } from './user';
+import { Message } from './message';
 import * as io from 'socket.io-client';
 
 @Injectable()
 export class ChatService {
   private socket;
-  private _messages: Subject<string>;
-  private _motd: Subject<string>;
-  private messageStore: string[];
+
+  private _state: Subject<string>;
+  private _message: Subject<Message>;
+
+  private userStore: Map<string, User>;
+
   private nickname: string;
+  private connected: boolean;
 
   constructor() {
     this.socket = io();
-    console.log(this.socket.id);
-    this.messageStore = [];
-    this._messages = new Subject<string>();
-    this._motd = new Subject<string>();
 
-    this.socket.on('message', (message: string) => {
-      this._messages.next(message);
+    this.userStore = new Map<string, User>();
+
+    this._state = new Subject<string>();
+    this._message = new Subject<Message>();
+
+    this.socket.on('userJoin', (data: any) => {
+      const user = new User(data.userId);
+      user.nickname = data.nickname;
+
+      this.userStore.set(data.userId, user);
+
+      if (data.isLocalUser) {
+        this._state.next('connected');
+      }
+
+      console.log(user);
     });
 
-    this.socket.on('motd', (motd: string) => {
-      this._motd.next(motd);
+    this.socket.on('message', (data: any) => {
+      const message = new Message();
+      message.nickname = data.nickname;
+      message.content = data.content;
+
+      console.log(message);
+      this._message.next(message);
     });
-  }
 
-  sendMessage(message: string) {
-    message = message.trim();
+    this.socket.on('userLeave', (userId: string) => {
+      const user = this.userStore.get(userId);
 
-    if (message.length == 0) {
-      return;
-    }
-    
-    this.socket.emit('message', message);
-    this._messages.next(this.nickname + ": " + message);
-  }
-
-  getMessages() {
-    return this._messages.asObservable();
-  }
-
-  getMotd() {
-    return this._motd.asObservable();
-  }
-
-  loadMessages() {
-    this.socket.on('messages', (messages: string[]) => {
-      this.messageStore = messages;
-
-      for (const message of messages) {
-        this._messages.next(message);
+      if (user) {
+        console.log(user.nickname + ' has disconnected.');
+        this.userStore.delete(userId);
       }
     });
-
-    this.socket.emit('getMessages');
   }
 
-  setNickname(nickname: string) {
+  getState(): Observable<string> {
+    return this._state.asObservable();
+  }
+
+  join(nickname: string): void {
     this.nickname = nickname;
-    this.socket.emit('nickname', nickname);
+    this.socket.emit('join', this.nickname);
+  }
+
+  send(message: string): void {
+    this.socket.emit('message', message);
+  }
+
+  onMessage(): Observable<Message> {
+    return this._message.asObservable();
   }
 }

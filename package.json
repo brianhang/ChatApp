@@ -1,18 +1,24 @@
 {
-  "name": "chat-app",
-  "author": "Brian Hang",
+  "name": "brians-chat-app",
   "version": "1.0.0",
-  "description": "Brian's first chat app",
+  "description": "Brian's cool chat app!",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
   "scripts": {
-    "postinstall": "cd chat-app && npm install",
+    "postinstall": "cd chat-app && npm install && cd ../server && npm install",
     "build": "cd chat-app && ng build",
-    "start": "node server.js"
+    "start": "cd server && npm run start"
   },
-  "dependencies": {
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "mongodb": "^2.2.30",
-    "socket.io": "^2.0.3"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianhang/ChatApp.git"
   },
-  "license": "MIT"
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brianhang/ChatApp/issues"
+  },
+  "homepage": "https://github.com/brianhang/ChatApp#readme"
 }

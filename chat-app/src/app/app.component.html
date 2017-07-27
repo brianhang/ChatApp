@@ -1,16 +1,10 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <ng-template #chatroom>
-  <ol>
-    <li *ngFor="let message of messages">
-      {{ message }}
-    </li>
+  <div *ngFor="let message of messages">
+    <app-message [message]="message"></app-message>
+  </div>
 
-    <em *ngIf="messages.length == 0">
-      There are no messages to show :(
-    </em>
-  </ol>
-
-  <input #message (keyup.enter)="onEnter(message.value); message.value=''">
+  <input #chatText (keyup.enter)="onChatEnter(chatText.value); chatText.value=''">
 </ng-template>
 
 <ng-template #nickname>
@@ -18,4 +12,4 @@
   <input #nickname (keyup.enter)="onNicknameEnter(nickname.value); nickname.value=''">
 </ng-template>
 
-<div *ngIf="ready; then chatroom else nickname"></div>
+<div *ngIf="connected; then chatroom else nickname"></div>

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ChatService } from './chat/chat.service';
+import { Message } from './chat/message';
+import { User } from './chat/user';
 
 @Component({
   selector: 'app-root',
@@ -9,33 +11,32 @@ import { ChatService } from './chat/chat.service';
 export class AppComponent {
   title = 'app';
 
-  public messages: string[]
-  
-  private ready: boolean;
+  public messages: Message[];
+
+  public connected: boolean;
 
   constructor(private chatService: ChatService) {
     this.messages = [];
-    this.ready = false;
+    this.connected = false;
 
-    chatService.getMotd().subscribe((motd: string) => {
-      this.messages.push("Message of the Day:");
-      this.messages.push(motd);
-
-      this.ready = true;
+    this.chatService.getState().subscribe((state) => {
+      switch (state) {
+        case 'connected':
+          this.connected = true;
+          break;
+      }
     });
 
-    chatService.getMessages().subscribe((message: string) => {
+    this.chatService.onMessage().subscribe((message) => {
       this.messages.push(message);
-    });
-
-    chatService.loadMessages();
-  }
-
-  onEnter(message: string) {
-    this.chatService.sendMessage(message);
+    })
   }
 
   onNicknameEnter(nickname: string) {
-    this.chatService.setNickname(nickname);
+    this.chatService.join(nickname);
+  }
+
+  onChatEnter(message: string) {
+    this.chatService.send(message);
   }
 }
