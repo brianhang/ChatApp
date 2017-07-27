@@ -1,5 +1,5 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div>
+<ng-template #chatroom>
   <ol>
     <li *ngFor="let message of messages">
       {{ message }}
@@ -11,4 +11,11 @@
   </ol>
 
   <input #message (keyup.enter)="onEnter(message.value); message.value=''">
-</div>
+</ng-template>
+
+<ng-template #nickname>
+  <label>Enter your desired nickname: </label>
+  <input #nickname (keyup.enter)="onNicknameEnter(nickname.value); nickname.value=''">
+</ng-template>
+
+<div *ngIf="ready; then chatroom else nickname"></div>
