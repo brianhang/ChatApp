@@ -8,8 +8,13 @@
 </ng-template>
 
 <ng-template #nickname>
-  <label>Enter your desired nickname: </label>
-  <input #nickname (keyup.enter)="onNicknameEnter(nickname.value); nickname.value=''">
+  <div class="page-header">
+    <h1>Welcome!</h1>
+  </div>
+  <p class="lead">
+    <label>Enter your desired nickname: </label>
+    <input #nickname (keyup.enter)="onNicknameEnter(nickname.value); nickname.value=''">
+  </p>
 </ng-template>
 
 <div *ngIf="connected; then chatroom else nickname"></div>
