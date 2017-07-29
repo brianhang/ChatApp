@@ -9,6 +9,7 @@ import { UserComponent } from './user/user.component';
 import { UserlistComponent } from './userlist/userlist.component';
 import { RoomlistComponent } from './roomlist/roomlist.component';
 import { RoomComponent } from './room/room.component';
+import { SideoptionsComponent } from './sideoptions/sideoptions.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { RoomComponent } from './room/room.component';
     UserComponent,
     UserlistComponent,
     RoomlistComponent,
-    RoomComponent
+    RoomComponent,
+    SideoptionsComponent
   ],
   imports: [
     BrowserModule

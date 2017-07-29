@@ -1,14 +1,36 @@
-<nav class="room-list bg-inverse text-white sidebar">
+<div class="flex-column room-list sidebar">
   <h3>brianchat</h3>
+  <app-sideoptions></app-sideoptions>
   <hr>
   <strong>Rooms</strong>
-  <ul>
-    <li>General</li>
-    <li>Test</li>
-  </ul>
+  <div class="list-group room-list">
+    <a href="#" class="list-group-item list-group-item-action justify-content-between">
+      General
+      <hr>
+    </a>
+    <a href="#" class="list-group-item list-group-item-action user-item">
+      <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2264%22%20height%3D%2264%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15d8c1353c1%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15d8c1353c1%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2213.5546875%22%20y%3D%2236.5%22%3E64x64%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="" width="16" height="16">
+      Brian
+      &nbsp;<i class="fa fa-keyboard-o text-muted" aria-hidden="true"></i>
+    </a>
+    <a href="#" class="list-group-item list-group-item-action user-item">
+      <img src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2264%22%20height%3D%2264%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_15d8c1353c1%20text%20%7B%20fill%3Argba(255%2C255%2C255%2C.75)%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_15d8c1353c1%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%2213.5546875%22%20y%3D%2236.5%22%3E64x64%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="" width="16" height="16">
+      John
+    </a>
+
+    <a href="#" class="list-group-item list-group-item-action">Development</a>
+    <a href="#" class="list-group-item list-group-item-action">Quiet Room</a>
+  </div>
+
+  <br />
+
   <strong>Private Messages</strong>
-  <ul>
-    <li>Brian</li>
-    <li>Not Brian</li>
-  </ul>
-</nav>
+  <div class="list-group room-list">
+    <a href="#" class="list-group-item list-group-item-action justify-content-between">
+      Brian
+      <span class="badge badge-default badge-pill">1</span>
+    </a>
+    <a href="#" class="list-group-item list-group-item-action">John</a>
+    <a href="#" class="list-group-item list-group-item-action">Doe</a>
+  </div>
+</div>
