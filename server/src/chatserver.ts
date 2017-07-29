@@ -43,6 +43,7 @@ export class ChatServer {
   private handleConnection(socket: SocketIO.Socket): void {
     socket.on('join', (nickname: string) => this.handleJoin(socket, nickname));
     socket.on('message', (content: string) => this.handleMessage(socket, content));
+    socket.on('typing', (isTyping) => this.handleTyping(socket, isTyping));
     socket.on('disconnect', () => this.handleLeave(socket));
   }
 
@@ -105,6 +106,21 @@ export class ChatServer {
       nickname: message.nickname,
       content: message.content
     });
+  }
+
+  /**
+   * Handles the replication of whether or not a user is typing.
+   * 
+   * @param socket The socket that sent this message.
+   * @param isTyping Whether or not the user is now typing.
+   */
+  private handleTyping(socket: SocketIO.Socket, isTyping: boolean): void {
+    const user = this.users.get(socket.id);
+
+    if (user && user.isTyping != isTyping) {
+      console.log(user.getNickname() + ' is ' + (isTyping ? '' : 'not ') + 'typing');
+      user.setTyping(isTyping);
+    }
   }
 
   /**

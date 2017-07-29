@@ -7,5 +7,6 @@ import { Message } from '../chat/message';
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent {
-  @Input() public message: Message;
+  @Input() public nickname: string;
+  @Input() public message: string;
 }

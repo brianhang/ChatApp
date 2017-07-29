@@ -4,6 +4,9 @@
 export class User {
   private userId: string;
 
+  // Whether or not this user is typing.
+  public isTyping: boolean;
+
   /**
    * The constructor that sets up the initial data for the user.
    * 
@@ -68,12 +71,26 @@ export class User {
   }
 
   /**
+   * Sets whether or not the user is typing.
+   * 
+   * @param isTyping True if the user is typing.
+   */
+  public setTyping(isTyping: boolean) {
+    this.isTyping = !!isTyping;
+    this.socket.broadcast.emit('typing', {
+      userId: this.userId,
+      isTyping: this.isTyping
+    });
+  }
+
+  /**
    * Sends data about this user to the given recipient.
    */
   public replicate(recipient: User) {
     recipient.getSocket().emit('userJoin', {
       userId: this.userId,
-      nickname: this.nickname
+      nickname: this.nickname,
+      isTyping: this.isTyping
     });
   }
 }

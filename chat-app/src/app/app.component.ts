@@ -15,8 +15,13 @@ export class AppComponent {
 
   public connected: boolean;
 
+  private isTyping: boolean;
+
+  public users: User[];
+
   constructor(private chatService: ChatService) {
     this.messages = [];
+    this.users = [];
     this.connected = false;
 
     this.chatService.getState().subscribe((state) => {
@@ -27,9 +32,14 @@ export class AppComponent {
       }
     });
 
-    this.chatService.onMessage().subscribe((message) => {
+    this.chatService.onMessage().subscribe((message: Message) => {
       this.messages.push(message);
-    })
+    });
+
+    this.chatService.getUsers().subscribe((users: User[]) => {
+      this.users = users;
+      console.log(this.users);
+    });
   }
 
   onNicknameEnter(nickname: string) {
@@ -38,5 +48,16 @@ export class AppComponent {
 
   onChatEnter(message: string) {
     this.chatService.send(message);
+  }
+
+  onTypingUpdate(isTyping: boolean) {
+    if (this.isTyping != isTyping) {
+      this.isTyping = isTyping;
+      this.chatService.setTyping(isTyping);
+    }
+  }
+
+  onChatTextChange(text: string) {
+    this.onTypingUpdate(text.length > 0);
   }
 }

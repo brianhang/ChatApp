@@ -1,20 +1,10 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<ng-template #chatroom>
-  <div *ngFor="let message of messages">
-    <app-message [message]="message"></app-message>
+<div class="container-fluid">
+  <div class="row">
+    <nav class="col-sm-3 bg-faded sidebar">
+      <app-roomlist></app-roomlist>
+    </nav>
+    <div class="col-sm-9 content">
+      <app-room></app-room>
+    </div>
   </div>
-
-  <input #chatText (keyup.enter)="onChatEnter(chatText.value); chatText.value=''">
-</ng-template>
-
-<ng-template #nickname>
-  <div class="page-header">
-    <h1>Welcome!</h1>
-  </div>
-  <p class="lead">
-    <label>Enter your desired nickname: </label>
-    <input #nickname (keyup.enter)="onNicknameEnter(nickname.value); nickname.value=''">
-  </p>
-</ng-template>
-
-<div *ngIf="connected; then chatroom else nickname"></div>
+</div>

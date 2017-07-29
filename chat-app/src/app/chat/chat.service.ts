@@ -11,8 +11,10 @@ export class ChatService {
 
   private _state: Subject<string>;
   private _message: Subject<Message>;
+  private _users: Subject<User[]>;
 
   private userStore: Map<string, User>;
+  private userList: User[];
 
   private nickname: string;
   private connected: boolean;
@@ -24,12 +26,15 @@ export class ChatService {
 
     this._state = new Subject<string>();
     this._message = new Subject<Message>();
+    this._users = new Subject<User[]>();
 
     this.socket.on('userJoin', (data: any) => {
       const user = new User(data.userId);
       user.nickname = data.nickname;
+      user.isTyping = data.isTyping;
 
       this.userStore.set(data.userId, user);
+      this._users.next(this.getUserList());
 
       if (data.isLocalUser) {
         this._state.next('connected');
@@ -47,12 +52,23 @@ export class ChatService {
       this._message.next(message);
     });
 
+    this.socket.on('typing', (data: any) => {
+      const user = this.userStore.get(data.userId);
+      const isTyping = data.isTyping;
+
+      if (user) {
+        user.isTyping = isTyping;
+        console.log(user.nickname + ".typing = " + isTyping);
+      }
+    });
+
     this.socket.on('userLeave', (userId: string) => {
       const user = this.userStore.get(userId);
 
       if (user) {
         console.log(user.nickname + ' has disconnected.');
         this.userStore.delete(userId);
+        this._users.next(this.getUserList());
       }
     });
   }
@@ -72,5 +88,17 @@ export class ChatService {
 
   onMessage(): Observable<Message> {
     return this._message.asObservable();
+  }
+
+  setTyping(isTyping: boolean): void {
+    this.socket.emit('typing', isTyping);
+  }
+
+  private getUserList(): User[] {
+    return Array.from(this.userStore.values());
+  }
+
+  getUsers(): Observable<User[]> {
+    return this._users.asObservable();
   }
 }
