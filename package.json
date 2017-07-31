@@ -4,7 +4,9 @@
   "description": "Brian's cool chat app!",
   "main": "index.js",
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "@angular/cli": "^1.2.6"
+  },
   "scripts": {
     "postinstall": "cd chat-app && npm install && cd ../server && npm install",
     "build": "cd chat-app && ng build",

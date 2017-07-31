@@ -11,5 +11,4 @@ export class SideoptionsComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

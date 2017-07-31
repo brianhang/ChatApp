@@ -1,6 +1,7 @@
 <div class="d-flex justify-content-around" role="group">
-  <button class="btn btn-secondary" href="#"><i class="fa fa-microphone" aria-hidden="true"></i></button>
-  <button class="btn btn-secondary" href="#"><i class="fa fa-video-camera" aria-hidden="true"></i></button>
-  <button class="btn btn-secondary" href="#"><i class="fa fa-headphones" aria-hidden="true"></i></button>
-  <button class="btn btn-secondary" href="#"><i class="fa fa-cog" aria-hidden="true"></i></button>
+  <button class="btn btn-secondary bg-inverse text-white" href="#"><i class="fa fa-microphone" aria-hidden="true"></i></button>
+  <button class="btn btn-secondary bg-inverse text-white" href="#"><i class="fa fa-video-camera" aria-hidden="true"></i></button>
+  <button class="btn btn-secondary bg-inverse text-white" href="#"><i class="fa fa-headphones" aria-hidden="true"></i></button>
+  <button class="btn btn-secondary bg-inverse text-white" href="#" (click)="settingsModal.open()"><i class="fa fa-cog" aria-hidden="true"></i></button>
 </div>
+<app-settings-modal #settingsModal></app-settings-modal>

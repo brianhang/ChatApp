@@ -51,7 +51,7 @@ export class AppComponent {
   }
 
   onTypingUpdate(isTyping: boolean) {
-    if (this.isTyping != isTyping) {
+    if (this.isTyping !== isTyping) {
       this.isTyping = isTyping;
       this.chatService.setTyping(isTyping);
     }
