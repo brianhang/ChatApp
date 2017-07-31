@@ -1,3 +1,5 @@
+import { MessageFilter } from './messagefilter';
+
 /**
  * The User class is a user in the chatroom.
  */
@@ -92,5 +94,15 @@ export class User {
       nickname: this.nickname,
       isTyping: this.isTyping
     });
+  }
+
+  /**
+   * Sends a message to the chatroom.
+   * 
+   * @param filter The filter that determines who receives the message.
+   * @param content The content of the message to send.
+   */
+  public send(filter: MessageFilter, content: string) {
+
   }
 }
