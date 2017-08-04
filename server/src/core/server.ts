@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http';
 import * as socket from 'socket.io';
 import { User } from './user';
+import { Subject, Observable } from 'rxjs';
 
 /**
  * The Server class is responsible for handling messages between the chat server
@@ -10,8 +11,15 @@ export class Server {
   // The server's socket for communication.
   private io: SocketIO.Server;
 
+  // Subjects for when users join and left.
+  private _userJoined: Subject<User>;
+  private _userLeft: Subject<User>;
+
   // The users who are connected to this server.
   private users: Map<string, User>;
+
+  // The event handlers for socket messages.
+  private handlers: Map<string, Function>;
 
   /**
    * Contructor that sets up the server socket.
@@ -21,6 +29,12 @@ export class Server {
   constructor(httpServer: HttpServer) {
     this.io = socket(httpServer);
     this.users = new Map<string, User>();
+    this.handlers = new Map<string, any>();
+
+    this._userJoined = new Subject<User>();
+    this._userLeft = new Subject<User>();
+
+    this.io.on('connection', socket => this.onUserConnected(socket));
   }
 
   /**
@@ -35,8 +49,54 @@ export class Server {
       return;
     }
 
-    this.users.set(socket.id, new User(socket));
-    socket.emit('connected');
+    this.handlers.forEach((listener: any, event: string) => {
+      socket.on(event, (data: any) => listener(socket, data));
+    });
+
+    const user = new User(socket);
+    user.nickname = socket.id;
+
+    console.log("JOIN " + socket.id);
+
+    this.users.forEach(other => {
+      user.emit('userData', {
+        id: other.id,
+        nickname: other.nickname
+      });
+
+      other.emit('userData', {
+        id: user.id,
+        nickname: user.nickname
+      });
+    });
+
+    this.users.set(socket.id, user);
+    this._userJoined.next(user);
+    
+    socket.emit('joined', {
+      id: user.id,
+      nickname: user.nickname
+    });
+
+    socket.on('disconnect', () => this.onUserDisconnected(user));
+  }
+
+  /**
+   * Returns an observable for when a user has fully joined the chat room.
+   * 
+   * @return An observable stream of users.
+   */
+  public get userJoined(): Observable<User> {
+    return this._userJoined.asObservable();
+  }
+
+  /**
+   * Returns an observable for when a user has left the chat room.
+   * 
+   * @return An observable stream of users.
+   */
+  public get userLeft(): Observable<User> {
+    return this._userLeft.asObservable();
   }
 
   /**
@@ -45,8 +105,11 @@ export class Server {
    * 
    * @param socket The socket that disconnected.
    */
-  private onUserDisconnected(socket: SocketIO.Socket): void {
+  private onUserDisconnected(user: User): void {
+    this._userLeft.next(user);
+    this.users.delete(user.id);
 
+    this.emit('userLeft', user.id);
   }
 
   /**
@@ -59,13 +122,13 @@ export class Server {
   }
 
   /**
-   * Sends an event to all users connected.
+   * Emits an event to all users connected.
    * 
    * @param message 
    * @param data 
    */
-  public send(event: string, data: any): void {
-    this.io.emit(event, data);
+  public emit(event: string, data: any): void {
+    this.io.sockets.emit(event, data);
   }
 
   /**
@@ -76,9 +139,9 @@ export class Server {
    * @param listener What to do when the message is received.
    */
   public on(event: string, listener: Function): void {
-    this.io.on(event, (socket: SocketIO.Socket, data: any) => {
+    this.handlers.set(event, (socket: SocketIO.Socket, data: any) => {
       // Get the user from the socket.
-      const user = this.users.get(socket.id);
+      const user: User | undefined = this.users.get(socket.id);
 
       if (user) {
         listener(user, data);

@@ -28,7 +28,7 @@ export class MessageService {
     // Send the message only to people who pass the filter.
     for (let recipient of this.server.getUsers()) {
       if (filter.check(sender, recipient)) {
-        recipient.send('message', {
+        recipient.emit('message', {
           nickname: sender.nickname,
           content: content
         });
@@ -47,6 +47,8 @@ export class MessageService {
     const message = new Message();
     message.content = data;
 
-    this.send(sender, new RoomFilter(), message);
+    if (sender.room) {
+      sender.room.onMessageReceived(sender, message);
+    }
   }
 }

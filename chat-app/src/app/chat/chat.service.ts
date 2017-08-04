@@ -1,104 +1,87 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { User } from './user';
-import { Message } from './message';
+import { User } from './models/user';
+import { Message } from './models/message';
 import * as io from 'socket.io-client';
 
 @Injectable()
 export class ChatService {
   private socket;
-
-  private _state: Subject<string>;
-  private _message: Subject<Message>;
-  private _users: Subject<User[]>;
-
-  private userStore: Map<string, User>;
-  private userList: User[];
-
-  private nickname: string;
   private connected: boolean;
+  private _users: Map<string, User>;
+  private _localUser: User;
 
+  /**
+   * Constructor which sets up the socket to communicate with the chat server.
+   */
   constructor() {
     this.socket = io();
+    this.connected = false;
 
-    this.userStore = new Map<string, User>();
+    this._users = new Map<string, User>();
 
-    this._state = new Subject<string>();
-    this._message = new Subject<Message>();
-    this._users = new Subject<User[]>();
-
-    this.socket.on('userJoin', (data: any) => {
-      const user = new User(data.userId);
-      user.nickname = data.nickname;
-      user.isTyping = data.isTyping;
-
-      this.userStore.set(data.userId, user);
-      this._users.next(this.getUserList());
-
-      if (data.isLocalUser) {
-        this._state.next('connected');
-      }
-
-      console.log(user);
+    this.on('userLeft', userId => {
+      this._users.delete(userId);
+      console.log('REMAINING');
+      console.log(Array.from(this._users.values()));
     });
 
-    this.socket.on('message', (data: any) => {
-      const message = new Message();
-      message.nickname = data.nickname;
-      message.content = data.content;
-
-      console.log(message);
-      this._message.next(message);
+    this.on('userData', data => {
+      const user = new User(data.id, data.nickname);
+      this._users.set(user.id, user);
     });
 
-    this.socket.on('typing', (data: any) => {
-      const user = this.userStore.get(data.userId);
-      const isTyping = data.isTyping;
+    this.on('joined', data => {
+      const user = new User(data.id, data.nickname);
+      this._users.set(user.id, user);
 
-      if (user) {
-        user.isTyping = isTyping;
-        console.log(user.nickname + ".typing = " + isTyping);
-      }
-    });
+      this._localUser = user;
 
-    this.socket.on('userLeave', (userId: string) => {
-      const user = this.userStore.get(userId);
+      this.connected = true;
+      console.log('connected');
 
-      if (user) {
-        console.log(user.nickname + ' has disconnected.');
-        this.userStore.delete(userId);
-        this._users.next(this.getUserList());
-      }
+      console.log(Array.from(this._users.values()));
     });
   }
 
-  getState(): Observable<string> {
-    return this._state.asObservable();
+  /**
+   * Adds a listener for an event from the server.
+   *
+   * @param event The name of the event to listen for.
+   * @param listener What to do when the event is fired.
+   */
+  public on(event: string, listener: Function): void {
+    this.socket.on(event, listener);
   }
 
-  join(nickname: string): void {
-    this.nickname = nickname;
-    this.socket.emit('join', this.nickname);
+  /**
+   * Emits an event to the server.
+   *
+   * @param event The name of the event to emit.
+   * @param data The data to send with the event.
+   */
+  public emit(event: string, data: any): void {
+    console.log(event, data);
+    this.socket.emit(event, data);
   }
 
-  send(message: string): void {
-    this.socket.emit('message', message);
+  /**
+   * Returns a user in the chat room corresponding to the given user ID.
+   *
+   * @param userId The ID of the desired user.
+   * @returns The user with the matching ID if found, undefined otherwise.
+   */
+  public getUserById(userId: string): User | undefined {
+    return this._users.get(userId);
   }
 
-  onMessage(): Observable<Message> {
-    return this._message.asObservable();
-  }
-
-  setTyping(isTyping: boolean): void {
-    this.socket.emit('typing', isTyping);
-  }
-
-  private getUserList(): User[] {
-    return Array.from(this.userStore.values());
-  }
-
-  getUsers(): Observable<User[]> {
-    return this._users.asObservable();
+  /**
+   * Returns the local user object.
+   *
+   * @return The local user.
+   */
+  public get user(): User {
+    return this._localUser;
   }
 }

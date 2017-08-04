@@ -1,3 +1,5 @@
+import { Room } from '../room/room';
+
 /** 
  * The User class is a user in the chatroom.
  */
@@ -8,6 +10,9 @@ export class User {
   // The name for the user.
   private _nickname: string;
 
+  // The room that the user is in.
+  public room: Room | undefined;
+
   /**
    * Constructor for the User which takes in the socket that belongs to the
    * user.
@@ -17,12 +22,12 @@ export class User {
   constructor(private socket: SocketIO.Socket) { }
 
   /**
-   * Sends an event to this user.
+   * Emits an event to this user.
    * 
    * @param event The name of the event to send.
    * @param data The data to send.
    */
-  public send(event: string, data: any): void {
+  public emit(event: string, data: any): void {
     this.socket.emit(event, data);
   }
 

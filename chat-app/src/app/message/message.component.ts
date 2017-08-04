@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Message } from '../chat/message';
+import { Message } from '../chat/models/message';
 
 @Component({
   selector: 'app-message',

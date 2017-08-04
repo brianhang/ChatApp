@@ -1,0 +1,3 @@
+<div *ngFor="let room of rooms" class="list-group">
+  <app-room-list-item [room]="room" (roomClick)="onRoomClick($event)"></app-room-list-item>
+</div>

@@ -1,4 +1,5 @@
 import { User } from '../core/user'
+import { Message } from '../messaging/message';
 import { RoomService } from './service';
 
 /**
@@ -12,38 +13,40 @@ export class Room {
   private _description: string = "";
 
   // The users who are in this room.
-  private users: Map<string, User>;
+  private _users: Map<string, User>;
 
   /**
    * Constructor for a room that sets the room ID.
    * 
-   * @param id The string ID for this room.
+   * @param _id The string ID for this room.
    */
-  constructor(private id: string, private roomService: RoomService) {
-    this.users = new Map<string, User>();
+  constructor(private _id: string, private roomService: RoomService) {
+    this._users = new Map<string, User>();
+    this._name = this._id;
   }
 
   /**
-   * Adds a user to this room so the user can communicate in the room.
+   * Allows the given user to receive events in this room.
    * 
    * @param user The user that should be added to this room.
    */
   addUser(user: User): void {
-    if (this.users.get(user.id)) {
+    if (this._users.get(user.id)) {
       return;
     }
 
-    this.users.set(user.id, user);
+    this._users.set(user.id, user);
+    user.room = this;
   }
 
   /**
-   * Removes a user from this room so the user can no longer communicate
-   * in the room.
+   * Stops a user from receiving events in this room.
    * 
    * @param user The user to remove.
    */
   removeUser(user: User): void {
-    this.users.delete(user.id);
+    this._users.delete(user.id);
+    user.room = undefined;
   }
 
   /**
@@ -53,6 +56,44 @@ export class Room {
    */
   public set name(name: string) {
     this._name = name;
-    this.roomService.setRoomName(this.id, name);
+  }
+  
+  /**
+   * Returns the ID of this room.
+   * 
+   * @return A string containing the room's ID.
+   */
+  public get id(): string {
+    return this._id;
+  }
+
+  /**
+   * Returns the name of this room.
+   * 
+   * @return A string containing this room's name.
+   */
+  public get name(): string {
+    return this._name;
+  }
+
+  /**
+   * Called when a user in this room has sent a message to the chat room.
+   * 
+   * @param sender The user that sent the message.
+   * @param message The message that was sent.
+   */
+  public onMessageReceived(sender: User, message: Message): void {
+    this._users.forEach(user => {
+      user.emit('message', message);
+    });
+  }
+
+  /**
+   * Returns a list of users in the room.
+   * 
+   * @return A list of users in the room.
+   */
+  public get users(): User[] {
+    return Array.from(this._users.values());
   }
 }

@@ -6,6 +6,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "mongodb": "^2.2.30",
+    "rxjs": "^5.4.2",
     "socket.io": "^2.0.3"
   },
   "keywords": [],
@@ -18,8 +19,8 @@
     "typescript": "^2.4.2"
   },
   "scripts": {
-    "start": "npm run build:live",
-    "build:live": "nodemon --exec .\\\\node_modules\\\\.bin\\\\ts-node src/index.ts"
+    "start": "./node_modules/.bin/ts-node src/index.ts",
+    "watch": "nodemon --exec .\\\\node_modules\\\\.bin\\\\ts-node src/index.ts"
   },
   "description": ""
 }

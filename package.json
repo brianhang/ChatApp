@@ -5,12 +5,16 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "@angular/cli": "^1.2.6"
+    "@angular/cli": "^1.2.6",
+    "concurrently": "^3.5.0"
   },
   "scripts": {
     "postinstall": "cd chat-app && npm install && cd ../server && npm install",
     "build": "cd chat-app && ng build",
-    "start": "cd server && npm run start"
+    "start:server": "cd server && npm run start",
+    "watch:server": "cd server && npm run watch",
+    "watch:client": "cd chat-app && npm run watch",
+    "watch": "concurrently \"npm run watch:server\" \"npm run watch:client\""
   },
   "repository": {
     "type": "git",

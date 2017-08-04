@@ -1,5 +1,7 @@
+import { Server } from '../core/server';
+
 export class VoiceService {
-  constructor(private io: SocketIO.Server) {
+  constructor(private io: Server) {
 
   }
 }

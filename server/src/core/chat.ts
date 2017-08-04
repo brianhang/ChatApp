@@ -1,6 +1,7 @@
 import { Server } from './server';
 import { Server as HttpServer } from 'http';
 import { MessageService } from '../messaging/service';
+import { RoomService } from '../room/service';
 import { VideoService } from '../video/service';
 import { VoiceService } from '../voice/service';
 
@@ -13,6 +14,7 @@ export class ChatServer {
 
   // Services for handling user events.
   private messageService: MessageService;
+  private roomService: RoomService;
   private videoService: VideoService;
   private voiceService: VoiceService;
 
@@ -32,6 +34,7 @@ export class ChatServer {
    */
   public start(): void {
     this.messageService = new MessageService(this.server);
+    this.roomService = new RoomService(this.server);
     this.videoService = new VideoService(this.server);
     this.voiceService = new VoiceService(this.server);
   }

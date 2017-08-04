@@ -1,0 +1,6 @@
+<a href="#" class="list-group-item list-group-item-action" (click)="onClick($event)">
+  {{ room.name }}
+</a>
+<a *ngFor="let user of room.users" href="#" class="user list-group-item list-group-item-action">
+  {{ user.nickname }}
+</a>

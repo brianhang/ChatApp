@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as http from 'http';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import { ChatServer } from './core/server';
+import { ChatServer } from './core/chat';
 
 const router: express.Router = express.Router();
 const app: express.Server = express();
