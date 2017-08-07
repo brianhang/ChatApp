@@ -1,6 +1,6 @@
 <div *ngIf="user !== undefined && user.room !== undefined">
-  <div class="messageList">
-    <div *ngFor="let message of (messages | room:user.room.id)">
+  <div id="messageList" ngx-auto-scroll>
+    <div *ngFor="let message of (messages | room:user.room.id)" (elementCreated)="onMessageElementCreated($event)">
       <app-message [message]="message.content" [nickname]="message.nickname"></app-message>
     </div>
   </div>

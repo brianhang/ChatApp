@@ -18,6 +18,7 @@ import { RoomService } from './room/room.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { MessageService } from './message/message.service';
 import { RoomPipe } from './room/room.pipe';
+import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { RoomPipe } from './room/room.pipe';
     RoomListComponent,
     RoomListItemComponent,
     SidebarComponent,
+    NgxAutoScroll
   ],
   imports: [
     BrowserModule,
