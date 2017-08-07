@@ -5,10 +5,4 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './sideoptions.component.html',
   styleUrls: ['./sideoptions.component.scss']
 })
-export class SideoptionsComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-}
+export class SideoptionsComponent { }
