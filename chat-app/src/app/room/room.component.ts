@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { MessageService } from 'app/message/message.service';
 import { Message } from 'app/message/models/message';
 import { RoomPipe } from './room.pipe';
@@ -10,17 +10,12 @@ import { User } from 'app/chat/models/user';
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements AfterViewChecked {
+export class RoomComponent {
   protected messages: Message[];
-  @ViewChild('messageList') content: ElementRef;
 
   constructor(private chatService: ChatService, private messageService: MessageService) {
     this.messages = this.messageService.messages;
-    this.messageService.messageAdded.subscribe((message) => {
-      this.messages = this.messageService.messages.slice()
-      this.scrollToBottom();
-    });
-    this.scrollToBottom();
+    this.messageService.messageAdded.subscribe((message) => this.messages = this.messageService.messages.slice());
   }
 
   protected onMessageEntered(content: string): void {
@@ -33,15 +28,5 @@ export class RoomComponent implements AfterViewChecked {
 
   protected onMessageElementCreated(event): void {
     console.log(event)
-  }
-
-  private scrollToBottom(): void {
-    if (this.content) {
-      this.content.nativeElement.scrollToBottom();
-    }
-  }
-
-  ngAfterViewChecked(): void {
-    this.scrollToBottom();
   }
 }
