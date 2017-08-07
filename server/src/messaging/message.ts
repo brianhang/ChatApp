@@ -11,4 +11,7 @@ export class Message {
 
   // The room that this message was sent to.
   public room: Room;
+
+  // The time this message was created.
+  public time: number;
 }

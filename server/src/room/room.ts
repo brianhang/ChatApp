@@ -84,7 +84,7 @@ export class Room {
    */
   public onMessageReceived(sender: User, message: Message): void {
     this._users.forEach(user => {
-      user.emit('message', message);
+      user.emit('msg', message);
     });
   }
 

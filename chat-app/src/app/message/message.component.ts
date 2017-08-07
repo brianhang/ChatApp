@@ -9,4 +9,5 @@ import { Message } from './models/message';
 export class MessageComponent {
   @Input() public nickname: string;
   @Input() public message: string;
+  @Input() public time: number;
 }

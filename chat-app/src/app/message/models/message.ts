@@ -12,4 +12,7 @@ export class Message {
 
   // The room that this messaged was posted in.
   public room: Room;
+
+  // The time this message was created.
+  public time: Date;
 }

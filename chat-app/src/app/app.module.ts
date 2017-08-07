@@ -19,6 +19,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { MessageService } from './message/message.service';
 import { RoomPipe } from './room/room.pipe';
 import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
+import { MarkdownToHtmlModule } from 'ng2-markdown-to-html';
+
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 @NgModule({
   declarations: [
@@ -34,12 +37,14 @@ import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
     RoomListComponent,
     RoomListItemComponent,
     SidebarComponent,
-    NgxAutoScroll
+    NgxAutoScroll,
+    TimeAgoPipe
   ],
   imports: [
     BrowserModule,
     NgbModule.forRoot(),
-    NgbModule
+    NgbModule,
+    MarkdownToHtmlModule.forRoot()
   ],
   providers: [
     ChatService,

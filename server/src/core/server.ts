@@ -14,6 +14,7 @@ export class Server {
   // Subjects for when users join and left.
   private _userJoined: Subject<User>;
   private _userLeft: Subject<User>;
+  private _postUserJoined: Subject<User>;
 
   // The users who are connected to this server.
   private users: Map<string, User>;
@@ -32,6 +33,7 @@ export class Server {
     this.handlers = new Map<string, any>();
 
     this._userJoined = new Subject<User>();
+    this._postUserJoined = new Subject<User>();
     this._userLeft = new Subject<User>();
 
     this.io.on('connection', socket => this.onUserConnected(socket));
@@ -79,6 +81,8 @@ export class Server {
     });
 
     socket.on('disconnect', () => this.onUserDisconnected(user));
+
+    this._postUserJoined.next(user);
   }
 
   /**
@@ -88,6 +92,15 @@ export class Server {
    */
   public get userJoined(): Observable<User> {
     return this._userJoined.asObservable();
+  }
+
+  /**
+   * Called after the user has fully joined the chat room.
+   * 
+   * @return An observable stream of users.
+   */
+  public get postUserJoined(): Observable<User> {
+    return this._postUserJoined.asObservable();
   }
 
   /**

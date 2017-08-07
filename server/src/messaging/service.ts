@@ -4,6 +4,8 @@ import { Message } from './message';
 import { MessageFilter } from './filters/message-filter';
 import { RoomFilter } from './filters/room-filter';
 
+const MAX_LENGTH = 4096;
+
 /**
  * The MessageService class handles messaging in the chat application.
  */
@@ -17,26 +19,36 @@ export class MessageService {
    */
   constructor(private server: Server) {
     this.messages = [];
-    this.server.on('message', (sender: User, data: any) => this.onMessageReceived(sender, data));
+    this.server.on('msg', (sender: User, data: any) => this.onMessageReceived(sender, data));
+
+    this.server.postUserJoined.subscribe(user => {
+      setTimeout(() => {
+        let i = 0;
+
+        this.messages.forEach(message => {
+          setTimeout(() => {
+            user.emit('msg', this.getMessagePayload(message));
+          }, i * 50);
+          i++;
+        });
+      }, 1000);
+    });
   }
 
   /**
-   * Sends a message to the chat server from the specified user.
+   * Creates the data that the client expects in order to receive a particular
+   * message.
    * 
-   * @param sender The user that is sending the message.
-   * @param filter The filter to determine who receives the message.
-   * @param content What the user said.
+   * @param message The message that will be sent.
+   * @return Data in order to send the message to clients.
    */
-  public send(sender: User, filter: MessageFilter, content: Message): void {
-    // Send the message only to people who pass the filter.
-    for (let recipient of this.server.getUsers()) {
-      if (filter.check(sender, recipient)) {
-        recipient.emit('message', {
-          nickname: sender.nickname,
-          content: content
-        });
-      }
-    }
+  private getMessagePayload(message: Message): any {
+    return {
+      nickname: message.nickname,
+      room: message.room.id,
+      content: message.content,
+      time: message.time
+    };
   }
 
   /**
@@ -54,15 +66,10 @@ export class MessageService {
     const message = new Message();
     message.nickname = sender.nickname;
     message.room = sender.room;
-    message.content = data.content;
+    message.content = data.content.substring(0, MAX_LENGTH);
+    message.time = Date.now();
 
     this.messages.push(message);
-
-    this.server.emit('message', {
-      nickname: message.nickname,
-      room: message.room.id,
-      content: message.content
-    });
-    console.log(message.room.id)
+    this.server.emit('msg', this.getMessagePayload(message));
   }
 }

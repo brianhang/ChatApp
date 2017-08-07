@@ -1,7 +1,7 @@
 <div *ngIf="user !== undefined && user.room !== undefined">
   <div id="messageList" ngx-auto-scroll>
     <div *ngFor="let message of (messages | room:user.room.id)" (elementCreated)="onMessageElementCreated($event)">
-      <app-message [message]="message.content" [nickname]="message.nickname"></app-message>
+      <app-message [message]="message.content" [nickname]="message.nickname" [time]="message.time"></app-message>
     </div>
   </div>
   <input #content class="form-control chatboxText" type="text" placeholder="Type a message" (keyup.enter)="onMessageEntered(content.value); content.value = ''">

@@ -14,7 +14,7 @@ export class MessageService {
     this._messages = [];
     this._messageAdded = new Subject<Message>();
 
-    this.chatService.on('message', data => this.onMessageReceived(data));
+    this.chatService.on('msg', data => this.onMessageReceived(data));
   }
 
   /**
@@ -27,6 +27,7 @@ export class MessageService {
     message.nickname = data.nickname;
     message.content = data.content;
     message.room = this.roomService.getRoomById(data.room);
+    message.time = data.time;
 
     this._messages.push(message);
     this._messageAdded.next(message);
@@ -38,7 +39,7 @@ export class MessageService {
    * @param content The contents of the message.
    */
   public send(content: string): void {
-    this.chatService.emit('message', {
+    this.chatService.emit('msg', {
       content: content
     });
   }
