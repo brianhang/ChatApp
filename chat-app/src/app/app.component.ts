@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ChatService } from './chat/chat.service';
-import { Message } from './chat/models/message';
+import { Message } from './message/models/message';
 import { User } from './chat/models/user';
 
 @Component({

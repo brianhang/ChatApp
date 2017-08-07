@@ -9,8 +9,9 @@
 }
 
 .messageList {
+  position: fixed;
   padding: 0px 10px 10px 10px;
-  width: 100%;
+  width: calc(100% - 250px);
   height: calc(100% - 50px);
-  overflow-y: auto;
+  overflow-y: scroll;
 }

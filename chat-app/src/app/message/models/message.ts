@@ -1,3 +1,5 @@
+import { Room } from "app/room/models/room";
+
 /**
  * The Message class is a message that has been posted in the chat.
  */
@@ -7,4 +9,7 @@ export class Message {
 
   // The content of the message.
   public content: string;
+
+  // The room that this messaged was posted in.
+  public room: Room;
 }

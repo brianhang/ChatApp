@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { User } from './models/user';
-import { Message } from './models/message';
+import { Message } from '../message/models/message';
 import * as io from 'socket.io-client';
 
 @Injectable()
@@ -62,7 +62,6 @@ export class ChatService {
    * @param data The data to send with the event.
    */
   public emit(event: string, data: any): void {
-    console.log(event, data);
     this.socket.emit(event, data);
   }
 

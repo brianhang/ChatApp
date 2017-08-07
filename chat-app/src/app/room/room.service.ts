@@ -83,12 +83,21 @@ export class RoomService {
     }
   }
 
+  /**
+   * Finds and returns a room with an ID matching the given ID.
+   *
+   * @param id The desired room.
+   * @return The room with matching ID if found.
+   */
+  public getRoomById(id: string): Room {
+    return this._rooms.get(id);
+  }
+
   public get roomAdded(): Observable<Room> {
     return this._roomAdded.asObservable();
   }
 
   public join(room: Room): void {
-    console.log(room.id);
     this.chatService.emit('roomChange', room.id);
   }
 }

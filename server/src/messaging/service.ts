@@ -8,13 +8,16 @@ import { RoomFilter } from './filters/room-filter';
  * The MessageService class handles messaging in the chat application.
  */
 export class MessageService {
+  private messages: Message[];
+
   /**
    * Constructor that takes in a socket to handle messaging events.
    * 
-   * @param io The server socket to receive messages from.
+   * @param server The server for the chat room.
    */
   constructor(private server: Server) {
-    this.server.on('message', this.onMessageReceived);
+    this.messages = [];
+    this.server.on('message', (sender: User, data: any) => this.onMessageReceived(sender, data));
   }
 
   /**
@@ -43,12 +46,23 @@ export class MessageService {
    * @param sender The user that sent the message.
    * @param data The data for the message received.
    */
-  public onMessageReceived(sender: User, data: any): void {
-    const message = new Message();
-    message.content = data;
-
-    if (sender.room) {
-      sender.room.onMessageReceived(sender, message);
+  private onMessageReceived(sender: User, data: any): void {
+    if (!sender.room) {
+      return;
     }
+
+    const message = new Message();
+    message.nickname = sender.nickname;
+    message.room = sender.room;
+    message.content = data.content;
+
+    this.messages.push(message);
+
+    this.server.emit('message', {
+      nickname: message.nickname,
+      room: message.room.id,
+      content: message.content
+    });
+    console.log(message.room.id)
   }
 }

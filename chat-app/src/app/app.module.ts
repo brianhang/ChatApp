@@ -16,11 +16,13 @@ import { RoomListComponent } from './room/room-list/room-list.component';
 import { RoomListItemComponent } from './room/room-list/room-list-item/room-list-item.component';
 import { RoomService } from './room/room.service';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { RoomPipe } from './room/room-list/room-list-item/room-list-filter.pipe';
+import { MessageService } from './message/message.service';
+import { RoomPipe } from './room/room.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
+    RoomPipe,
     MessageComponent,
     UserComponent,
     UserlistComponent,
@@ -31,7 +33,6 @@ import { RoomPipe } from './room/room-list/room-list-item/room-list-filter.pipe'
     RoomListComponent,
     RoomListItemComponent,
     SidebarComponent,
-    RoomPipe
   ],
   imports: [
     BrowserModule,
@@ -40,7 +41,9 @@ import { RoomPipe } from './room/room-list/room-list-item/room-list-filter.pipe'
   ],
   providers: [
     ChatService,
-    RoomService
+    RoomService,
+    MessageService,
+    RoomPipe
   ],
   entryComponents: [
     SettingsComponent
