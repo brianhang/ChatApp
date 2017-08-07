@@ -1,4 +1,4 @@
-import { Room } from "app/room/models/room";
+import { Room } from 'app/room/models/room';
 
 /**
  * The Message class is a message that has been posted in the chat.
