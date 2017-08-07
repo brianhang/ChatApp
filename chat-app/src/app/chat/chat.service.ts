@@ -23,8 +23,6 @@ export class ChatService {
 
     this.on('userLeft', userId => {
       this._users.delete(userId);
-      console.log('REMAINING');
-      console.log(Array.from(this._users.values()));
     });
 
     this.on('userData', data => {
@@ -37,11 +35,7 @@ export class ChatService {
       this._users.set(user.id, user);
 
       this._localUser = user;
-
       this.connected = true;
-      console.log('connected');
-
-      console.log(Array.from(this._users.values()));
     });
   }
 

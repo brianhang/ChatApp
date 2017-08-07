@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { RoomService } from '../room.service';
 import { Room } from '../models/room';
+import { ChatService } from 'app/chat/chat.service';
+import { User } from 'app/chat/models/user';
 
 /**
  * The RoomListComponent is a list of all the rooms in the chat server. This
@@ -20,7 +22,7 @@ export class RoomListComponent {
    *
    * @param roomService The service to retrieve room information from.
    */
-  constructor(private roomService: RoomService) {
+  constructor(private roomService: RoomService, private chatService: ChatService) {
     this.rooms = [];
 
     this.roomService.roomAdded.subscribe(room => {
@@ -35,5 +37,21 @@ export class RoomListComponent {
    */
   protected onRoomClick(room: Room) {
     this.roomService.join(room);
+  }
+
+  /**
+   * Returns the user that is viewing the chat room.
+   *
+   * @return The local user.
+   */
+  protected get user(): User {
+    return this.chatService.user;
+  }
+
+  /**
+   * Called when the user clicks the leave button.
+   */
+  protected onRoomLeaveClick(event): void {
+    this.roomService.leave();
   }
 }

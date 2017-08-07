@@ -7,6 +7,7 @@ export class RoomService {
 
   constructor(private server: Server) {
     server.on('roomChange', (user: User, room: any) => this.onRoomChangeRequest(user, room));
+    server.on('roomLeave', (user: User) => this.onRoomLeaveRequest(user));
 
     this.rooms = new Map<string, Room>();
     this.rooms.set('general', new Room('general', this));
@@ -48,8 +49,6 @@ export class RoomService {
     if (roomId) {
       const room = this.rooms.get(roomId);
 
-      console.log(user.id + ' -> ' + roomId);
-
       if (!room) {
         return;
       }
@@ -77,5 +76,22 @@ export class RoomService {
       name: room.name,
       users: room.users.map(member => member.id)
     });
+  }
+
+  /**
+   * Called when a user wants to leave their current room. This will eject the
+   * user from their room if they are in a room.
+   * 
+   * @param user The user that wants to leave their current room.
+   */
+  onRoomLeaveRequest(user: User): void {
+    // Ignore if the use is not in a room.
+    if (!user.room) {
+      return;
+    }
+
+    // Remove the user and replicate it client side.
+    user.room.removeUser(user);
+    this.server.emit('roomChange', { userId: user.id });
   }
 }

@@ -58,8 +58,6 @@ export class Server {
     const user = new User(socket);
     user.nickname = socket.id;
 
-    console.log("JOIN " + socket.id);
-
     this.users.forEach(other => {
       user.emit('userData', {
         id: other.id,

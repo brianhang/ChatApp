@@ -99,4 +99,8 @@ export class RoomService {
   public join(room: Room): void {
     this.chatService.emit('roomChange', room.id);
   }
+
+  public leave(): void {
+    this.chatService.emit('roomLeave', undefined);
+  }
 }

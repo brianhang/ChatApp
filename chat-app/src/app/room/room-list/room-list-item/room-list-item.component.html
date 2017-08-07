@@ -1,6 +1,11 @@
-<a href="#" class="list-group-item list-group-item-action" (click)="onClick($event)">
-  {{ room.name }}
-</a>
+<div class="list-group-item list-group-item-action d-flex justify-content-between room-item">
+  <a href="#" class="room-button" (click)="onClick($event)">
+    <span>{{ room.name }}</span>
+  </a>
+  <a *ngIf="showLeave" href="#" class="room-leave-button">
+    <i class="fa fa-sign-out" aria-hidden="true" (click)="onLeaveClick($event)"></i>
+  </a>
+</div>
 <a *ngFor="let user of room.users" href="#" class="user list-group-item list-group-item-action">
   {{ user.nickname }}
 </a>

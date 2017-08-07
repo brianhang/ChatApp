@@ -21,7 +21,6 @@ export class MessageService {
    * Called when a message has been received by the server.
    */
   private onMessageReceived(data: any) {
-    console.log(data)
     // Create a new message instance from the given data.
     const message = new Message();
     message.nickname = data.nickname;
