@@ -78,7 +78,6 @@ export class RoomService {
     }
 
     if (room) {
-      user.room = room;
       room.addUser(user);
     }
   }
