@@ -3,7 +3,8 @@
   <div class="media-body">
     <span class="nickname">{{ nickname }}</span> <small class="text-muted">{{ time | timeAgo }}</small>
     <br />
-    <div markdown-to-html [data]="message">
-    </div>
+    <markdown-to-html>
+      {{ message }}
+    </markdown-to-html>
   </div>
 </div>
