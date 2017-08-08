@@ -1,2 +1,7 @@
 @import 'variables';
 @import '../node_modules/font-awesome/scss/font-awesome';
+
+.page-small {
+  margin-top: 10vh;
+  max-width: 480px;
+}

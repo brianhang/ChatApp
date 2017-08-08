@@ -1,6 +1,6 @@
 import { Server as HttpServer } from 'http';
 import * as socket from 'socket.io';
-import { User } from './user';
+import { User } from './models/user';
 import { Subject, Observable } from 'rxjs';
 
 /**
@@ -12,12 +12,12 @@ export class Server {
   private io: SocketIO.Server;
 
   // Subjects for when users join and left.
-  private _userJoined: Subject<User>;
-  private _userLeft: Subject<User>;
-  private _postUserJoined: Subject<User>;
+  //private _userJoined: Subject<User>;
+  //private _userLeft: Subject<User>;
+  //private _postUserJoined: Subject<User>;
 
   // The users who are connected to this server.
-  private users: Map<string, User>;
+  //private users: Map<string, User>;
 
   // The event handlers for socket messages.
   private handlers: Map<string, Function>;
@@ -29,12 +29,15 @@ export class Server {
    */
   constructor(httpServer: HttpServer) {
     this.io = socket(httpServer);
-    this.users = new Map<string, User>();
     this.handlers = new Map<string, any>();
+
+    /*
+    this.users = new Map<string, User>();
 
     this._userJoined = new Subject<User>();
     this._postUserJoined = new Subject<User>();
     this._userLeft = new Subject<User>();
+    */
 
     this.io.on('connection', socket => this.onUserConnected(socket));
   }
@@ -47,14 +50,15 @@ export class Server {
    */
   private onUserConnected(socket: SocketIO.Socket): void {
     // Do not allow duplicate connections.
+    /*
     if (this.users.get(socket.id)) {
       return;
     }
-
+    */
     this.handlers.forEach((listener: any, event: string) => {
       socket.on(event, (data: any) => listener(socket, data));
     });
-
+    /*
     const user = new User(socket);
     user.nickname = socket.id;
 
@@ -81,6 +85,7 @@ export class Server {
     socket.on('disconnect', () => this.onUserDisconnected(user));
 
     this._postUserJoined.next(user);
+    */
   }
 
   /**
@@ -88,27 +93,31 @@ export class Server {
    * 
    * @return An observable stream of users.
    */
+  /*
   public get userJoined(): Observable<User> {
     return this._userJoined.asObservable();
   }
-
+  */
   /**
    * Called after the user has fully joined the chat room.
    * 
    * @return An observable stream of users.
    */
+  /*
   public get postUserJoined(): Observable<User> {
     return this._postUserJoined.asObservable();
   }
-
+  */
   /**
    * Returns an observable for when a user has left the chat room.
    * 
    * @return An observable stream of users.
    */
+  /*
   public get userLeft(): Observable<User> {
     return this._userLeft.asObservable();
   }
+  */
 
   /**
    * Called when a socket disconnects from this server. This will handle
@@ -116,22 +125,26 @@ export class Server {
    * 
    * @param socket The socket that disconnected.
    */
+  /*
   private onUserDisconnected(user: User): void {
     this._userLeft.next(user);
     this.users.delete(user.id);
 
     this.emit('userLeft', user.id);
   }
+  */
 
   /**
    * Returns all of the connected users.
    * 
    * @return A list of users who are connected.
    */
+  /*
   public getUsers(): User[] {
     return Array.from(this.users.values());
   }
-
+  */
+  
   /**
    * Emits an event to all users connected.
    * 
@@ -149,6 +162,7 @@ export class Server {
    * @param event The name of the event to listen for.
    * @param listener What to do when the message is received.
    */
+  /*
   public on(event: string, listener: Function): void {
     this.handlers.set(event, (socket: SocketIO.Socket, data: any) => {
       // Get the user from the socket.
@@ -159,4 +173,5 @@ export class Server {
       }
     });
   }
+  */
 }

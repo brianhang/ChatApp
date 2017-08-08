@@ -1,66 +1,45 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 
-import { ChatService } from './chat/chat.service';
-import { MessageComponent } from './message/message.component';
-import { UserComponent } from './user/user.component';
-import { RoomComponent } from './room/room.component';
-import { SideoptionsComponent } from './sideoptions/sideoptions.component';
-import { SettingsComponent } from './settings/settings.component';
-import { RoomListComponent } from './room/room-list/room-list.component';
-import { RoomListItemComponent } from './room/room-list/room-list-item/room-list-item.component';
-import { RoomService } from './room/room.service';
-import { SidebarComponent } from './sidebar/sidebar.component';
-import { MessageService } from './message/message.service';
-import { RoomPipe } from './room/room.pipe';
-import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
-import { MarkdownToHtmlModule } from 'ng2-markdown-to-html';
+import { ChatModule } from './chat/chat.module';
+import { ChatComponent } from './chat/chat.component';
 
-import { TimeAgoPipe } from 'time-ago-pipe';
-import { RoomAddButtonComponent } from './room/room-add-button/room-add-button.component';
-import { RoomAddFormComponent } from './room/room-add-form/room-add-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { LoginModule } from './login/login.module';
+import { LoginComponent } from './login/login.component';
+
+import { SignupModule } from './signup/signup.module';
+import { SignupComponent } from './signup/signup.component';
+
+import { NotFoundComponent } from './not-found/not-found.component';
+
+const appRoutes: Routes = [
+  { path: '', redirectTo: 'chat', pathMatch: 'full' },
+  { path: 'chat', component: ChatComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
+  { path: '**', component: NotFoundComponent }
+];
 
 @NgModule({
   declarations: [
     AppComponent,
-    RoomPipe,
-    MessageComponent,
-    UserComponent,
-    RoomComponent,
-    SideoptionsComponent,
-    SettingsComponent,
-    RoomListComponent,
-    RoomListItemComponent,
-    SidebarComponent,
-    NgxAutoScroll,
-    TimeAgoPipe,
-    RoomAddButtonComponent,
-    RoomAddFormComponent
+    LoginComponent,
+    SignupComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,
-    NgbModule.forRoot(),
-    NgbModule,
-    MarkdownToHtmlModule.forRoot(),
-    ReactiveFormsModule
+    RouterModule.forRoot(appRoutes, { enableTracing: true }),
+    ChatModule,
+    LoginModule,
+    SignupModule
   ],
-  exports: [
-    ReactiveFormsModule
-  ],
-  providers: [
-    ChatService,
-    RoomService,
-    MessageService,
-    RoomPipe
-  ],
-  entryComponents: [
-    SettingsComponent,
-    RoomAddFormComponent
-  ],
+  exports: [],
+  providers: [],
+  entryComponents: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

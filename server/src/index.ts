@@ -25,6 +25,8 @@ const server = http.createServer(app);
 server.listen(port);
 
 const chatServer: ChatServer = new ChatServer(server);
-chatServer.start();
+chatServer.setup()
+  .then(() => chatServer.start())
+  .catch(err => console.error(err));
 
 console.log('Server started on port ' + port);
