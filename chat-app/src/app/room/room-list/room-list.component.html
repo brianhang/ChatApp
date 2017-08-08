@@ -1,5 +1,6 @@
-<div id="header">
-  Rooms
+<div id="header" class="d-flex justify-content-between">
+  <span>Rooms</span>
+  <app-room-add-button></app-room-add-button>
 </div>
 <div *ngFor="let room of rooms" class="list-group">
   <app-room-list-item

@@ -22,6 +22,9 @@ import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
 import { MarkdownToHtmlModule } from 'ng2-markdown-to-html';
 
 import { TimeAgoPipe } from 'time-ago-pipe';
+import { RoomAddButtonComponent } from './room/room-add-button/room-add-button.component';
+import { RoomAddFormComponent } from './room/room-add-form/room-add-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -38,13 +41,19 @@ import { TimeAgoPipe } from 'time-ago-pipe';
     RoomListItemComponent,
     SidebarComponent,
     NgxAutoScroll,
-    TimeAgoPipe
+    TimeAgoPipe,
+    RoomAddButtonComponent,
+    RoomAddFormComponent
   ],
   imports: [
     BrowserModule,
     NgbModule.forRoot(),
     NgbModule,
-    MarkdownToHtmlModule.forRoot()
+    MarkdownToHtmlModule.forRoot(),
+    ReactiveFormsModule
+  ],
+  exports: [
+    ReactiveFormsModule
   ],
   providers: [
     ChatService,
@@ -53,7 +62,8 @@ import { TimeAgoPipe } from 'time-ago-pipe';
     RoomPipe
   ],
   entryComponents: [
-    SettingsComponent
+    SettingsComponent,
+    RoomAddFormComponent
   ],
   bootstrap: [AppComponent]
 })

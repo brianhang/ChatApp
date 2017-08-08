@@ -6,6 +6,7 @@ export class RoomService {
   private rooms: Map<string, Room>;
 
   constructor(private server: Server) {
+    server.on('roomCreate', (user: User, data: any) => this.onRoomCreateRequest(user, data));
     server.on('roomChange', (user: User, room: any) => this.onRoomChangeRequest(user, room));
     server.on('roomLeave', (user: User) => this.onRoomLeaveRequest(user));
 
@@ -40,7 +41,7 @@ export class RoomService {
    * @param user The user who wants to switch rooms.
    * @param room The room that the user wants to switch to.
    */
-  private onRoomChangeRequest(user: User, roomId: string | undefined) {
+  private onRoomChangeRequest(user: User, roomId: string | undefined): void {
     if (user.room) {
       user.room.removeUser(user);      
     }
@@ -70,7 +71,7 @@ export class RoomService {
    * @param user The user that the room data should be replicated for.
    * @param room The room that is being replicated.
    */
-  private replicateRoom(user: User, room: Room) {
+  private replicateRoom(user: User, room: Room): void {
     user.emit('roomData', {
       id: room.id,
       name: room.name,
@@ -84,7 +85,7 @@ export class RoomService {
    * 
    * @param user The user that wants to leave their current room.
    */
-  onRoomLeaveRequest(user: User): void {
+  private onRoomLeaveRequest(user: User): void {
     // Ignore if the use is not in a room.
     if (!user.room) {
       return;
@@ -93,5 +94,33 @@ export class RoomService {
     // Remove the user and replicate it client side.
     user.room.removeUser(user);
     this.server.emit('roomChange', { userId: user.id });
+  }
+
+  /**
+   * Called when the user requests a new room. This will create the room
+   * instance and replicate it to everyone.
+   * 
+   * @param user The user that wants to create the room.
+   * @param data Data about the room being created.
+   */
+  private onRoomCreateRequest(user: User, data: any): void {
+    // Get the desired room name.
+    const name = data.name.toString().trim();
+
+    if (name.length == 0) {
+      return;
+    }
+
+    // Create the room instance.
+    const id = Math.random().toString();
+    const room = new Room(id, this);
+    room.name = name;
+
+    this.rooms.set(id, room);
+
+    // Replicate the room on the client side.
+    this.server.getUsers().forEach(user => {
+      this.replicateRoom(user, room);
+    });
   }
 }
