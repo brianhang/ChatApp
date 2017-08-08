@@ -6,12 +6,12 @@
 </div>
 <div class="modal-body">
   <form [formGroup]="form">
-    <div class="form-group" formGroupName="name">
+    <div class="form-group">
       <label for="name" class="form-control-label">Enter the name of your room:</label>
-      <input type="text" class="form-control" id="name">
+      <input type="text" class="form-control" id="name" formControlName="name" (keyup.enter)="onSubmit($event)">
     </div>
   </form>
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-primary">Create</button>
+  <button type="submit" class="btn btn-primary" (click)="onSubmit($event)">Create</button>
 </div>

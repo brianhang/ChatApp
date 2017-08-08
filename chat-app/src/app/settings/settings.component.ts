@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 
 @Component({
   selector: 'app-settings',
@@ -7,7 +8,13 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent {
-  constructor(protected activeModal: NgbActiveModal) { }
+  private form: FormGroup;
+
+  constructor(protected activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
+    this.form = formBuilder.group({
+
+    });
+  }
 
   /**
    * Closes the modal.
