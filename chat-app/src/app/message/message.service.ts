@@ -5,11 +5,24 @@ import { RoomService } from 'app/room/room.service';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 
+/**
+ * The MessageService handles sending and receiving of messages to and from the
+ * chat server.
+ */
 @Injectable()
 export class MessageService {
+  // Subject for when a message was added to the chat server.
   private _messageAdded: Subject<Message>;
+
+  // A list of messages that have been sent from the chat server.
   private _messages: Message[];
 
+  /**
+   * Constructor that sets up listnening for messages.
+   *
+   * @param chatService Service that allows for sending/receiving of data.
+   * @param roomService Service for getting room data.
+   */
   constructor(private chatService: ChatService, private roomService: RoomService) {
     this._messages = [];
     this._messageAdded = new Subject<Message>();

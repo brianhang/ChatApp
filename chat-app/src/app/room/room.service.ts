@@ -5,11 +5,23 @@ import { Room } from './models/room';
 import { User } from '../chat/models/user';
 import { ChatService } from '../chat/chat.service';
 
+/**
+ * The RoomService is responsible for handling room data between the server
+ * and the client.
+ */
 @Injectable()
 export class RoomService {
+  // Subject for when a room has been added to the chat server.
   private _roomAdded: Subject<Room>;
+
+  // A list of rooms in the chat server.
   private _rooms: Map<string, Room>;
 
+  /**
+   * Constructor that sets up listeners for room related messages.
+   *
+   * @param chatService Service for communicating with the chat server.
+   */
   constructor(private chatService: ChatService) {
     this._roomAdded = new Subject<Room>();
     this._rooms = new Map<string, Room>();
@@ -92,14 +104,27 @@ export class RoomService {
     return this._rooms.get(id);
   }
 
+  /**
+   * Returns an observable that is a stream of rooms that have been created.
+   *
+   * @return A stream of rooms that were just created.
+   */
   public get roomAdded(): Observable<Room> {
     return this._roomAdded.asObservable();
   }
 
+  /**
+   * Sends a request to the chat server to join the given room.
+   *
+   * @param room The room that the user wants to join.
+   */
   public join(room: Room): void {
     this.chatService.emit('roomChange', room.id);
   }
 
+  /**
+   * Sends a request to the server to leave the current room.
+   */
   public leave(): void {
     this.chatService.emit('roomLeave', undefined);
   }
