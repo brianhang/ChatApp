@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsComponent } from '../settings/settings.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sideoptions',
@@ -13,7 +14,7 @@ export class SideoptionsComponent {
    *
    * @param modalService Service for opening modals.
    */
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal, private router: Router) { }
 
   /**
    * Called when the user clicks on the settings button. This will open the
@@ -23,5 +24,15 @@ export class SideoptionsComponent {
    */
   protected openSettings(event): void {
     this.modalService.open(SettingsComponent);
+  }
+
+  /**
+   * Called when the user clicks on the log out button. This will request for
+   * the user to be logged out.
+   *
+   * @param event Information about the click event.
+   */
+  protected onLogout(event): void {
+    this.router.navigate(['/logout']);
   }
 }

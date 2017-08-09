@@ -39,9 +39,7 @@ export class AuthenticationService {
       user = null;
     }
 
-    res.json({
-      user: user
-    });
+    res.json(user);
   }
 
   /**
@@ -77,7 +75,7 @@ export class AuthenticationService {
       (err: any, user: UserDocument) => {
         // Send the error if registering failed.
         if (err) {
-          res.status(400).json({ user: user, message: err });
+          res.status(400).json({ user: user, message: err.message });
 
           return;
         }
@@ -97,6 +95,7 @@ export class AuthenticationService {
    * @param res The response to the user.
    */
   private logout(req: any, res: any): void {
+    req.logout();
     res.sendStatus(200);
   }
 }

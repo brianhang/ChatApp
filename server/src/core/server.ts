@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http';
 import * as socket from 'socket.io';
 import { Subject, Observable } from 'rxjs';
+import { default as session } from '../session';
 
 /**
  * The Server class is responsible for handling messages between the chat server
@@ -28,6 +29,12 @@ export class Server {
    */
   constructor(httpServer: HttpServer) {
     this.io = socket(httpServer);
+
+    // Set up user session for the socket for user authentication.
+    this.io.use((socket, next) => {
+      session(socket.request, {}, next);
+    });
+
     this.handlers = new Map<string, any>();
 
     /*
@@ -54,6 +61,7 @@ export class Server {
       return;
     }
     */
+    console.log(socket.request.session);
     this.handlers.forEach((listener: any, event: string) => {
       socket.on(event, (data: any) => listener(socket, data));
     });

@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
-    "@angular/cli": "^1.2.6",
     "concurrently": "^3.5.0"
   },
   "scripts": {

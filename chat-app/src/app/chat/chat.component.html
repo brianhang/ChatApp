@@ -1,10 +1,21 @@
+<div *ngIf="loading">
+</div>
+
 <div class="container-fluid">
-  <div class="row">
-    <nav class="bg-inverse text-white sidebar">
-      <app-sidebar></app-sidebar>
-    </nav>
-    <div class="content">
-      <app-room></app-room>
+  <ng-template #content>
+    <div class="row">
+      <nav class="bg-inverse text-white sidebar">
+        <app-sidebar></app-sidebar>
+      </nav>
+      <div class="content">
+        <app-room></app-room>
+      </div>
     </div>
-  </div>
+  </ng-template>
+
+  <ng-template #loader>
+    <app-loader></app-loader>
+  </ng-template>
+
+  <div *ngIf="loading; then loader else content"></div>
 </div>
