@@ -1,6 +1,5 @@
 import { Server as HttpServer } from 'http';
 import * as socket from 'socket.io';
-import { User } from './models/user';
 import { Subject, Observable } from 'rxjs';
 
 /**
