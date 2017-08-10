@@ -14,7 +14,9 @@ import { ChatService } from '../../chat/chat.service';
   styleUrls: ['./room-add-form.component.scss']
 })
 export class RoomAddFormComponent  {
-  private form: FormGroup;
+  protected form: FormGroup;
+  protected busy: boolean;
+  protected error: string;
 
   /**
    * Constructor that sets up the form and services.
@@ -24,6 +26,9 @@ export class RoomAddFormComponent  {
    * @param chatService Service for requesting rooms on the server.
    */
   constructor(protected activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
+    this.busy = false;
+    this.error = '';
+
     this.form = formBuilder.group({
       name: ['', Validators.compose([Validators.required, Validators.minLength(1), Validators.maxLength(32)])]
     });
@@ -37,7 +42,6 @@ export class RoomAddFormComponent  {
    * @param event Information about the event that led to this submission.
    */
   protected onSubmit(): void {
-    console.log(this.form.valid);
     if (!this.form.valid) {
       return;
     }
@@ -45,13 +49,29 @@ export class RoomAddFormComponent  {
     // Get the desired room name.
     const name = this.form.controls.name.value.trim();
 
-    // Request to have the room made.
-    this.chatService.emit('roomCreate', {
-      name: name
+    this.chatService.on('roomAdd', (data) => {
+      const room = data.room;
+      const message = data.message;
+
+      // Close the form after the room has been created.
+      if (room) {
+        this.busy = false;
+        this.activeModal.close();
+
+        return;
+      }
+
+      this.error = message;
+      this.busy = false;
     });
 
-    // Close the form after the room request has been made.
-    this.activeModal.close();
+    // Indicate that the room is being created.
+    this.busy = true;
+
+    // Request to have the room made.
+    this.chatService.emit('roomAdd', {
+      name: name
+    });
   }
 
   /**

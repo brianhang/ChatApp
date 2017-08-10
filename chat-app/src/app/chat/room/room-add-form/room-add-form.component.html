@@ -5,6 +5,9 @@
   </button>
 </div>
 <div class="modal-body">
+  <div *ngIf="error.length > 0" class="alert alert-danger" role="alert">
+    <strong>Oh no!</strong> {{ error }}
+  </div>
   <form [formGroup]="form">
     <div class="form-group">
       <label for="name" class="form-control-label">Enter the name of your room:</label>
@@ -13,5 +16,5 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button type="submit" class="btn btn-primary" (click)="onSubmit($event)">Create</button>
+  <button type="submit" class="btn btn-primary" (click)="onSubmit($event)" [disabled]="busy">Create</button>
 </div>
