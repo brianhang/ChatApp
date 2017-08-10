@@ -82,7 +82,6 @@ export class AuthenticationService {
 
         // Otherwise, get the account and pass it back.
         passport.authenticate('local')(req, res, () => {
-          console.log(req.user)
           res.status(201).json({ user: req.user, message: 'success' });
         });
       }
@@ -97,6 +96,8 @@ export class AuthenticationService {
    */
   private logout(req: any, res: any): void {
     req.logout();
-    res.sendStatus(200);
+    req.session.destroy(() => {
+      res.status(200).end();
+    });
   }
 }

@@ -123,6 +123,7 @@ export class AuthenticationService {
    */
   public logout(): void {
     this._user = undefined;
-    this.http.post('/auth/logout', {});
+    this.http.post('/auth/logout', { message: 'bye' })
+      .subscribe(() => window.location.assign('/login'));
   }
 }
