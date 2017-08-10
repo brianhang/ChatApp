@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Http, Response } from '@angular/http';
 import { User } from './models/user';
+import { Observable } from 'rxjs/Rx';
+import 'rxjs/add/operator/map';
 
 /**
  * The AuthenticateService handles signing up and signing in to the chat server.
@@ -14,7 +16,7 @@ export class AuthenticationService {
    *
    * @param http HTTP client to send and get credentials with.
    */
-  constructor(private http: HttpClient) { }
+  constructor(private http: Http) { }
 
   /**
    * Attempts to log in as the user with the given credentials.
@@ -25,19 +27,26 @@ export class AuthenticationService {
    */
   public login(username: string, password: string): Promise<User> {
     return new Promise((resolve, reject) => {
-      // Log in with the given credentials.
-      this.http.post('/auth/login', {
+      const credentials = {
         username: username,
         password: password
-      }).subscribe((user: User) => {
-        // Resolve if we got a user back (now logged in), reject otherwise.
-        if (user) {
-          this._user = user;
-          resolve(user);
-        } else {
-          reject('You have provided an invalid username or password.');
-        }
-      }, error => reject(error));
+      };
+
+      // Log in with the given credentials.
+      this.http.post('/auth/login', credentials)
+        .map((res: Response) => res.json())
+        .subscribe(
+          (user: User) => {
+            // Resolve if we got a user back (now logged in), reject otherwise.
+            if (user) {
+              this._user = user;
+              resolve(user);
+            } else {
+              reject('You have provided an invalid username or password.');
+            }
+          },
+          (error) => reject(error)
+        );
     });
   }
 
@@ -65,24 +74,28 @@ export class AuthenticationService {
 
       // Send the credentials to the server.
       this.http.post('/auth/signup', signUpData)
-        .map((res: any) => res.json())
-        .subscribe((data: { user?: User, message: string }) => {
-          // Sign in if we have the account and resolve. Otherwise, reject with
-          // the error message.
-          console.log(data);
-          if (data.message === 'success' && data.user) {
-            this._user = data.user;
-            resolve(data.user);
-          } else {
-            reject(data.message);
+        .map((res: Response) => res.json())
+        .subscribe(
+          (data) => {
+            // Sign in if we have the account and resolve. Otherwise, reject with
+            // the error message.
+            console.log(data);
+            if (data.message === 'success' && data.user) {
+              this._user = data.user;
+              resolve(data.user);
+            } else {
+              reject(data.message);
+            }
+          },
+          (error) => {
+            console.log(error)
+            if (error.error && error.error.message) {
+              reject(error.error.message);
+            } else {
+              reject(error.toString());
+            }
           }
-        }, error => {
-          if (error.error && error.error.message) {
-            reject(error.error.message);
-          } else {
-            reject(error);
-          }
-        });
+        );
     })
   }
 
@@ -94,9 +107,14 @@ export class AuthenticationService {
    */
   public getUser(): Promise<(User | null)> {
     return new Promise((resolve, reject) => {
-      this.http.get('/auth').subscribe((user: User | null) => {
-        resolve(user);
-      }, error => reject(error));
+      this.http.get('/auth')
+        .map(res => res.json())
+        .subscribe(
+          (user: User | null) => {
+            resolve(user);
+          },
+          error => reject(error)
+        );
     });
   }
 

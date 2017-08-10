@@ -82,6 +82,7 @@ export class AuthenticationService {
 
         // Otherwise, get the account and pass it back.
         passport.authenticate('local')(req, res, () => {
+          console.log(req.user)
           res.status(201).json({ user: req.user, message: 'success' });
         });
       }
