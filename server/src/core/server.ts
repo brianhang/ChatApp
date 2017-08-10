@@ -1,16 +1,12 @@
-import { Server as HttpServer } from 'http';
 import * as socket from 'socket.io';
 import { Subject, Observable } from 'rxjs';
-import { default as session } from '../session';
+import { User } from './models/user';
 
 /**
  * The Server class is responsible for handling messages between the chat server
  * and its clients.
  */
 export class Server {
-  // The server's socket for communication.
-  private io: SocketIO.Server;
-
   // Subjects for when users join and left.
   //private _userJoined: Subject<User>;
   //private _userLeft: Subject<User>;
@@ -25,16 +21,10 @@ export class Server {
   /**
    * Contructor that sets up the server socket.
    * 
-   * @param httpServer The HTTP server to bind to.
+   * @param io The socket for the server.
    */
-  constructor(httpServer: HttpServer) {
-    this.io = socket(httpServer);
-
+  constructor(private io: SocketIO.Server) {
     // Set up user session for the socket for user authentication.
-    this.io.use((socket, next) => {
-      session(socket.request, {}, next);
-    });
-
     this.handlers = new Map<string, any>();
 
     /*
@@ -55,14 +45,14 @@ export class Server {
    * @param socket The socket that connected.
    */
   private onUserConnected(socket: SocketIO.Socket): void {
-    // Do not allow duplicate connections.
-    /*
-    if (this.users.get(socket.id)) {
+    if (!socket.request.user) {
       return;
     }
-    */
-    console.log(socket.request.session);
+
+    console.log(socket.request.user.nickname + ' has connected.');
+
     this.handlers.forEach((listener: any, event: string) => {
+      console.log(event);
       socket.on(event, (data: any) => listener(socket, data));
     });
     /*
@@ -169,16 +159,14 @@ export class Server {
    * @param event The name of the event to listen for.
    * @param listener What to do when the message is received.
    */
-  /*
   public on(event: string, listener: Function): void {
     this.handlers.set(event, (socket: SocketIO.Socket, data: any) => {
       // Get the user from the socket.
-      const user: User | undefined = this.users.get(socket.id);
-
+      const user: User = socket.request.user;
+      console.log(user.nickname + ' -> ' + event);
       if (user) {
         listener(user, data);
       }
     });
   }
-  */
 }
