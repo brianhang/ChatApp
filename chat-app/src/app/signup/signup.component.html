@@ -1,10 +1,15 @@
 <div class="container page-small">
   <h1>Sign Up</h1>
   <hr>
+
+  <div *ngIf="error.length > 0" class="alert alert-danger" role="alert">
+    <strong>Oh no!</strong> {{ error }}
+  </div>
+
   <form [formGroup]="form">
-    <div class="form-group" [ngClass]="{'has-danger': !form.controls.email.valid && form.controls.email.dirty}">
-      <label class="form-control-label" for="emailInput">E-mail Address:</label>
-      <input id="emailInput" type="email" class="form-control" placeholder="example@mail.com" formControlName="email" required autofocus>
+    <div class="form-group" [ngClass]="{'has-danger': !form.controls.username.valid && form.controls.username.dirty}">
+      <label class="form-control-label" for="usernameInput">Username:</label>
+      <input id="usernameInput" type="text" class="form-control" formControlName="username" required autofocus>
     </div>
 
     <div class="form-group" [ngClass]="{'has-danger': !form.controls.password.valid && form.controls.password.dirty}">
@@ -17,7 +22,7 @@
       <input id="confirmInput" type="password" class="form-control" formControlName="confirm">
     </div>
 
-    <button type="submit" class="btn btn-block btn-primary">
+    <button type="submit" class="btn btn-block btn-primary" (click)="onSubmit($event)" [disabled]="busy">
       Sign Up
     </button>
 

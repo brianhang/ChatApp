@@ -2,10 +2,8 @@
   <h1>Login</h1>
   <hr>
   <form [formGroup]="form">
-    <div class="alert alert-danger" role="alert" *ngIf="error.length > 0">
-      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-      <span class="sr-only">Error:</span>
-      {{ error }}
+    <div *ngIf="error.length > 0" class="alert alert-danger" role="alert">
+      <strong>Oh no!</strong> {{ error }}
     </div>
 
     <div class="form-group" [ngClass]="{'has-danger': !form.controls.username.valid && form.controls.username.dirty}">

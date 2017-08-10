@@ -57,21 +57,32 @@ export class AuthenticationService {
     }
 
     return new Promise((resolve, reject) => {
-      // Send the credentials to the server.
-      this.http.post('/auth/signup', {
+      const signUpData = {
         username: username,
         password: password,
         nickname: nickname
-      }).subscribe((data: { user?: User, message: string }) => {
-        // Sign in if we have the account and resolve. Otherwise, reject with
-        // the error message.
-        if (data.message === 'success' && data.user) {
-          this._user = data.user;
-          resolve(data.user);
-        } else {
-          reject(data.message);
-        }
-      }, error => reject(error));
+      };
+
+      // Send the credentials to the server.
+      this.http.post('/auth/signup', signUpData)
+        .map((res: any) => res.json())
+        .subscribe((data: { user?: User, message: string }) => {
+          // Sign in if we have the account and resolve. Otherwise, reject with
+          // the error message.
+          console.log(data);
+          if (data.message === 'success' && data.user) {
+            this._user = data.user;
+            resolve(data.user);
+          } else {
+            reject(data.message);
+          }
+        }, error => {
+          if (error.error && error.error.message) {
+            reject(error.error.message);
+          } else {
+            reject(error);
+          }
+        });
     })
   }
 
