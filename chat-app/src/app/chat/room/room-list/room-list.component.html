@@ -5,7 +5,7 @@
 <div *ngFor="let room of rooms" class="list-group">
   <app-room-list-item
     [room]="room"
-    [showLeave]="user.room && user.room.id === room.id"
+    [showLeave]="user && user.room && user.room.id === room.id"
     (roomClick)="onRoomClick($event)"
     (roomLeaveClick)="onRoomLeaveClick($event)">
   </app-room-list-item>
