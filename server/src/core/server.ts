@@ -13,7 +13,10 @@ export class Server {
   //private _postUserJoined: Subject<User>;
 
   // The users who are connected to this server.
-  //private users: Map<string, User>;
+  private _users: Map<string, User>;
+
+  private _userConnected: Subject<User>;
+  private _userJoined: Subject<User>;
 
   // The event handlers for socket messages.
   private handlers: Map<string, Function>;
@@ -27,14 +30,14 @@ export class Server {
     // Set up user session for the socket for user authentication.
     this.handlers = new Map<string, any>();
 
-    /*
-    this.users = new Map<string, User>();
+    // Set up the list of connected users.
+    this._users = new Map<string, User>();
 
+    // Set up subjects for user events.
+    this._userConnected = new Subject<User>();
     this._userJoined = new Subject<User>();
-    this._postUserJoined = new Subject<User>();
-    this._userLeft = new Subject<User>();
-    */
 
+    // Set up what to do when a user joins.
     this.io.on('connection', socket => this.onUserConnected(socket));
   }
 
@@ -45,16 +48,23 @@ export class Server {
    * @param socket The socket that connected.
    */
   private onUserConnected(socket: SocketIO.Socket): void {
-    if (!socket.request.user) {
+    const user = socket.request.user;
+
+    if (!user) {
       return;
     }
 
     console.log(socket.request.user.nickname + ' has connected.');
 
     this.handlers.forEach((listener: any, event: string) => {
-      console.log(event);
       socket.on(event, (data: any) => listener(socket, data));
     });
+
+    this._users.set(socket.id, user);
+    user.socket = socket;
+
+    this._userConnected.next(user);
+
     /*
     const user = new User(socket);
     user.nickname = socket.id;
@@ -71,7 +81,6 @@ export class Server {
       });
     });
 
-    this.users.set(socket.id, user);
     this._userJoined.next(user);
     
     socket.emit('joined', {
@@ -83,6 +92,8 @@ export class Server {
 
     this._postUserJoined.next(user);
     */
+
+    this._userJoined.next(socket.request.user);
   }
 
   /**
@@ -90,21 +101,19 @@ export class Server {
    * 
    * @return An observable stream of users.
    */
-  /*
   public get userJoined(): Observable<User> {
     return this._userJoined.asObservable();
   }
-  */
+
   /**
    * Called after the user has fully joined the chat room.
    * 
    * @return An observable stream of users.
    */
-  /*
-  public get postUserJoined(): Observable<User> {
-    return this._postUserJoined.asObservable();
+  public get userConnected(): Observable<User> {
+    return this._userConnected.asObservable();
   }
-  */
+
   /**
    * Returns an observable for when a user has left the chat room.
    * 
@@ -136,11 +145,9 @@ export class Server {
    * 
    * @return A list of users who are connected.
    */
-  /*
-  public getUsers(): User[] {
-    return Array.from(this.users.values());
+  public get users(): User[] {
+    return Array.from(this._users.values());
   }
-  */
   
   /**
    * Emits an event to all users connected.
@@ -163,8 +170,9 @@ export class Server {
     this.handlers.set(event, (socket: SocketIO.Socket, data: any) => {
       // Get the user from the socket.
       const user: User = socket.request.user;
-      console.log(user.nickname + ' -> ' + event);
+
       if (user) {
+        user.socket = socket;
         listener(user, data);
       }
     });
