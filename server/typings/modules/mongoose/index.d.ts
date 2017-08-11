@@ -536,6 +536,7 @@ export class Query<T> {
   comment(val: any): Query<T>;
   count(callback?: (err: any, count: number) => void): Query<number>;
   count(criteria: Object, callback?: (err: any, count: number) => void): Query<number>;
+  cursor(options?: Object): QueryCursor;
   distinct(callback?: (err: any, res: T) => void): Query<T>;
   distinct(field: string, callback?: (err: any, res: T) => void): Query<T>;
   distinct(criteria: Object, field: string, callback?: (err: any, res: T) => void): Query<T>;
@@ -651,6 +652,14 @@ export interface QueryStream extends NodeJS.EventEmitter {
   readable: boolean;
 }
 
+export interface QueryCursor extends NodeJS.EventEmitter {
+  addCursorFlag(flag: string, value: boolean): AggregationCursor;
+  close(callback: Function): Promise<void>;
+  eachAsync(fn: Function, options?: Object, parallel?: number, callback?: Function): Promise<void>;
+  map(fn: Function): QueryCursor;
+  next(callback: Function): Promise<Document>;
+}
+
 export interface Document {
   id?: string | number;
   _id: Types.ObjectId;
@@ -706,4 +715,13 @@ export class Aggregate<T> {
   exec(callback?: (err: any, result: T) => void): Promise<T>;
   read(pref: string, ...tags: Object[]): Aggregate<T>;
 }
+
+export interface AggregationCursor {
+  addCursorflag(flag: string, value: boolean): AggregationCursor;
+  close(callback: Function): Promise<void>;
+  eachAsync(fn: Function, callback?: Function): Promise<void>;
+  map(fn: Function): QueryCursor;
+  next(callback: Function): Promise<Document>;
+}
+
 }
