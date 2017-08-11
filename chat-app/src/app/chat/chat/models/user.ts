@@ -13,7 +13,7 @@ export class User {
   // The room that the user is in.
   public room: Room | undefined;
 
-  constructor(private _id: string, nickname: string) {
+  constructor(public _id: string, nickname: string) {
     this.nickname = nickname;
   }
 
