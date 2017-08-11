@@ -24,28 +24,29 @@ export class RoomService {
    */
   constructor(private chatService: ChatService) {
     this._roomAdded = new Subject<Room>();
-
     this._rooms = new Map<string, Room>();
 
+    // Handle room data from the server.
     this.chatService.on('roomData', data => this.loadRoomData(data));
 
     // Handle users joining rooms.
     this.chatService.on('roomJoin', data => {
-      const user: User = data.user;
-      const room: Room | undefined = this._rooms.get(data.roomId);
+      const user: User = this.chatService.getUserById(data.userId);
+      const room: Room = this._rooms.get(data.roomId);
 
-      if (!user) {
-        return;
+      if (user && room) {
+        this.onUserJoinRoom(user, room);
       }
-
-      this.onUserChangeRoom(user, room);
     });
 
+    // Handle users leaving rooms.
     this.chatService.on('roomLeave', data => {
-      const userId: string = data.userId;
+      const user = this.chatService.getUserById(data.userId);
 
-      this._rooms.forEach(room => room.removeUserById(userId));
-    })
+      if (user && user.room) {
+        this.onUserLeaveRoom(user);
+      }
+    });
   }
 
   /**
@@ -62,7 +63,16 @@ export class RoomService {
     const room = new Room(data.id, data.name);
     this.addRoom(room);
 
-    data.users.forEach(user => room.addUser(user));
+    data.users.forEach(userId => {
+      const user = this.chatService.getUserById(userId);
+
+      if (user) {
+        // Fix since the server sends invalid room data before this.
+        user.room = undefined;
+
+        room.addUser(user);
+      }
+    });
   }
 
   /**
@@ -80,18 +90,38 @@ export class RoomService {
   }
 
   /**
+   * Helper function to eject a user from the room they are in.
+   *
+   * @param user The desired user.
+   */
+  private ejectUser(user: User): void {
+    if (user && user.room) {
+      user.room.removeUser(user);
+    }
+  }
+
+  /**
    * Called when a user changes which room they are in.
    *
    * @param user The user that has joined a room.
    * @param room The room that the user changed to.
    */
-  private onUserChangeRoom(user: User, newRoom: Room | undefined): void {
-    console.log(user.nickname);
-    this._rooms.forEach(room => room.removeUser(user));
+  private onUserJoinRoom(user: User, newRoom: Room | undefined): void {
+    this.ejectUser(user);
 
     if (newRoom) {
       newRoom.addUser(user);
     }
+  }
+
+  /**
+   * Called when a user has left a room. This will remove the user from the
+   * room locally.
+   *
+   * @param user The user that left a room.
+   */
+  private onUserLeaveRoom(user: User): void {
+    this.ejectUser(user);
   }
 
   /**

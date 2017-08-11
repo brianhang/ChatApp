@@ -10,32 +10,29 @@ export class ChatService {
   private socket;
   private connected: boolean;
   private _users: Map<string, User>;
-  private _localUser: User;
+  private _user: User;
 
   /**
    * Constructor which sets up the socket to communicate with the chat server.
    */
   constructor() {
+    this._users = new Map<string, User>();
+    this._user = undefined;
+
     this.socket = io();
     this.connected = false;
 
-    this._users = new Map<string, User>();
-
-    this.on('userLeft', userId => {
-      this._users.delete(userId);
-    });
-
     this.on('userData', data => {
-      const user = new User(data.id, data.nickname);
-      this._users.set(user.id, user);
+      this._users.set(data._id, data);
     });
 
     this.on('joined', data => {
-      const user = new User(data.id, data.nickname);
-      this._users.set(user.id, user);
+      this._user = data;
+      this._users.set(data._id, data);
 
-      this._localUser = user;
       this.connected = true;
+
+      console.log(this._users)
     });
   }
 
@@ -65,7 +62,7 @@ export class ChatService {
    * @param userId The ID of the desired user.
    * @returns The user with the matching ID if found, undefined otherwise.
    */
-  public getUserById(userId: string): User | undefined {
+  public getUserById(userId: string): User {
     return this._users.get(userId);
   }
 
@@ -75,6 +72,6 @@ export class ChatService {
    * @return The local user.
    */
   public get user(): User {
-    return this._localUser;
+    return this._user;
   }
 }

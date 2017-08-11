@@ -10,10 +10,10 @@ export class RoomService {
   // Manager class for the state of rooms.
   private manager: RoomManager;
 
-  private utils: RoomUtils
+  private utils: RoomUtils;
 
   constructor(private server: Server) {
-    this.utils = new RoomUtils();
+    this.utils = new RoomUtils(this.server);
     this.manager = new RoomManager(server, this.utils);
 
     this.server.userJoined.subscribe(user => this.onUserJoined(user));
@@ -21,6 +21,7 @@ export class RoomService {
 
     this.server.on('roomAdd', (user: UserDocument, data: any) => this.onRoomAdd(user, data));
     this.server.on('roomJoin', (user: UserDocument, data: any) => this.onRequestJoin(user, data));
+    this.server.on('roomLeave', (user: UserDocument) => this.onRequestLeave(user));
   }
 
   /**
@@ -42,14 +43,7 @@ export class RoomService {
    * @param user The user that just left.
    */
   private onUserLeft(user: UserDocument): void {
-    if (user.room) {
-      this.server.emit('roomLeave', {
-        userId: user._id
-      });
-
-      user.room = undefined;
-      user.save();
-    }
+    this.utils.ejectUser(user);
   }
 
   /**
@@ -60,7 +54,7 @@ export class RoomService {
    */
   private onRequestJoin(user: UserDocument, data: any): void {
     const roomId = (data.roomId || '').toString();
-    
+
     if (user.room && user.room._id && user.room._id.toHexString() === roomId) {
       return;
     }
@@ -76,7 +70,7 @@ export class RoomService {
 
       this.server.emit('roomJoin', {
         roomId: room._id,
-        user: user
+        userId: user._id
       });
 
       user.room = room;
@@ -85,6 +79,17 @@ export class RoomService {
       console.log(user.nickname + ' has joined ' + room.name);
     });
   }
+
+  /**
+   * Called when the user wants to leave the room they are in. This will
+   * eject the user from their room.
+   * 
+   * @param user The user that wants to leave.
+   */
+  private onRequestLeave(user: UserDocument): void {
+    this.utils.ejectUser(user);
+  }
+
   /**
    * Called when a user requests for a room to be made.
    * 
@@ -105,7 +110,8 @@ export class RoomService {
     Rooms.create({
       name: name,
       description: description,
-      password: password
+      password: password,
+      owner: user
     }, (err, room) => {
       // If there was an error, report it.
       if (err) {

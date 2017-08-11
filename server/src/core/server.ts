@@ -14,7 +14,7 @@ export class Server {
   //private _postUserJoined: Subject<User>;
 
   // The users who are connected to this server.
-  private _users: Map<string, User>;
+  private _users: Map<string, UserDocument>;
 
   private _userConnected: Subject<UserDocument>;
   private _userJoined: Subject<UserDocument>;
@@ -33,7 +33,7 @@ export class Server {
     this.handlers = new Map<string, any>();
 
     // Set up the list of connected users.
-    this._users = new Map<string, User>();
+    this._users = new Map<string, UserDocument>();
 
     // Set up subjects for user events.
     this._userConnected = new Subject<UserDocument>();
@@ -59,6 +59,8 @@ export class Server {
 
     console.log(socket.request.user.nickname + ' has connected.');
 
+    socket.on('disconnect', () => this.onUserDisconnected(user));
+
     this.handlers.forEach((listener: any, event: string) => {
       socket.on(event, (data: any) => listener(socket, data));
     });
@@ -68,33 +70,12 @@ export class Server {
 
     this._userConnected.next(user);
 
-    /*
-    const user = new User(socket);
-    user.nickname = socket.id;
-
-    this.users.forEach(other => {
-      user.emit('userData', {
-        id: other.id,
-        nickname: other.nickname
-      });
-
-      other.emit('userData', {
-        id: user.id,
-        nickname: user.nickname
-      });
+    this._users.forEach(other => {
+      user.emit('userData', other);
+      other.emit('userData', user);
     });
 
-    this._userJoined.next(user);
-    
-    socket.emit('joined', {
-      id: user.id,
-      nickname: user.nickname
-    });
-
-    this._postUserJoined.next(user);
-    */
-
-    socket.on('disconnect', () => this.onUserDisconnected(user));
+    socket.emit('joined', user);
 
     this._userJoined.next(socket.request.user);
   }
@@ -125,17 +106,6 @@ export class Server {
   public get userLeft(): Observable<UserDocument> {
     return this._userLeft.asObservable();
   }
-
-  /**
-   * Returns an observable for when a user has left the chat room.
-   * 
-   * @return An observable stream of users.
-   */
-  /*
-  public get userLeft(): Observable<User> {
-    return this._userLeft.asObservable();
-  }
-  */
 
   /**
    * Called when a socket disconnects from this server. This will handle

@@ -13,7 +13,7 @@ export class Room {
    * @param _id The unique identifier for the room.
    * @param name The nice name for the room.
    */
-  constructor(private _id: string, public name: string) {
+  constructor(public _id: string, public name: string) {
     this._users = [];
   }
 
@@ -34,7 +34,12 @@ export class Room {
    * @param user The user that should be added to the room.
    */
   public addUser(user: User): void {
+    if (user.room) {
+      return;
+    }
+
     this._users.push(user);
+    user.room = this;
   }
 
   /**
@@ -53,6 +58,10 @@ export class Room {
    * @param target The user that should be removed.
    */
   public removeUser(target: User): void {
+    if (target.room === this) {
+      target.room = undefined;
+    }
+
     this.removeUserById(target._id);
   }
 
