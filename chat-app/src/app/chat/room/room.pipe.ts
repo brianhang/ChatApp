@@ -9,6 +9,8 @@ import { Message } from '../message/models/message';
 })
 export class RoomPipe implements PipeTransform {
   transform(messages: Message[], roomId: string): any {
-    return messages.filter(message => message.room.id === roomId);
+    return messages.filter(message => {
+      return message.room === roomId;
+    });
   }
 }

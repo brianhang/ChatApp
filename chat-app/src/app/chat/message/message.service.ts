@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChatService } from '../chat/chat.service';
-import { Message } from './models/message';
+import { Message, MessageDto } from './models/message';
 import { RoomService } from '../room/room.service';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
@@ -33,13 +33,12 @@ export class MessageService {
   /**
    * Called when a message has been received by the server.
    */
-  private onMessageReceived(data: any) {
-    // Create a new message instance from the given data.
+  private onMessageReceived(data: MessageDto) {
     const message = new Message();
     message.nickname = data.nickname;
     message.content = data.content;
-    message.room = this.roomService.getRoomById(data.room);
-    message.time = data.time;
+    message.room = data.room;
+    message.time = new Date(data.time);
 
     this._messages.push(message);
     this._messageAdded.next(message);

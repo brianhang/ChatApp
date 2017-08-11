@@ -3,7 +3,18 @@ import { Room } from '../../room/models/room';
 /**
  * The Message class is a message that has been posted in the chat.
  */
+export interface MessageDto {
+  _id: string;
+  nickname: string;
+  content: string;
+  room: string;
+  time: string;
+}
+
 export class Message {
+  // A unique identifier for the message.
+  public _id: string;
+
   // The name of the user who made this message.
   public nickname: string;
 
@@ -11,7 +22,7 @@ export class Message {
   public content: string;
 
   // The room that this messaged was posted in.
-  public room: Room;
+  public room: string;
 
   // The time this message was created.
   public time: Date;
