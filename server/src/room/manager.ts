@@ -3,11 +3,13 @@ import { Room } from './models/room';
 import { User } from '../core/models/user';
 import { Rooms } from './models/rooms';
 import { RoomDocument } from "./interfaces/room-document";
+import { RoomUtils } from './utils';
+import { UserDocument } from '../core/interfaces/user-document';
 
 export class RoomManager {
   private _rooms: Map<string, Room>;
 
-  constructor(private server: Server) {
+  constructor(private server: Server, private utils: RoomUtils) {
     this._rooms = new Map<string, Room>();
   }
 
@@ -17,13 +19,19 @@ export class RoomManager {
    * 
    * @param room The room that should be replicated.
    * @param user Who the room should be replicated for.
+   * @return A promise that is called after the data has been sent.
    */
-  public replicate(room: RoomDocument, user: User): void {
-    console.log(room);
-    user.emit('roomData', {
-      id: room._id,
-      name: room.name
-    });
+  public replicate(room: RoomDocument, user: User): Promise<void> {
+    return this.utils.getUsers(room)
+      .then((users: UserDocument[]) => {
+        user.emit('roomData', {
+          id: room._id,
+          name: room.name,
+          users: users
+        });
+
+        return undefined;
+      });
   }
 
   /**

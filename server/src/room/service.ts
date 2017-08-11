@@ -3,17 +3,24 @@ import { User } from '../core/models/user';
 import { Rooms } from './models/rooms';
 import { RoomManager } from './manager';
 import { RoomDocument } from './interfaces/room-document';
+import { RoomUtils } from './utils';
+import { UserDocument } from '../core/interfaces/user-document';
 
 export class RoomService {
   // Manager class for the state of rooms.
   private manager: RoomManager;
 
+  private utils: RoomUtils
+
   constructor(private server: Server) {
-    this.manager = new RoomManager(server);
+    this.utils = new RoomUtils();
+    this.manager = new RoomManager(server, this.utils);
 
     this.server.userJoined.subscribe(user => this.onUserJoined(user));
+    this.server.userLeft.subscribe(user => this.onUserLeft(user));
 
-    this.server.on('roomAdd', (user: User, data: any) => this.onRoomAdd(user, data));
+    this.server.on('roomAdd', (user: UserDocument, data: any) => this.onRoomAdd(user, data));
+    this.server.on('roomJoin', (user: UserDocument, data: any) => this.onRequestJoin(user, data));
   }
 
   /**
@@ -22,13 +29,62 @@ export class RoomService {
    * 
    * @param user The user that just joined.
    */
-  private onUserJoined(user: User): void {
+  private onUserJoined(user: UserDocument): void {
     // Load all rooms for the chat server and store it for later use.
-    const stream = Rooms.find({}).stream();
-
-    stream.on('data', (room: RoomDocument) => this.manager.replicate(room, user));
+    Rooms.find({}).cursor()
+      .eachAsync((room: RoomDocument) => this.manager.replicate(room, user));
   }
 
+  /**
+   * Called after a user has left the server. This will clear which room the
+   * user is in.
+   * 
+   * @param user The user that just left.
+   */
+  private onUserLeft(user: UserDocument): void {
+    if (user.room) {
+      this.server.emit('roomLeave', {
+        userId: user._id
+      });
+
+      user.room = undefined;
+      user.save();
+    }
+  }
+
+  /**
+   * Called when the user requests to join a room.
+   * 
+   * @param user The user that made the request.
+   * @param data Information about the requested room.
+   */
+  private onRequestJoin(user: UserDocument, data: any): void {
+    const roomId = (data.roomId || '').toString();
+    
+    if (user.room && user.room._id && user.room._id.toHexString() === roomId) {
+      return;
+    }
+
+    Rooms.findById(roomId, (err, room: RoomDocument) => {
+      if (err) {
+        console.error(user.nickname + ' tried to join ' + roomId + ': ' + err);
+
+        return;
+      }
+
+      user.room = undefined;
+
+      this.server.emit('roomJoin', {
+        roomId: room._id,
+        user: user
+      });
+
+      user.room = room;
+      user.save();
+
+      console.log(user.nickname + ' has joined ' + room.name);
+    });
+  }
   /**
    * Called when a user requests for a room to be made.
    * 

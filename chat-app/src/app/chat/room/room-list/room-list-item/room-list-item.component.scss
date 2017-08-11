@@ -1,9 +1,18 @@
-.user {
+.user-item {
   height: 32px;
-  color: #ffffff;
   background-color: rgba(0, 0, 0, 0.1);
-  font-weight: normal;
-  font-size: smaller;
+
+  .user-button {
+    font-weight: normal;
+    color: #ffffff;
+    flex-grow: 1;
+    text-decoration: none;
+    background: transparent;
+    text-align: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
 }
 
 .room-leave-button {
@@ -24,5 +33,10 @@
     color: #ffffff;
     flex-grow: 1;
     text-decoration: none;
+    background: transparent;
+    text-align: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
   }
 }

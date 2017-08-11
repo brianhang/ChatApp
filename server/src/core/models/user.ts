@@ -1,5 +1,8 @@
+import { RoomDocument } from '../../room/interfaces/room-document';
+
 export class User {
   public nickname: string;
+  public room?: RoomDocument;
   public socket: SocketIO.Socket;
 
   /**

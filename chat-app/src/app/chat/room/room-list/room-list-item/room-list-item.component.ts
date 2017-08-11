@@ -1,6 +1,7 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { Room } from '../../models/room';
 import { User } from '../../../chat/models/user';
+import { RoomService } from '../../room.service';
 
 /**
  * The RoomListItemComponent represents a particular room in the list of rooms.
@@ -26,7 +27,7 @@ export class RoomListItemComponent {
   /**
    * Empty constructor for the RoomListItemComponent.
    */
-  constructor() {
+  constructor(private roomService: RoomService) {
     this.roomClick = new EventEmitter<Room>();
     this.roomLeaveClick = new EventEmitter<any>();
   }
@@ -39,14 +40,6 @@ export class RoomListItemComponent {
    */
   protected onClick(event: any) {
     this.roomClick.emit(this.room);
-  }
-
-  /**
-   * Returns a list of users in this room. This is so user items can be created
-   * below this component to show the users in this room in the UI.
-   */
-  protected get users(): User[] {
-    return this.room.users.filter(user => user.room && user.room.id === this.room.id);
   }
 
   /**

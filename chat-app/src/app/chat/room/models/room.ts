@@ -34,26 +34,26 @@ export class Room {
    * @param user The user that should be added to the room.
    */
   public addUser(user: User): void {
-    if (user.room === this) {
-      return;
-    }
-
     this._users.push(user);
-    user.room = this;
+  }
+
+  /**
+   * Removes the user that corresponds to the given ID from this room.
+   *
+   * @param userId The ID of the desired user.
+   */
+  public removeUserById(targetId: string): void {
+    this._users = this._users.filter(user => user._id !== targetId);
   }
 
   /**
    * Removes the given user from this room so that user can no longer send
    * messages to the room. If the user is not in this room, nothing happens.
    *
-   * @param user The user that should be removed.
+   * @param target The user that should be removed.
    */
-  public removeUser(user: User): void {
-    this._users = this._users.filter(other => other.id !== user.id);
-
-    if (user.room === this) {
-      user.room = undefined;
-    }
+  public removeUser(target: User): void {
+    this.removeUserById(target._id);
   }
 
   /**

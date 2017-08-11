@@ -3,7 +3,8 @@ import { UserDocument } from '../interfaces/user-document';
 import { User } from './user';
 
 const schema = new Schema({
-  nickname: { type: String, required: true }
+  nickname: { type: String, required: true },
+  room: { type: Schema.Types.ObjectId, ref: 'Room' }
 });
 
 schema.virtual('socket')

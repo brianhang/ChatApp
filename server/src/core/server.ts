@@ -1,6 +1,7 @@
 import * as socket from 'socket.io';
 import { Subject, Observable } from 'rxjs';
 import { User } from './models/user';
+import { UserDocument } from "./interfaces/user-document";
 
 /**
  * The Server class is responsible for handling messages between the chat server
@@ -15,8 +16,9 @@ export class Server {
   // The users who are connected to this server.
   private _users: Map<string, User>;
 
-  private _userConnected: Subject<User>;
-  private _userJoined: Subject<User>;
+  private _userConnected: Subject<UserDocument>;
+  private _userJoined: Subject<UserDocument>;
+  private _userLeft: Subject<UserDocument>;
 
   // The event handlers for socket messages.
   private handlers: Map<string, Function>;
@@ -34,8 +36,9 @@ export class Server {
     this._users = new Map<string, User>();
 
     // Set up subjects for user events.
-    this._userConnected = new Subject<User>();
-    this._userJoined = new Subject<User>();
+    this._userConnected = new Subject<UserDocument>();
+    this._userJoined = new Subject<UserDocument>();
+    this._userLeft = new Subject<UserDocument>();
 
     // Set up what to do when a user joins.
     this.io.on('connection', socket => this.onUserConnected(socket));
@@ -48,7 +51,7 @@ export class Server {
    * @param socket The socket that connected.
    */
   private onUserConnected(socket: SocketIO.Socket): void {
-    const user = socket.request.user;
+    const user: UserDocument | undefined = socket.request.user;
 
     if (!user) {
       return;
@@ -88,30 +91,39 @@ export class Server {
       nickname: user.nickname
     });
 
-    socket.on('disconnect', () => this.onUserDisconnected(user));
-
     this._postUserJoined.next(user);
     */
+
+    socket.on('disconnect', () => this.onUserDisconnected(user));
 
     this._userJoined.next(socket.request.user);
   }
 
   /**
-   * Returns an observable for when a user has fully joined the chat room.
+   * Returns an observable for when a user has fully joined the chat server.
    * 
    * @return An observable stream of users.
    */
-  public get userJoined(): Observable<User> {
+  public get userJoined(): Observable<UserDocument> {
     return this._userJoined.asObservable();
   }
 
   /**
-   * Called after the user has fully joined the chat room.
+   * Called after the user has fully joined the chat server.
    * 
    * @return An observable stream of users.
    */
-  public get userConnected(): Observable<User> {
+  public get userConnected(): Observable<UserDocument> {
     return this._userConnected.asObservable();
+  }
+
+  /**
+   * Called after a user has left the chat server.
+   * 
+   * @return An observable stream of users.
+   */
+  public get userLeft(): Observable<UserDocument> {
+    return this._userLeft.asObservable();
   }
 
   /**
@@ -131,14 +143,10 @@ export class Server {
    * 
    * @param socket The socket that disconnected.
    */
-  /*
-  private onUserDisconnected(user: User): void {
+  private onUserDisconnected(user: UserDocument): void {
     this._userLeft.next(user);
-    this.users.delete(user.id);
-
-    this.emit('userLeft', user.id);
+    this.emit('userLeft', user._id);
   }
-  */
 
   /**
    * Returns all of the connected users.
@@ -169,7 +177,7 @@ export class Server {
   public on(event: string, listener: Function): void {
     this.handlers.set(event, (socket: SocketIO.Socket, data: any) => {
       // Get the user from the socket.
-      const user: User = socket.request.user;
+      const user: UserDocument = socket.request.user;
 
       if (user) {
         user.socket = socket;

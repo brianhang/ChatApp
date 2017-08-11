@@ -24,13 +24,14 @@ export class RoomService {
    */
   constructor(private chatService: ChatService) {
     this._roomAdded = new Subject<Room>();
+
     this._rooms = new Map<string, Room>();
 
     this.chatService.on('roomData', data => this.loadRoomData(data));
 
     // Handle users joining rooms.
-    this.chatService.on('roomChange', data => {
-      const user: User = this.chatService.getUserById(data.userId);
+    this.chatService.on('roomJoin', data => {
+      const user: User = data.user;
       const room: Room | undefined = this._rooms.get(data.roomId);
 
       if (!user) {
@@ -39,6 +40,12 @@ export class RoomService {
 
       this.onUserChangeRoom(user, room);
     });
+
+    this.chatService.on('roomLeave', data => {
+      const userId: string = data.userId;
+
+      this._rooms.forEach(room => room.removeUserById(userId));
+    })
   }
 
   /**
@@ -55,13 +62,7 @@ export class RoomService {
     const room = new Room(data.id, data.name);
     this.addRoom(room);
 
-    data.users.forEach(userId => {
-      const user: User = this.chatService.getUserById(userId);
-
-      if (user) {
-        room.addUser(user);
-      }
-    });
+    data.users.forEach(user => room.addUser(user));
   }
 
   /**
@@ -84,13 +85,12 @@ export class RoomService {
    * @param user The user that has joined a room.
    * @param room The room that the user changed to.
    */
-  private onUserChangeRoom(user: User, room: Room | undefined): void {
-    if (user.room) {
-      user.room.removeUser(user);
-    }
+  private onUserChangeRoom(user: User, newRoom: Room | undefined): void {
+    console.log(user.nickname);
+    this._rooms.forEach(room => room.removeUser(user));
 
-    if (room) {
-      room.addUser(user);
+    if (newRoom) {
+      newRoom.addUser(user);
     }
   }
 
@@ -119,7 +119,7 @@ export class RoomService {
    * @param room The room that the user wants to join.
    */
   public join(room: Room): void {
-    this.chatService.emit('roomChange', room.id);
+    this.chatService.emit('roomJoin', { roomId: room.id });
   }
 
   /**
