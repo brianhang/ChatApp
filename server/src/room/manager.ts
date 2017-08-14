@@ -27,7 +27,8 @@ export class RoomManager {
         user.emit('roomData', {
           id: room._id,
           name: room.name,
-          users: users.map(member => member._id)
+          users: users.map(member => member._id),
+          owner: room.owner._id || room.owner.toString()
         });
 
         return undefined;

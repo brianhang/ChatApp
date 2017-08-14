@@ -60,7 +60,7 @@ export class RoomService {
       return;
     }
 
-    const room = new Room(data.id, data.name);
+    const room = new Room(data.id, data.name, data.owner);
     this.addRoom(room);
 
     data.users.forEach(userId => {

@@ -13,7 +13,7 @@ export class Room {
    * @param _id The unique identifier for the room.
    * @param name The nice name for the room.
    */
-  constructor(public _id: string, public name: string) {
+  constructor(public _id: string, public name: string, private _owner: string) {
     this._users = [];
   }
 
@@ -72,5 +72,14 @@ export class Room {
    */
   public get users() {
     return this._users;
+  }
+
+  /**
+   * Returns the ID of the user who owns the room.
+   *
+   * @return The user ID of the owner.
+   */
+  public get owner(): string {
+    return this._owner;
   }
 }
