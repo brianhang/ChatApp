@@ -40,6 +40,19 @@ export class RoomEditFormComponent {
       description: [this.room.description],
       password: ['']
     });
+
+    // Handle the change response from the server.
+    this.chatService.on('roomEditResult', (data: any) => {
+      const status: boolean = data.status;
+      const message: string = data.message;
+
+      if (status) {
+        this.activeModal.close();
+      } else {
+        this.busy = false;
+        this.error = message || 'An unknown error has occured';
+      }
+    });
   }
 
   /**
@@ -81,19 +94,6 @@ export class RoomEditFormComponent {
       changes.password = this.form.controls.password.value;
     }
 
-    // Handle the change response from the server.
-    this.chatService.on('roomEditResult', (data: any) => {
-      const status: boolean = data.status;
-      const message: string = data.message;
-
-      if (status) {
-        this.activeModal.close();
-      } else {
-        this.busy = false;
-        this.error = message || 'An unknown error has occured';
-      }
-    });
-
     console.log(changes);
     // Submit the changes
     this.busy = true;
@@ -107,7 +107,12 @@ export class RoomEditFormComponent {
    * @param event Information about the delete button click event.
    */
   protected onDelete(event): void {
+    if (this.busy || !this.room) {
+      return;
+    }
 
+    this.busy = true;
+    this.chatService.emit('roomEdit', { roomId: this.room._id, delete: true });
   }
 
   /**
