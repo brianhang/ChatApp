@@ -7,6 +7,8 @@ export class Room {
   // The users in this room.
   private _users: User[];
 
+  public description: string;
+
   /**
    * Constructor for the Room class that sets up the ID and name of the room.
    *
@@ -15,6 +17,7 @@ export class Room {
    */
   constructor(public _id: string, public name: string, private _owner: string) {
     this._users = [];
+    this.description = '';
   }
 
   /**
@@ -38,7 +41,14 @@ export class Room {
       return;
     }
 
-    this._users.push(user);
+    const existingIndex = this._users.findIndex(x => x._id === user._id);
+
+    if (existingIndex > -1) {
+      this._users[existingIndex] = user;
+    } else {
+      this._users.push(user);
+    }
+
     user.room = this;
   }
 
