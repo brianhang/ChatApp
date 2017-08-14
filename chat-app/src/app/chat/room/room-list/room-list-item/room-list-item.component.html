@@ -3,7 +3,7 @@
     <span>{{ room.name }}</span>
   </button>
   <div>
-    <app-room-edit-button *ngIf="showLeave"></app-room-edit-button>
+    <app-room-edit-button *ngIf="showEdit"></app-room-edit-button>
     <button *ngIf="showLeave" class="room-button">
       <i class="fa fa-sign-out" aria-hidden="true" (click)="onLeaveClick($event)"></i>
     </button>
