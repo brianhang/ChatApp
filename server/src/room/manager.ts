@@ -83,4 +83,19 @@ export class RoomManager {
     room.password = password;
     room.save();
   }
+
+  /**
+   * Deletes a room permanently.
+   * 
+   * @param room The room that should be deleted.
+   */
+  public deleteRoom(room: RoomDocument): void {
+    Rooms.findByIdAndRemove(room._id.toHexString(), err => {
+      if (err) {
+        console.error('Failed to delete ' + room._id.toHexString() + ': ' + err);
+      } else {
+        this.server.emit('roomDelete', room._id);
+      }
+    });
+  }
 }

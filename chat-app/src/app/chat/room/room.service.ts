@@ -14,6 +14,9 @@ export class RoomService {
   // Subject for when a room has been added to the chat server.
   private _roomAdded: Subject<Room>;
 
+  // Subject for when a room has been deleted from the chat server.
+  private _roomDeleted: Subject<Room>;
+
   // A list of rooms in the chat server.
   private _rooms: Map<string, Room>;
 
@@ -24,6 +27,8 @@ export class RoomService {
    */
   constructor(private chatService: ChatService) {
     this._roomAdded = new Subject<Room>();
+    this._roomDeleted = new Subject<Room>();
+
     this._rooms = new Map<string, Room>();
 
     // Handle room data from the server.
@@ -31,6 +36,9 @@ export class RoomService {
 
     // Handle room data editting.
     this.chatService.on('roomEdit', data => this.editRoomData(data));
+
+    // Handle room deleting.
+    this.chatService.on('roomDelete', data => this.deleteRoom(data));
 
     // Handle users joining rooms.
     this.chatService.on('roomJoin', data => {
@@ -99,7 +107,7 @@ export class RoomService {
   }
 
   /**
-   * Adds a room to the list of rooms available in the chat room.
+   * Adds a room to the list of rooms available in the chat server.
    *
    * @param room The room that will be added.
    */
@@ -110,6 +118,20 @@ export class RoomService {
 
     this._rooms.set(room.id, room);
     this._roomAdded.next(room);
+  }
+
+  /**
+   * Deletes a room from the list of available rooms in the chat server.
+   *
+   * @param room The room that will be deleted.
+   */
+  private deleteRoom(id: string): void {
+    const room = this._rooms.get(id);
+
+    if (room) {
+      this._roomDeleted.next(room);
+      this._rooms.delete(id);
+    }
   }
 
   /**
@@ -164,6 +186,15 @@ export class RoomService {
    */
   public get roomAdded(): Observable<Room> {
     return this._roomAdded.asObservable();
+  }
+
+  /**
+   * Returns an observable that is a stream of rooms that have been deleted.
+   *
+   * @return A stream of rooms that were just deleted.
+   */
+  public get roomDeleted(): Observable<Room> {
+    return this._roomDeleted.asObservable();
   }
 
   /**

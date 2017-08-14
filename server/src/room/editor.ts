@@ -11,7 +11,6 @@ export class RoomEditorService {
   }
 
   private onRoomEdit(user: UserDocument, data: any): void {
-    console.log(data)
     if (!data.roomId) {
       user.emit('roomEditResult', { status: false, message: 'Invalid room' });
 
@@ -48,6 +47,10 @@ export class RoomEditorService {
         err = this.onRoomPasswordEdit(user, room, data.password);
       }
 
+      if (data.delete) {
+        this.onRoomDelete(user, room);
+      }
+
       // Notify the owner of the change.
       if (err) {
         user.emit('roomEditResult', { status: false, message: err });
@@ -55,6 +58,10 @@ export class RoomEditorService {
         user.emit('roomEditResult', { status: true });
       }
     });
+  }
+
+  private onRoomDelete(user: UserDocument, room: RoomDocument): string | void {
+    this.roomManager.deleteRoom(room);
   }
 
   private onRoomNameEdit(user: UserDocument, room: RoomDocument, name: string): string | void {

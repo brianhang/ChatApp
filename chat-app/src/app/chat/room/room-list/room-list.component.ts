@@ -28,6 +28,10 @@ export class RoomListComponent {
     this.roomService.roomAdded.subscribe(room => {
       this.rooms.push(room);
     });
+
+    this.roomService.roomDeleted.subscribe(room => {
+      this.rooms = this.rooms.filter(x => x.id !== room.id);
+    });
   }
 
   /**
