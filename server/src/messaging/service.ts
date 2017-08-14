@@ -10,6 +10,7 @@ export class MessageService {
 
   constructor(private server: Server) {
     this.server.on('msg', (user: any, data: any) => this.onMessageSent(user, data));
+    this.server.on('typing', (user: any, data: any) => this.onUserTypingStateChanged(user, data));
 
     this.server.userJoined.subscribe(user => this.onUserJoin(user));
   }
@@ -53,6 +54,22 @@ export class MessageService {
       room: user.room
     }, (err, message: MessageDocument) => {
       this.send(message);
+    });
+  }
+
+  private onUserTypingStateChanged(user: UserDocument, isTyping: boolean): void {
+    isTyping = !!isTyping;
+
+    console.log('--------------------');
+    console.log(isTyping);
+    this.server.users.forEach((other: UserDocument) => {
+      if (other._id !== user._id && other.room && user.room && other.room.equals(user.room)) {
+        console.log('typing for ', other.nickname)
+        other.emit('typing', {
+          userId: user._id,
+          isTyping: isTyping
+        });
+      }
     });
   }
 }

@@ -123,7 +123,7 @@ export class Server {
    * 
    * @return A list of users who are connected.
    */
-  public get users(): User[] {
+  public get users(): UserDocument[] {
     return Array.from(this._users.values());
   }
   

@@ -4,6 +4,7 @@ import { Message } from '../message/models/message';
 import { RoomPipe } from './room.pipe';
 import { ChatService } from '../chat/chat.service';
 import { User } from '../chat/models/user';
+import { TypingService } from '../typing/typing.service';
 
 /**
  * The RoomComponent is where the user can see and send chat messages for a
@@ -24,7 +25,7 @@ export class RoomComponent {
    * @param chatService Service for getting chat server information.
    * @param messageService Service for getting messages sent.
    */
-  constructor(private chatService: ChatService, private messageService: MessageService) {
+  constructor(private chatService: ChatService, private messageService: MessageService, private typingService: TypingService) {
     this.messages = this.messageService.messages;
     this.messageService.messageAdded.subscribe((message) => this.messages = this.messageService.messages.slice());
   }
@@ -36,6 +37,22 @@ export class RoomComponent {
    */
   protected onMessageEntered(content: string): void {
     this.messageService.send(content);
+  }
+
+  /**
+   * Called when the user changes the text in the message input.
+   *
+   * @param content The text content that the user has entered.
+   */
+  protected onMessageChanged(content: any): void {
+    this.typingService.setTyping(content.trim().length > 0);
+  }
+
+  /**
+   * Called when the user stops typing in the message input.
+   */
+  protected onUserStoppedTyping(event): void {
+    this.typingService.setTyping(false);
   }
 
   /**

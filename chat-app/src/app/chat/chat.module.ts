@@ -21,7 +21,8 @@ import { MarkdownToHtmlModule } from 'ng2-markdown-to-html';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { RoomAddButtonComponent } from './room/room-add-button/room-add-button.component';
 import { RoomAddFormComponent } from './room/room-add-form/room-add-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { TypingService } from './typing/typing.service';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     NgbModule.forRoot(),
     NgbModule,
     MarkdownToHtmlModule.forRoot(),
@@ -55,7 +57,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     ChatService,
     RoomService,
     MessageService,
-    RoomPipe
+    RoomPipe,
+    TypingService
   ],
   entryComponents: [
     SettingsComponent,

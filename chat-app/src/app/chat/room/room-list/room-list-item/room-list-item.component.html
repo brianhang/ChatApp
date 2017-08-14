@@ -8,6 +8,10 @@
 </div>
 <div *ngFor="let user of room.users" class="list-group-item list-group-item-action d-flex justify-content-between user-item">
   <button class="user-button">
-    <span>{{ user.nickname }}</span>
+    <span>
+      <i *ngIf="room.owner === user._id" class="fa fa-star" aria-hidden="true"></i>
+      {{ user.nickname }}
+      <i *ngIf="user.isTyping" class="fa fa-keyboard-o user-badge" aria-hidden="true"></i>
+    </span>
   </button>
 </div>
