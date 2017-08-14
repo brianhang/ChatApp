@@ -42,8 +42,15 @@ export class RoomManager {
    * @param room The room that should be affected.
    * @param name The new name of the room.
    */
-  public setRoomName(room: Room, name: string): void {
-    throw new Error("Not implemented");
+  public setRoomName(room: RoomDocument, name: string): void {
+    room.name = name;
+    room.save();
+
+    this.server.emit('roomEdit', {
+      roomId: room._id.toHexString(),
+      field: 'name',
+      value: name
+    });
   }
 
   /**
@@ -53,8 +60,15 @@ export class RoomManager {
    * @param room The room that should be affected.
    * @param description The new description of the room.
    */
-  public setRoomDescription(room: Room, description: string): void {
-    throw new Error("Not implemented");
+  public setRoomDescription(room: RoomDocument, description: string): void {
+    room.description = description;
+    room.save();
+
+    this.server.emit('roomEdit', {
+      roomId: room._id.toHexString(),
+      field: 'description',
+      value: description
+    });
   }
 
   /**
@@ -65,7 +79,8 @@ export class RoomManager {
    * @param room The room that should be affected.
    * @param password The new password for the room.
    */
-  public setRoomPassword(room: Room, password: string): void {
-    throw new Error("Not implemented");
+  public setRoomPassword(room: RoomDocument, password: string): void {
+    room.password = password;
+    room.save();
   }
 }

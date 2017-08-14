@@ -5,8 +5,11 @@ import { RoomManager } from './manager';
 import { RoomDocument } from './interfaces/room-document';
 import { RoomUtils } from './utils';
 import { UserDocument } from '../core/interfaces/user-document';
+import { RoomEditorService } from './editor';
 
 export class RoomService {
+  private editorService: RoomEditorService;
+
   // Manager class for the state of rooms.
   private manager: RoomManager;
 
@@ -14,7 +17,9 @@ export class RoomService {
 
   constructor(private server: Server) {
     this.utils = new RoomUtils(this.server);
+
     this.manager = new RoomManager(server, this.utils);
+    this.editorService = new RoomEditorService(this.server, this, this.manager);
 
     this.server.userJoined.subscribe(user => this.onUserJoined(user));
     this.server.userLeft.subscribe(user => this.onUserLeft(user));
