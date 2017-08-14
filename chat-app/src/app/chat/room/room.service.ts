@@ -29,6 +29,9 @@ export class RoomService {
     // Handle room data from the server.
     this.chatService.on('roomData', data => this.loadRoomData(data));
 
+    // Handle room data editting.
+    this.chatService.on('roomEdit', data => this.editRoomData(data));
+
     // Handle users joining rooms.
     this.chatService.on('roomJoin', data => {
       const user: User = this.chatService.getUserById(data.userId);
@@ -73,6 +76,26 @@ export class RoomService {
         room.addUser(user);
       }
     });
+  }
+
+  /**
+   * Called when room data has been modified from the server.
+   *
+   * @param data Data about the modification.
+   */
+  private editRoomData(data: any): void {
+    // Get the room that should be modified.
+    const room = this._rooms.get(data.roomId);
+
+    if (!room) {
+      return;
+    }
+
+    // Modify the room accordingly.
+    const field = data.field;
+    const value = data.value;
+
+    room[field] = value;
   }
 
   /**
