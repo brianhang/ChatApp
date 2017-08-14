@@ -1,8 +1,8 @@
-import { User } from '../../core/models/user';
+import { UserDocument } from '../../core/interfaces/user-document';
 
 export class Room {
   public name: string;
   public description: string;
   public password: string;
-  public owner: User;
+  public owner: UserDocument;
 }
