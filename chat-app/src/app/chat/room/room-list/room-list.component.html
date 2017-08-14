@@ -6,7 +6,7 @@
   <app-room-list-item
     [room]="room"
     [showLeave]="user && user.room && user.room._id === room._id"
-    [showEdit]="user && user.room && user.room.owner === user.id"
+    [showEdit]="user && user.room && user.room._id === room._id && user.room.owner === user._id"
     (roomClick)="onRoomClick($event)"
     (roomLeaveClick)="onRoomLeaveClick($event)">
   </app-room-list-item>

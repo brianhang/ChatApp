@@ -101,7 +101,7 @@ export class RoomService {
    * @param user The user that made the request.
    * @param data Information about the requested room.
    */
-  private onRoomAdd(user: User, data: any) {
+  private onRoomAdd(user: UserDocument, data: any) {
     const name: string = data.name.toString().trim();
     const description: string | undefined = data.description ? data.description.toString().trim() : undefined;
     const password: string | undefined = data.password ? data.password.toString() : undefined;
@@ -122,7 +122,8 @@ export class RoomService {
       if (err) {
         user.emit('roomAdd', {
           room: null,
-          message: err
+          message: err,
+          owner: user._id
         });
 
         return;
