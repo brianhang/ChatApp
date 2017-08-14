@@ -12,6 +12,9 @@ import { RoomService } from '../../room.service';
   styleUrls: ['./room-list-item.component.scss']
 })
 export class RoomListItemComponent {
+  // Whether or not to show the edit button.
+  @Input() showEdit: boolean;
+
   // Whether or not to show the leave button.
   @Input() showLeave: boolean;
 
@@ -21,7 +24,7 @@ export class RoomListItemComponent {
   // An event for when this item is clicked.
   @Output() roomClick: EventEmitter<Room>;
 
-  // An even for when the leave button is clicked.
+  // An event for when the leave button is clicked.
   @Output() roomLeaveClick: EventEmitter<any>;
 
   /**
@@ -48,7 +51,7 @@ export class RoomListItemComponent {
    * @param event Information about the click event.
    */
   protected onLeaveClick(event): void {
-    this.roomLeaveClick.emit();
+    this.roomLeaveClick.emit(this.room);
     event.stopPropagation();
   }
 }

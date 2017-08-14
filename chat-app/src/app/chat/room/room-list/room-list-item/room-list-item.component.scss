@@ -16,10 +16,10 @@
 }
 
 .user-badge {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.room-leave-button {
+.room-button {
   color: rgba(255, 255, 255, 0.3);
   z-index: 99;
   background-color: transparent;
@@ -40,7 +40,7 @@
   height: 32px;
   background-color: rgba(255, 255, 255, 0.1);
 
-  .room-button {
+  .room-name {
     font-weight: bold;
     color: #ffffff;
     flex-grow: 1;

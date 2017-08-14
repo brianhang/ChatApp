@@ -23,6 +23,8 @@ import { RoomAddButtonComponent } from './room/room-add-button/room-add-button.c
 import { RoomAddFormComponent } from './room/room-add-form/room-add-form.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TypingService } from './typing/typing.service';
+import { RoomEditButtonComponent } from './room/room-edit-button/room-edit-button.component';
+import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { TypingService } from './typing/typing.service';
     NgxAutoScroll,
     TimeAgoPipe,
     RoomAddButtonComponent,
-    RoomAddFormComponent
+    RoomAddFormComponent,
+    RoomEditButtonComponent,
+    RoomEditFormComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +66,8 @@ import { TypingService } from './typing/typing.service';
   ],
   entryComponents: [
     SettingsComponent,
-    RoomAddFormComponent
+    RoomAddFormComponent,
+    RoomEditFormComponent
   ]
 })
 export class ChatModule { }
