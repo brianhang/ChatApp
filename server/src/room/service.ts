@@ -71,6 +71,14 @@ export class RoomService {
         return;
       }
 
+      const authError: string = this.checkJoinAuthorization(user, room, data);
+
+      if (authError !== '') {
+        user.notify('Oh no!', authError, 'error');
+
+        return;
+      }
+
       user.room = undefined;
 
       this.server.emit('roomJoin', {
@@ -83,6 +91,29 @@ export class RoomService {
 
       console.log(user.nickname + ' has joined ' + room.name);
     });
+  }
+
+  /**
+   * Called when the user wants to join and permission to needs to be checked.
+   * If the user attempts to join the room but is not allowed, then a
+   * notification will be sent. If the user is authorized, the error message
+   * returned will be empty.
+   * 
+   * @param user The user that is trying to join a room.
+   * @param room The room that the user is trying to join.
+   * @param data Information about the join request.
+   * @return An error message if an error occured.
+   */
+  private checkJoinAuthorization(user: UserDocument, room: RoomDocument, data: any): string {
+    if (room.password && room.password.length > 0) {
+      const password = data.password;
+
+      if (password !== room.password) {
+        return 'The password entered is not correct';
+      }
+    }
+
+    return '';
   }
 
   /**
