@@ -1,8 +1,8 @@
 <div class="list-group-item list-group-item-action d-flex justify-content-between room-item">
   <button class="room-name" (click)="onClick($event)">
-    <span>{{ room.name }}</span>
+    {{ room.name }}
   </button>
-  <div>
+  <div class="room-buttons">
     <app-room-edit-button *ngIf="showEdit"></app-room-edit-button>
     <button *ngIf="showLeave" class="room-button">
       <i class="fa fa-sign-out" aria-hidden="true" (click)="onLeaveClick($event)"></i>

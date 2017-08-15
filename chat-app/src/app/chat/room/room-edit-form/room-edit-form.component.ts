@@ -36,7 +36,7 @@ export class RoomEditFormComponent {
     this.error = '';
 
     this.form = formBuilder.group({
-      name: [this.room.name, Validators.compose([Validators.required, Validators.minLength(1), Validators.maxLength(32)])],
+      name: [this.room.name, Validators.compose([Validators.required, Validators.minLength(1)])],
       description: [this.room.description],
       password: ['']
     });

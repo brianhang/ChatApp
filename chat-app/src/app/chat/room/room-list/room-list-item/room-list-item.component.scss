@@ -1,3 +1,9 @@
+$room-background: #454545;
+$room-button: rgba(255, 255, 255, 0.2);
+$room-button-hover: rgba(255, 255, 255, 0.5);
+$room-button-active: rgba(255, 255, 255, 1);
+$room-text: #ffffff;
+
 .user-item {
   height: 32px;
   background-color: rgba(0, 0, 0, 0.1);
@@ -16,39 +22,53 @@
 }
 
 .user-badge {
-  color: rgba(255, 255, 255, 0.5);
+  color: $room-background;
 }
 
-.room-button {
-  color: rgba(255, 255, 255, 0.3);
+button {
+  color: $room-button;
   z-index: 99;
   background-color: transparent;
   border: none;
   outline: none;
   cursor: pointer;
+  overflow: hidden;
 
   &:hover {
-    color: rgba(255, 255, 255, 0.6);
+    color: $room-button-hover;
   }
 
   &:active {
-    color: rgba(255, 255, 255, 1);
+    color: $room-button-active;
   }
+}
+
+.room-buttons {
+  right: 0;
+  position: absolute;
+  z-index: 99;
+  background-color: $room-background;
 }
 
 .room-item {
   height: 32px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: $room-background;
+  padding-left: 5px;
 
   .room-name {
+    position: absolute;
     font-weight: bold;
-    color: #ffffff;
-    flex-grow: 1;
+    color: $room-text;
     text-decoration: none;
     background: transparent;
     text-align: left;
     border: none;
     outline: none;
     cursor: pointer;
+    z-index: 0;
+    max-width: calc(100% - 20px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
   }
 }
