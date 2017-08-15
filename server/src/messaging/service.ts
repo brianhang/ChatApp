@@ -11,6 +11,8 @@ export class MessageService {
   constructor(private server: Server) {
     this.server.on('msg', (user: any, data: any) => this.onMessageSent(user, data));
     this.server.on('typing', (user: any, data: any) => this.onUserTypingStateChanged(user, data));
+    this.server.on('msgEdit', (user: any, data: any) => this.onMessageEdit(user, data));
+    this.server.on('msgDelete', (user: any, data: any) => this.onMessageDelete(user, data));
 
     this.server.userJoined.subscribe(user => this.onUserJoin(user));
   }
@@ -28,6 +30,8 @@ export class MessageService {
 
   private getMessagePayload(message: MessageDocument): any {
     return {
+      _id: message._id,
+      user: message.user._id ? message.user._id.toHexString() : message.user.toString(),
       nickname: message.nickname,
       content: message.content,
       room: message.room._id || message.room.toString(),
@@ -49,12 +53,48 @@ export class MessageService {
     }
 
     Messages.create({
+      user: user,
       nickname: user.nickname,
       content: data.content,
       room: user.room
     }, (err, message: MessageDocument) => {
       this.send(message);
     });
+  }
+
+  /**
+   * Called when the user requests to edit a message. If the user is allowed to,
+   * then this will edit the message.
+   * 
+   * @param user The user that made the edit request.
+   * @param data Information about the edit event.
+   */
+  private onMessageEdit(user: UserDocument, data: any): void {
+    Messages.findOne(data.messageId, (err, message: MessageDocument) => {
+      // Do nothing if the message data could not be retrieved.
+      if (err) {
+        return;
+      }
+
+      // Do nothing if the user did not create the message.
+      if (!user.equals(message.user)) {
+        return;
+      }
+
+      const content = (data.content || '').toString().trim();
+
+      // Make sure the new content is not empty.
+      if (content.length === 0) {
+        return;
+      }
+
+      message.content = data.content;
+      message.save();
+    });
+  }
+
+  private onMessageDelete(user: UserDocument, data: any): void {
+
   }
 
   private onUserTypingStateChanged(user: UserDocument, isTyping: boolean): void {
