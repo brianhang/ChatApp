@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../authentication/authentication.service';
+import { NotifyService } from './notify/notify.service';
 
 @Component({
   selector: 'app-chat-page',
@@ -12,7 +13,7 @@ export class ChatComponent implements OnInit {
 
   title = 'app';
 
-  constructor(private authService: AuthenticationService, private router: Router) {
+  constructor(private authService: AuthenticationService, private router: Router, private notifyService: NotifyService) {
     this.loading = true;
   }
 

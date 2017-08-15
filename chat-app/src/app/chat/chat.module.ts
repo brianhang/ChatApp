@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToasterModule } from 'angular2-toaster';
 import { LoaderModule } from '../common/loader/loader.module';
 
 import { ChatComponent } from './chat.component';
@@ -25,6 +27,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TypingService } from './typing/typing.service';
 import { RoomEditButtonComponent } from './room/room-edit-button/room-edit-button.component';
 import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.component';
+import { RoomPasswordFormComponent } from './room/room-password-form/room-password-form.component';
+import { NotifyService } from './notify/notify.service';
+import { NotifyComponent } from './notify/notify.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +48,9 @@ import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.comp
     RoomAddButtonComponent,
     RoomAddFormComponent,
     RoomEditButtonComponent,
-    RoomEditFormComponent
+    RoomEditFormComponent,
+    RoomPasswordFormComponent,
+    NotifyComponent
   ],
   imports: [
     CommonModule,
@@ -52,6 +59,8 @@ import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.comp
     NgbModule,
     MarkdownToHtmlModule.forRoot(),
     ReactiveFormsModule,
+    BrowserAnimationsModule,
+    ToasterModule,
     LoaderModule
   ],
   exports: [
@@ -62,12 +71,14 @@ import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.comp
     RoomService,
     MessageService,
     RoomPipe,
-    TypingService
+    TypingService,
+    NotifyService
   ],
   entryComponents: [
     SettingsComponent,
     RoomAddFormComponent,
-    RoomEditFormComponent
+    RoomEditFormComponent,
+    RoomPasswordFormComponent
   ]
 })
 export class ChatModule { }
