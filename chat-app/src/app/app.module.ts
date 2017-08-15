@@ -21,6 +21,9 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { LogoutModule } from './logout/logout.module';
 import { LogoutComponent } from './logout/logout.component'
 
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToasterModule } from 'angular2-toaster';
+
 const appRoutes: Routes = [
   { path: '', redirectTo: 'chat', pathMatch: 'full' },
   { path: 'chat', component: ChatComponent },
@@ -44,7 +47,9 @@ const appRoutes: Routes = [
     ChatModule,
     LoginModule,
     LogoutModule,
-    SignupModule
+    SignupModule,
+    BrowserAnimationsModule,
+    ToasterModule
   ],
   exports: [],
   providers: [
