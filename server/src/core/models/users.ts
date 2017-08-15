@@ -12,6 +12,7 @@ schema.virtual('socket')
   .get(function (this: any): SocketIO.Socket { return this._socket });
 
 schema.method('emit', User.prototype.emit);
+schema.method('notify', User.prototype.notify);
   
 // Add passport related fields for the users model.
 const passportlocalMongoose = require('passport-local-mongoose');

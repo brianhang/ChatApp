@@ -16,4 +16,19 @@ export class User {
       this.socket.emit(event, data);
     }
   }
+
+  /**
+   * Sends a notification to the user to display various information.
+   * 
+   * @param title The title of the notification.
+   * @param body The body of the notification.
+   * @param type The type of notification.
+   */
+  public notify(title: string, body?: string, type?: string): void {
+    this.socket.emit('notice', {
+      title: title,
+      body: body,
+      type: type
+    });
+  }
 }
