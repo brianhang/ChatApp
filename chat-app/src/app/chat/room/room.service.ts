@@ -73,6 +73,7 @@ export class RoomService {
 
     const room = new Room(data.id, data.name, data.owner);
     room.description = data.description;
+    room.hasPassword = data.hasPassword;
 
     this.addRoom(room);
 
@@ -98,6 +99,8 @@ export class RoomService {
     const room = this._rooms.get(data.roomId);
 
     if (!room) {
+      console.error('Edit for non-existent room! (' + data.roomId + ')');
+
       return;
     }
 

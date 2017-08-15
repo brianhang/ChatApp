@@ -29,7 +29,8 @@ export class RoomManager {
           name: room.name,
           users: users.map(member => member._id),
           description: room.description,
-          owner: room.owner._id || room.owner.toString()
+          owner: room.owner._id || room.owner.toString(),
+          hasPassword: room.password && room.password.length > 0
         });
 
         return undefined;
@@ -83,6 +84,12 @@ export class RoomManager {
   public setRoomPassword(room: RoomDocument, password: string): void {
     room.password = password;
     room.save();
+
+    this.server.emit('roomEdit', {
+      roomId: room._id.toHexString(),
+      field: 'hasPassword',
+      value: password.length > 0
+    });
   }
 
   /**

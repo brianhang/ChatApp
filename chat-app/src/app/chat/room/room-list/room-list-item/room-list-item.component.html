@@ -1,5 +1,6 @@
 <div class="list-group-item list-group-item-action d-flex justify-content-between room-item">
   <button class="room-name" (click)="onClick($event)">
+    <i *ngIf="room.hasPassword" class="fa fa-lock" aria-hidden="true"></i>
     {{ room.name }}
   </button>
   <div class="room-buttons">

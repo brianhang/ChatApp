@@ -9,6 +9,8 @@ export class Room {
 
   public description: string;
 
+  public hasPassword: boolean;
+
   /**
    * Constructor for the Room class that sets up the ID and name of the room.
    *
@@ -18,6 +20,7 @@ export class Room {
   constructor(public _id: string, public name: string, private _owner: string) {
     this._users = [];
     this.description = '';
+    this.hasPassword = false;
   }
 
   /**

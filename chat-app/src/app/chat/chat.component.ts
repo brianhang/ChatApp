@@ -24,6 +24,6 @@ export class ChatComponent implements OnInit {
         } else {
           this.router.navigate(['/login']);
         }
-      })
+      });
   }
 }
