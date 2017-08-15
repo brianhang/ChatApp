@@ -1,12 +1,14 @@
 $room-background: #454545;
 $room-button: rgba(255, 255, 255, 0.2);
-$room-button-hover: rgba(255, 255, 255, 0.5);
+$room-button-hover: rgba(255, 255, 255, 0.4);
 $room-button-active: rgba(255, 255, 255, 1);
 $room-text: #ffffff;
+$user-badge: rgba(255, 255, 255, 0.4);
+$user-background: rgba(0, 0, 0, 0.1);
 
 .user-item {
   height: 32px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: $user-background;
 
   .user-button {
     font-weight: normal;
@@ -22,7 +24,7 @@ $room-text: #ffffff;
 }
 
 .user-badge {
-  color: $room-background;
+  color: $user-badge;
 }
 
 button {
