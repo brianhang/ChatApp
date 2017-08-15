@@ -6,6 +6,7 @@ import { RoomDocument } from './interfaces/room-document';
 import { RoomUtils } from './utils';
 import { UserDocument } from '../core/interfaces/user-document';
 import { RoomEditorService } from './editor';
+import { MessageService } from '../messaging/service';
 
 export class RoomService {
   private editorService: RoomEditorService;
@@ -15,7 +16,7 @@ export class RoomService {
 
   private utils: RoomUtils;
 
-  constructor(private server: Server) {
+  constructor(private server: Server, private messageService: MessageService) {
     this.utils = new RoomUtils(this.server);
 
     this.manager = new RoomManager(server, this.utils);
@@ -89,8 +90,21 @@ export class RoomService {
       user.room = room;
       user.save();
 
+      this.onUserJoinedRoom(user, room);
+
       console.log(user.nickname + ' has joined ' + room.name);
     });
+  }
+
+  /**
+   * Called when a user joins a particular room.
+   * 
+   * @param user The user that has joined a room.
+   * @param room The room that the user joined.
+   */
+  private onUserJoinedRoom(user: UserDocument, room: RoomDocument): void {
+    this.messageService.replicate(user, room);
+    (<any>user).lastRoomJoin = Date.now();
   }
 
   /**

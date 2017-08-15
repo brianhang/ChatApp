@@ -2,7 +2,8 @@ import { MessageDocument } from './interfaces/message-document';
 import { MessageRequest } from './interfaces/message-request';
 import { Server } from '../core/server';
 import { UserDocument } from '../core/interfaces/user-document';
-import { Messages } from "./models/messages";
+import { Messages } from './models/messages';
+import { RoomDocument } from '../room/interfaces/room-document';
 
 const HISTORY_LENGTH = 250;
 
@@ -13,19 +14,6 @@ export class MessageService {
     this.server.on('typing', (user: any, data: any) => this.onUserTypingStateChanged(user, data));
     this.server.on('msgEdit', (user: any, data: any) => this.onMessageEdit(user, data));
     this.server.on('msgDelete', (user: any, data: any) => this.onMessageDelete(user, data));
-
-    this.server.userJoined.subscribe(user => this.onUserJoin(user));
-  }
-
-  private onUserJoin(user: UserDocument): void {
-    Messages.find({})
-      .sort('time')
-      .limit(HISTORY_LENGTH)
-      .populate('room._id')
-      .cursor()
-      .eachAsync((message: MessageDocument) => {
-        this.sendToUser(message, user);
-      });
   }
 
   private getMessagePayload(message: MessageDocument): any {
@@ -39,12 +27,28 @@ export class MessageService {
     }
   }
 
-  private send(message: MessageDocument): void {
+  public send(message: MessageDocument): void {
     this.server.emit('msg', this.getMessagePayload(message));
   }
 
-  private sendToUser(message: MessageDocument, user: UserDocument): void {
+  public sendToUser(message: MessageDocument, user: UserDocument): void {
     user.emit('msg', this.getMessagePayload(message));
+  }
+
+  public replicate(user: UserDocument, room: RoomDocument): void {
+    let query: any = { room: room };
+
+    if ((<any>user).lastRoomJoin) {
+      query.time = {
+        $gte: (<any>user).lastRoomJoin
+      };
+    }
+
+    Messages.find(query)
+      .sort('time')
+      .limit(HISTORY_LENGTH)
+      .cursor()
+      .eachAsync((message: MessageDocument) => this.sendToUser(message, user));
   }
 
   private onMessageSent(user: UserDocument, data: MessageRequest): void {
@@ -90,11 +94,43 @@ export class MessageService {
 
       message.content = data.content;
       message.save();
+
+      // Replicate the change for all users in the room.
+      message.room.getUsers()
+        .then(users => {
+          users.forEach(user => {
+            user.emit('msgEdit', {
+              messageId: message._id,
+              content: message.content
+            });
+          });
+        });
     });
   }
 
-  private onMessageDelete(user: UserDocument, data: any): void {
+  private onMessageDelete(user: UserDocument, messageId: string): void {
+    messageId = (messageId || '').toString();
 
+    Messages.findOne(messageId, (err, message: MessageDocument) => {
+      // Do nothing if the message data could not be retrieved.
+      if (err) {
+        return;
+      }
+
+      // Do nothing if the user did not create the message.
+      if (!user.equals(message.user)) {
+        return;
+      }
+
+      // Replicate the deletion of the message.
+      message.room.getUsers()
+        .then(users => {
+          users.forEach(user => user.emit('msgDelete', messageId));
+        });
+
+      // Actually delete the message.
+      message.remove();
+    });
   }
 
   private onUserTypingStateChanged(user: UserDocument, isTyping: boolean): void {

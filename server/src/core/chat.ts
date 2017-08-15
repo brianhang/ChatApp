@@ -45,7 +45,7 @@ export class ChatServer {
    */
   public start(): void {
     this.messageService = new MessageService(this.server);
-    this.roomService = new RoomService(this.server);
+    this.roomService = new RoomService(this.server, this.messageService);
     //this.videoService = new VideoService(this.server);
     //this.voiceService = new VoiceService(this.server);
   }
