@@ -105,6 +105,12 @@ export class RoomService {
    * @return An error message if an error occured.
    */
   private checkJoinAuthorization(user: UserDocument, room: RoomDocument, data: any): string {
+    // Always allow the room owner in.
+    if (user.equals(room.owner)) {
+      return '';
+    }
+
+    // Room password check.
     if (room.password && room.password.length > 0) {
       const password = data.password;
 

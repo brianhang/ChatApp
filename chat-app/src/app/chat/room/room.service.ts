@@ -207,8 +207,8 @@ export class RoomService {
    *
    * @param room The room that the user wants to join.
    */
-  public join(room: Room): void {
-    this.chatService.emit('roomJoin', { roomId: room.id });
+  public join(room: Room, password?: string): void {
+    this.chatService.emit('roomJoin', { roomId: room.id, password: password });
   }
 
   /**

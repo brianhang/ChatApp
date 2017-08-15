@@ -30,6 +30,7 @@ import { RoomEditFormComponent } from './room/room-edit-form/room-edit-form.comp
 import { RoomPasswordFormComponent } from './room/room-password-form/room-password-form.component';
 import { NotifyService } from './notify/notify.service';
 import { NotifyComponent } from './notify/notify.component';
+import { RoomPasswordFormService } from './room/room-password-form/room-password-form.service';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { NotifyComponent } from './notify/notify.component';
     MessageService,
     RoomPipe,
     TypingService,
+    RoomPasswordFormService,
     NotifyService
   ],
   entryComponents: [

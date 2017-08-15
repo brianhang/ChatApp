@@ -3,6 +3,7 @@ import { RoomService } from '../room.service';
 import { Room } from '../models/room';
 import { ChatService } from '../../chat/chat.service';
 import { User } from '../../chat/models/user';
+import { RoomPasswordFormService } from '../room-password-form/room-password-form.service';
 
 /**
  * The RoomListComponent is a list of all the rooms in the chat server. This
@@ -22,7 +23,11 @@ export class RoomListComponent {
    *
    * @param roomService The service to retrieve room information from.
    */
-  constructor(private roomService: RoomService, private chatService: ChatService) {
+  constructor(
+    private roomService: RoomService,
+    private chatService: ChatService,
+    private roomPasswordFormService: RoomPasswordFormService
+  ) {
     this.rooms = [];
 
     this.roomService.roomAdded.subscribe(room => {
@@ -40,7 +45,12 @@ export class RoomListComponent {
    * @param room The room that was clicked on.
    */
   protected onRoomClick(room: Room) {
-    this.roomService.join(room);
+    if (room.hasPassword && room.owner !== this.chatService.user._id) {
+      this.roomPasswordFormService.prompt()
+        .then(password => this.roomService.join(room, password));
+    } else {
+      this.roomService.join(room);
+    }
   }
 
   /**
