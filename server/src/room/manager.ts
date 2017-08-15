@@ -28,6 +28,7 @@ export class RoomManager {
           id: room._id,
           name: room.name,
           users: users.map(member => member._id),
+          description: room.description,
           owner: room.owner._id || room.owner.toString()
         });
 

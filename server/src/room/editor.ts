@@ -19,7 +19,6 @@ export class RoomEditorService {
 
     // Find the room that the user wants to edit.
     Rooms.findById(data.roomId, (err, room) => {
-      console.log(room)
       // Report back any errors.
       if (err) {
         user.emit('roomEditResult', { status: false, message: err });
