@@ -13,22 +13,6 @@ export class RoomUtils {
   constructor(private server: Server) { }
 
   /**
-   * Retrieves a list of users in a particular room.
-   * 
-   * @param room The room to get users from.
-   * @return A promise containing the users in the room.
-   */
-  public getUsers(room: Room): Promise<UserDocument[]> {
-    return new Promise((resolve, reject) => {
-      const users: UserDocument[] = [];
-
-      Users.find({ room: room }).cursor()
-        .eachAsync((user: UserDocument) => users.push(user))
-        .then(() => resolve(users));
-    });
-  }
-
-  /**
    * Removes a user from the room they are in.
    * 
    * @param server The server to notify clients with.

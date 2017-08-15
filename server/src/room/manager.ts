@@ -22,7 +22,7 @@ export class RoomManager {
    * @return A promise that is called after the data has been sent.
    */
   public replicate(room: RoomDocument, user: User): Promise<void> {
-    return this.utils.getUsers(room)
+    return room.getUsers()
       .then((users: UserDocument[]) => {
         user.emit('roomData', {
           id: room._id,
