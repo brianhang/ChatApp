@@ -30,7 +30,9 @@ export class RoomAddFormComponent  {
     this.error = '';
 
     this.form = formBuilder.group({
-      name: ['', Validators.compose([Validators.required, Validators.minLength(1), Validators.maxLength(32)])]
+      name: ['', Validators.compose([Validators.required, Validators.minLength(1)])],
+      description: [''],
+      password: ['']
     });
   }
 
@@ -48,6 +50,8 @@ export class RoomAddFormComponent  {
 
     // Get the desired room name.
     const name = this.form.controls.name.value.trim();
+    const description = this.form.controls.description.value.trim();
+    const password = this.form.controls.password.value;
 
     this.chatService.on('roomAdd', (data) => {
       const room = data.room;
@@ -70,7 +74,9 @@ export class RoomAddFormComponent  {
 
     // Request to have the room made.
     this.chatService.emit('roomAdd', {
-      name: name
+      name: name,
+      description: description,
+      password: password
     });
   }
 

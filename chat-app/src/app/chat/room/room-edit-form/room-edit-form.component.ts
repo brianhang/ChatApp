@@ -10,8 +10,7 @@ import { Room } from '../models/room';
   styleUrls: ['./room-edit-form.component.scss']
 })
 export class RoomEditFormComponent {
-  private room: Room;
-
+  protected room: Room;
   protected form: FormGroup;
   protected busy: boolean;
   protected error: string;
@@ -76,7 +75,7 @@ export class RoomEditFormComponent {
     if (this.form.controls.name.dirty) {
       changes.name = this.form.controls.name.value;
 
-      if (changes.name.length == 0) {
+      if (changes.name.length === 0) {
         this.error = 'The room name can not be empty';
         this.busy = false;
 
@@ -98,6 +97,18 @@ export class RoomEditFormComponent {
     // Submit the changes
     this.busy = true;
     this.chatService.emit('roomEdit', changes);
+  }
+
+  /**
+   * Called when the user clicks on the delete password button. This will
+   * set the password to be empty and mark as dirty so a blank password can
+   * be sent.
+   *
+   * @param event Information about the click event.
+   */
+  protected onDeletePassword(event): void {
+    this.form.controls.password.setValue('');
+    this.form.controls.password.markAsDirty();
   }
 
   /**

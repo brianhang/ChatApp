@@ -34,15 +34,15 @@ export class RoomEditorService {
       }
 
       // Update fields that have new values specified.
-      if (data.name) {
+      if (data.name !== undefined) {
         err = this.onRoomNameEdit(user, room, data.name);
       }
 
-      if (!err && data.description) {
+      if (!err && data.description !== undefined) {
         err = this.onRoomDescriptionEdit(user, room, data.description);
       }
 
-      if (!err && data.password) { 
+      if (!err && data.password !== undefined) { 
         err = this.onRoomPasswordEdit(user, room, data.password);
       }
 
@@ -80,8 +80,8 @@ export class RoomEditorService {
   }
 
   private onRoomPasswordEdit(user: UserDocument, room: RoomDocument, password: string): string | void {
-    password = (password || '').toString().trim();
+    password = (password || '').toString();
 
-    this.roomManager.setRoomPassword
+    this.roomManager.setRoomPassword(room, password);
   }
 }
