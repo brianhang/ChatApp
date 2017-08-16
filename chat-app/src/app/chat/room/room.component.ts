@@ -27,7 +27,9 @@ export class RoomComponent {
    */
   constructor(private chatService: ChatService, private messageService: MessageService, private typingService: TypingService) {
     this.messages = this.messageService.messages;
-    this.messageService.messageAdded.subscribe((message) => this.messages = this.messageService.messages.slice());
+
+    this.messageService.messageAdded.subscribe(message => this.messages = this.messageService.messages.slice());
+    this.messageService.messageDeleted.subscribe(message => this.messages = this.messageService.messages.slice());
   }
 
   /**

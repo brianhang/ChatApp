@@ -14,6 +14,9 @@ export class MessageService {
   // Subject for when a message was added to the chat server.
   private _messageAdded: Subject<Message>;
 
+  // Subject for when a message has been deleted from the server.
+  private _messageDeleted: Subject<string>;
+
   // A list of messages that have been sent from the chat server.
   private _messages: Message[];
 
@@ -25,9 +28,12 @@ export class MessageService {
    */
   constructor(private chatService: ChatService, private roomService: RoomService) {
     this._messages = [];
+
     this._messageAdded = new Subject<Message>();
+    this._messageDeleted = new Subject<string>();
 
     this.chatService.on('msg', data => this.onMessageReceived(data));
+    this.chatService.on('msgDelete', data => this.onMessageDeleted(data));
   }
 
   /**
@@ -44,6 +50,16 @@ export class MessageService {
 
     this._messages.push(message);
     this._messageAdded.next(message);
+  }
+
+  /**
+   * Called when a message has been deleted from the chat server.
+   *
+   * @param messageId The ID of the deleted message.
+   */
+  private onMessageDeleted(messageId: string): void {
+    this._messages = this._messages.filter(message => message._id !== messageId);
+    this._messageDeleted.next(messageId);
   }
 
   /**
@@ -73,5 +89,14 @@ export class MessageService {
    */
   public get messageAdded(): Observable<Message> {
     return this._messageAdded.asObservable();
+  }
+
+  /**
+   * Returns a stream of messages that were deleted from the chat.
+   *
+   * @return An observable stream of messages.
+   */
+  public get messageDeleted(): Observable<string> {
+    return this._messageDeleted.asObservable();
   }
 }

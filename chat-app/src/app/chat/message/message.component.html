@@ -3,10 +3,10 @@
   <div class="media-body">
     <span class="nickname">{{ message.nickname }}</span> <small class="text-muted">{{ message.time | timeAgo }}</small>
     <div *ngIf="showOptions" class="message-options hover-only">
-      <button>
+      <button (click)="onClickEdit($event)">
         <i class="fa fa-pencil" aria-hidden="true"></i>
       </button>
-      <button>
+      <button (click)="onClickDelete($event)">
         <i class="fa fa-trash-o" aria-hidden="true"></i>
       </button>
     </div>
