@@ -35,6 +35,7 @@ export class MessageService {
    */
   private onMessageReceived(data: MessageDto) {
     const message = new Message();
+    message._id = data._id;
     message.nickname = data.nickname;
     message.content = data.content;
     message.room = data.room;
