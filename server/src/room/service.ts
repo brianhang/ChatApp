@@ -80,6 +80,7 @@ export class RoomService {
         return;
       }
 
+      const oldRoom = user.room;
       user.room = undefined;
 
       this.server.emit('roomJoin', {
@@ -90,7 +91,7 @@ export class RoomService {
       user.room = room;
       user.save();
 
-      this.onUserJoinedRoom(user, room);
+      this.onUserJoinedRoom(user, room, oldRoom);
 
       console.log(user.nickname + ' has joined ' + room.name);
     });
@@ -101,10 +102,14 @@ export class RoomService {
    * 
    * @param user The user that has joined a room.
    * @param room The room that the user joined.
+   * @param oldRoom The last room the user was in.
    */
-  private onUserJoinedRoom(user: UserDocument, room: RoomDocument): void {
+  private onUserJoinedRoom(user: UserDocument, room: RoomDocument, oldRoom: RoomDocument | undefined): void {
     this.messageService.replicate(user, room);
-    (<any>user).lastRoomJoin.set(room._id.toHexString(), Date.now());
+
+    if (oldRoom && oldRoom._id) {
+      (<any>user).lastRoomJoin.set(oldRoom._id.toHexString(), new Date());
+    }
   }
 
   /**

@@ -36,6 +36,7 @@ export class MessageService {
   }
 
   public sendToUser(message: MessageDocument, user: UserDocument): void {
+    console.log(user.nickname + ' -> ' + message._id)
     user.emit('msg', this.getMessagePayload(message));
   }
 
@@ -79,7 +80,7 @@ export class MessageService {
    * @param data Information about the edit event.
    */
   private onMessageEdit(user: UserDocument, data: any): void {
-    Messages.findOne(data.messageId, (err, message: MessageDocument) => {
+    Messages.findById(data.messageId, (err, message: MessageDocument) => {
       // Do nothing if the message data could not be retrieved.
       if (err) {
         return;
@@ -115,9 +116,9 @@ export class MessageService {
   private onMessageDelete(user: UserDocument, messageId: string): void {
     messageId = (messageId || '').toString();
 
-    Messages.findOne(messageId, (err, message: MessageDocument) => {
+    Messages.findById(messageId, (err, message: MessageDocument) => {
       // Do nothing if the message data could not be retrieved.
-      if (err) {
+      if (err || !message) {
         return;
       }
 
