@@ -11,11 +11,8 @@ import { Message } from './models/message';
 })
 export class MessageComponent {
   // The name to show in the message.
-  @Input() public nickname: string;
+  @Input() public message: Message;
 
-  // The contents of the message.
-  @Input() public message: string;
-
-  // The UNIX timestamp for when the message was created.
-  @Input() public time: number;
+  // Whether or not to show the message options (edit, delete, etc...).
+  @Input() public showOptions: boolean;
 }

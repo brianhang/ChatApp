@@ -5,4 +5,35 @@
 .message {
   padding-top: 10px;
   word-break:break-word;
+
+  .hover-only {
+    display: none;
+  }
+
+  &:hover {
+    .hover-only {
+      display: block;
+    }
+  }
+}
+
+.message-options {
+  font-size: smaller;
+  float: right;
+
+  button {
+    background: transparent;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    &:active {
+      color: rgba(0, 0, 0, 0.8);
+    }
+  }
 }

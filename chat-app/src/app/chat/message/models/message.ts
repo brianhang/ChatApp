@@ -5,6 +5,7 @@ import { Room } from '../../room/models/room';
  */
 export interface MessageDto {
   _id: string;
+  user: string;
   nickname: string;
   content: string;
   room: string;
@@ -14,6 +15,9 @@ export interface MessageDto {
 export class Message {
   // A unique identifier for the message.
   public _id: string;
+
+  // The ID of the user who made this message.
+  public user: string;
 
   // The name of the user who made this message.
   public nickname: string;
