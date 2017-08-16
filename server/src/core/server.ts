@@ -57,8 +57,6 @@ export class Server {
       return;
     }
 
-    console.log(socket.request.user.nickname + ' has connected.');
-
     socket.on('disconnect', () => this.onUserDisconnected(user));
 
     this.handlers.forEach((listener: any, event: string) => {

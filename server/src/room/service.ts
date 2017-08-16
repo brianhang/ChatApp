@@ -104,7 +104,7 @@ export class RoomService {
    */
   private onUserJoinedRoom(user: UserDocument, room: RoomDocument): void {
     this.messageService.replicate(user, room);
-    (<any>user).lastRoomJoin = Date.now();
+    (<any>user).lastRoomJoin.set(room._id.toHexString(), Date.now());
   }
 
   /**

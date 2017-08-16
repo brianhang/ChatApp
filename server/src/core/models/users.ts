@@ -12,8 +12,13 @@ schema.virtual('socket')
   .get(function (this: any): SocketIO.Socket { return this._socket });
 
 schema.virtual('lastRoomJoin')
-  .set(function (this: any, joinTime: Date) { this._lastRoomJoin = joinTime })
-  .get(function (this: any): Date | undefined { return this._lastRoomJoin })
+  .get(function (this: any): Date | undefined {
+    if (!this._lastRoomJoin) {
+      this._lastRoomJoin = new Map<string, Date>();
+    }
+    
+    return this._lastRoomJoin;
+  });
 
 schema.method('emit', User.prototype.emit);
 schema.method('notify', User.prototype.notify);

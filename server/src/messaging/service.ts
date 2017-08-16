@@ -28,7 +28,11 @@ export class MessageService {
   }
 
   public send(message: MessageDocument): void {
-    this.server.emit('msg', this.getMessagePayload(message));
+    this.server.users.forEach(user => {
+      if (user.room && user.room.equals(message.room)) {
+        this.sendToUser(message, user);
+      }
+    });
   }
 
   public sendToUser(message: MessageDocument, user: UserDocument): void {
@@ -37,10 +41,11 @@ export class MessageService {
 
   public replicate(user: UserDocument, room: RoomDocument): void {
     let query: any = { room: room };
+    const lastRoomJoin = (<any>user).lastRoomJoin;
 
-    if ((<any>user).lastRoomJoin) {
+    if (lastRoomJoin && lastRoomJoin.get(room._id.toHexString())) {
       query.time = {
-        $gte: (<any>user).lastRoomJoin
+        $gte: lastRoomJoin.get(room._id.toHexString())
       };
     }
 
@@ -96,15 +101,14 @@ export class MessageService {
       message.save();
 
       // Replicate the change for all users in the room.
-      message.room.getUsers()
-        .then(users => {
-          users.forEach(user => {
-            user.emit('msgEdit', {
-              messageId: message._id,
-              content: message.content
-            });
+      this.server.users.forEach(user => {
+        if (user.room && user.room.equals(message.room)) {
+          user.emit('msgEdit', {
+            messageId: message._id,
+            content: message.content
           });
-        });
+        }
+      });
     });
   }
 
@@ -123,10 +127,11 @@ export class MessageService {
       }
 
       // Replicate the deletion of the message.
-      message.room.getUsers()
-        .then(users => {
-          users.forEach(user => user.emit('msgDelete', messageId));
-        });
+      this.server.users.forEach(user => {
+        if (user.room && user.room.equals(message.room)) {
+          user.emit('msgDelete', message._id);
+        }
+      });
 
       // Actually delete the message.
       message.remove();
@@ -136,11 +141,8 @@ export class MessageService {
   private onUserTypingStateChanged(user: UserDocument, isTyping: boolean): void {
     isTyping = !!isTyping;
 
-    console.log('--------------------');
-    console.log(isTyping);
     this.server.users.forEach((other: UserDocument) => {
       if (other._id !== user._id && other.room && user.room && other.room.equals(user.room)) {
-        console.log('typing for ', other.nickname)
         other.emit('typing', {
           userId: user._id,
           isTyping: isTyping
