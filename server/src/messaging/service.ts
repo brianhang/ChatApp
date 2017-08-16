@@ -83,11 +83,15 @@ export class MessageService {
     Messages.findById(data.messageId, (err, message: MessageDocument) => {
       // Do nothing if the message data could not be retrieved.
       if (err) {
+        user.emit('msgEditResult', err);
+
         return;
       }
 
       // Do nothing if the user did not create the message.
       if (!user.equals(message.user)) {
+        user.emit('msgEditResult', 'Not allowed');
+
         return;
       }
 
@@ -95,6 +99,8 @@ export class MessageService {
 
       // Make sure the new content is not empty.
       if (content.length === 0) {
+        user.emit('msgEditResult', undefined);
+
         return;
       }
 
@@ -102,14 +108,16 @@ export class MessageService {
       message.save();
 
       // Replicate the change for all users in the room.
-      this.server.users.forEach(user => {
-        if (user.room && user.room.equals(message.room)) {
-          user.emit('msgEdit', {
+      this.server.users.forEach(other => {
+        if (other.room && other.room.equals(message.room)) {
+          other.emit('msgEdit', {
             messageId: message._id,
             content: message.content
           });
         }
       });
+
+      user.emit('msgEditResult', undefined);
     });
   }
 
