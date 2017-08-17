@@ -1,4 +1,8 @@
 <div *ngIf="user !== undefined && user.room !== undefined">
+  <div id="roomInfo">
+    <h4 id="roomTitle">{{ user.room.name }}</h4>
+    <small>{{ user.room.description }}</small>
+  </div>
   <div id="messageList" ngx-auto-scroll>
     <div *ngFor="let message of (messages | room:user.room.id)">
       <app-message [message]="message" [showOptions]="message.user === user._id"></app-message>
