@@ -7,6 +7,7 @@ import { RoomUtils } from './utils';
 import { UserDocument } from '../core/interfaces/user-document';
 import { RoomEditorService } from './editor';
 import { MessageService } from '../messaging/service';
+import { RoomOwnerService } from './owner';
 
 export class RoomService {
   private editorService: RoomEditorService;
@@ -14,10 +15,14 @@ export class RoomService {
   // Manager class for the state of rooms.
   private manager: RoomManager;
 
+  // Service for handling room owner actions.
+  private ownerService: RoomOwnerService;
+
   private utils: RoomUtils;
 
   constructor(private server: Server, private messageService: MessageService) {
     this.utils = new RoomUtils(this.server);
+    this.ownerService = new RoomOwnerService(this.server, this, this.utils);
 
     this.manager = new RoomManager(server, this.utils);
     this.editorService = new RoomEditorService(this.server, this, this.manager);
@@ -81,7 +86,6 @@ export class RoomService {
       }
 
       const oldRoom = user.room;
-      user.room = undefined;
 
       this.server.emit('roomJoin', {
         roomId: room._id,

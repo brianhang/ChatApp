@@ -3,6 +3,8 @@ import { Subject, Observable } from 'rxjs';
 import { User } from './models/user';
 import { UserDocument } from "./interfaces/user-document";
 
+export const UserSocketMap = new Map<string, SocketIO.Socket>();
+
 /**
  * The Server class is responsible for handling messages between the chat server
  * and its clients.
@@ -58,13 +60,16 @@ export class Server {
     }
 
     socket.on('disconnect', () => this.onUserDisconnected(user));
+    (<any>socket).userId = user._id.toHexString();
 
     this.handlers.forEach((listener: any, event: string) => {
       socket.on(event, (data: any) => listener(socket, data));
     });
 
-    this._users.set(socket.id, user);
+    this._users.set(user._id.toHexString(), user);
     user.socket = socket;
+
+    UserSocketMap.set(user._id.toHexString(), socket);
 
     this._userConnected.next(user);
 
@@ -75,7 +80,7 @@ export class Server {
 
     socket.emit('joined', user);
 
-    this._userJoined.next(socket.request.user);
+    this._userJoined.next(user);
   }
 
   /**

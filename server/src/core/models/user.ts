@@ -1,4 +1,5 @@
 import { RoomDocument } from '../../room/interfaces/room-document';
+import { UserSocketMap } from '../server';
 
 export class User {
   public nickname: string;
@@ -12,9 +13,19 @@ export class User {
    * @param data Data about the event.
    */
   public emit(event: string, data: any): void {
+    const userId = (<any>this)._id;
+
+    if (!this.socket && userId) {
+      const socket = UserSocketMap.get(userId.toHexString());
+
+      if (socket) {
+        this.socket = socket;
+      }
+    }
+
     if (this.socket) {
       this.socket.emit(event, data);
-    }
+    } 
   }
 
   /**
