@@ -30,6 +30,9 @@ export class RoomListItemComponent {
   // An event for when a user's kick button was pressed.
   @Output() kickClick: EventEmitter<User>;
 
+  // An event for when a user's ban button was pressed.
+  @Output() banClick: EventEmitter<User>;
+
   /**
    * Empty constructor for the RoomListItemComponent.
    */
@@ -37,6 +40,7 @@ export class RoomListItemComponent {
     this.roomClick = new EventEmitter<Room>();
     this.roomLeaveClick = new EventEmitter<any>();
     this.kickClick = new EventEmitter<User>();
+    this.banClick = new EventEmitter<User>();
   }
 
   /**
@@ -65,6 +69,16 @@ export class RoomListItemComponent {
    * @param target The desired user to kick.
    */
   protected onKickClick(event: any, user: User): void {
+    this.kickClick.emit(user);
+    event.stopPropagation();
+  }
+
+  /**
+   * Called when the user clicks the button to ban another user.
+   *
+   * @param target The desired user to ban.
+   */
+  protected onBanClick(event: any, user: User): void {
     this.kickClick.emit(user);
     event.stopPropagation();
   }

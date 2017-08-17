@@ -1,0 +1,15 @@
+<div class="list-group">
+  <button *ngFor="let ban of bans" type="button" (click)="onBanClick(ban)" class="list-group-item list-group-item-action">
+    {{ ban }}
+  </button>
+
+  <span *ngIf="bans.length == 0" class="text-muted text-center">
+    <em>There are no bans to display.</em>
+  </span>
+</div>
+<div class="input-group">
+  <input #banInput type="text" class="form-control" placeholder="Username" (keyup.enter)="onAddBan(banInput.value); banInput.value=''">
+  <span class="input-group-btn">
+    <button class="btn btn-danger" (click)="onAddBan(banInput.value); banInput.value=''">Ban</button>
+  </span>
+</div>

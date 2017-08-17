@@ -31,6 +31,8 @@ import { RoomPasswordFormComponent } from './room/room-password-form/room-passwo
 import { NotifyService } from './notify/notify.service';
 import { NotifyComponent } from './notify/notify.component';
 import { RoomPasswordFormService } from './room/room-password-form/room-password-form.service';
+import { RoomBansComponent } from './room/room-bans/room-bans.component';
+import { BanService } from './room/room-bans/ban.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,8 @@ import { RoomPasswordFormService } from './room/room-password-form/room-password
     RoomEditButtonComponent,
     RoomEditFormComponent,
     RoomPasswordFormComponent,
-    NotifyComponent
+    NotifyComponent,
+    RoomBansComponent
   ],
   imports: [
     CommonModule,
@@ -74,7 +77,8 @@ import { RoomPasswordFormService } from './room/room-password-form/room-password
     RoomPipe,
     TypingService,
     RoomPasswordFormService,
-    NotifyService
+    NotifyService,
+    BanService
   ],
   entryComponents: [
     SettingsComponent,
