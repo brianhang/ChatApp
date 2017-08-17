@@ -8,6 +8,7 @@ export class Room {
   public description: string;
   public password: string;
   public owner: UserDocument;
+  public bans: string[];
 
   public getUsers(): Promise<UserDocument[]> {
     const users: UserDocument[] = [];

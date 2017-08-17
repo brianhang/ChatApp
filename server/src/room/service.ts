@@ -142,6 +142,11 @@ export class RoomService {
       }
     }
 
+    // Make sure the user is not banned from the room.
+    if (room.bans.find(ban => ban === (<any>user).username)) {
+      return 'You are banned from this room.';
+    }
+
     return '';
   }
 
