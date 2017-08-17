@@ -17,6 +17,9 @@ export class MessageService {
   // Subject for when a message has been deleted from the server.
   private _messageDeleted: Subject<string>;
 
+  // Subject for when a message has been modified on the server.
+  private _messageEdited: Subject<Message>;
+
   // A list of messages that have been sent from the chat server.
   private _messages: Message[];
 
@@ -31,8 +34,10 @@ export class MessageService {
 
     this._messageAdded = new Subject<Message>();
     this._messageDeleted = new Subject<string>();
+    this._messageEdited = new Subject<Message>();
 
     this.chatService.on('msg', data => this.onMessageReceived(data));
+    this.chatService.on('msgEdit', data => this.onMessageEdited(data));
     this.chatService.on('msgDelete', data => this.onMessageDeleted(data));
   }
 
@@ -50,6 +55,25 @@ export class MessageService {
 
     this._messages.push(message);
     this._messageAdded.next(message);
+  }
+
+  /**
+   * Called when a message has been modified on the chat server. This will
+   * replicate the modification.
+   *
+   * @param data Information about the edit event.
+   */
+  private onMessageEdited(data: any): void {
+    const messageId: string = data.messageId;
+    const content: string = data.content;
+
+    this._messages.forEach(message => {
+      if (message._id === messageId) {
+        message.content = content;
+
+        this._messageEdited.next(message);
+      }
+    });
   }
 
   /**
@@ -98,5 +122,49 @@ export class MessageService {
    */
   public get messageDeleted(): Observable<string> {
     return this._messageDeleted.asObservable();
+  }
+
+  /**
+   * Returns a stream of messages that were modified.
+   *
+   * @return An observable stream of messages.
+   */
+  public get messageEdited(): Observable<Message> {
+    return this._messageEdited.asObservable();
+  }
+
+  /**
+   * Requests to have a message editted.
+   *
+   * @param messageId The ID of the desired message to edit.
+   * @param content What the new contents of the message should be.
+   * @return A promise for after the message has been editted.
+   */
+  public edit(messageId: string, content: string): Promise<void> {
+    const promise = new Promise<void>((resolve, reject) => {
+      this.chatService.on('msgEditResult', (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+
+    this.chatService.emit('msgEdit', {
+      messageId: messageId,
+      content: content
+    })
+
+    return promise;
+  }
+
+  /**
+   * Requests to have a message deleted.
+   *
+   * @param messageId The ID of the desired message.
+   */
+  public delete(messageId: string): void {
+    this.chatService.emit('msgDelete', messageId);
   }
 }

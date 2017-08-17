@@ -3,16 +3,24 @@
   <div class="media-body">
     <span class="nickname">{{ message.nickname }}</span> <small class="text-muted">{{ message.time | timeAgo }}</small>
     <div *ngIf="showOptions" class="message-options hover-only">
-      <button (click)="onClickEdit($event)">
+      <button (click)="onClickEdit($event)" [disabled]="busy" *ngIf="mode != 'edit'">
         <i class="fa fa-pencil" aria-hidden="true"></i>
       </button>
-      <button (click)="onClickDelete($event)">
+      <button (click)="onClickDelete($event)" [disabled]="busy">
         <i class="fa fa-trash-o" aria-hidden="true"></i>
       </button>
     </div>
     <br />
-    <markdown-to-html>
-      {{ message.content }}
-    </markdown-to-html>
+    <form class="form-group" [formGroup]="form" *ngIf="edit">
+      <div class="form-group">
+        <textarea #edit class="form-control" id="editor">{{ message.content }}</textarea>
+      </div>
+      <button class="btn btn-primary" (click)="onEditSave(edit.value)" [disabled]="busy || !form.valid">Save</button>
+      <button class="btn btn-secondary" (click)="onEditCancel($event)" [disabled]="busy">Cancel</button>
+    </form>
+    <div *ngIf="!edit">
+      <markdown [data]="safeContent">
+      </markdown>
+    </div>
   </div>
 </div>

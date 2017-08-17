@@ -4,6 +4,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToasterModule } from 'angular2-toaster';
 import { LoaderModule } from '../common/loader/loader.module';
+import { MarkdownModule } from 'angular2-markdown';
 
 import { ChatComponent } from './chat.component';
 import { ChatService } from './chat/chat.service';
@@ -19,7 +20,6 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { MessageService } from './message/message.service';
 import { RoomPipe } from './room/room.pipe';
 import { NgxAutoScroll } from 'ngx-auto-scroll/lib/ngx-auto-scroll.directive';
-import { MarkdownToHtmlModule } from 'ng2-markdown-to-html';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { RoomAddButtonComponent } from './room/room-add-button/room-add-button.component';
 import { RoomAddFormComponent } from './room/room-add-form/room-add-form.component';
@@ -58,7 +58,7 @@ import { RoomPasswordFormService } from './room/room-password-form/room-password
     FormsModule,
     NgbModule.forRoot(),
     NgbModule,
-    MarkdownToHtmlModule.forRoot(),
+    MarkdownModule.forRoot(),
     ReactiveFormsModule,
     BrowserAnimationsModule,
     ToasterModule,
