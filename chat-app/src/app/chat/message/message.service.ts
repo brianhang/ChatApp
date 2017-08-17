@@ -134,11 +134,11 @@ export class MessageService {
   }
 
   /**
-   * Requests to have a message editted.
+   * Requests to have a message edited.
    *
    * @param messageId The ID of the desired message to edit.
    * @param content What the new contents of the message should be.
-   * @return A promise for after the message has been editted.
+   * @return A promise for after the message has been edited.
    */
   public edit(messageId: string, content: string): Promise<void> {
     const promise = new Promise<void>((resolve, reject) => {
