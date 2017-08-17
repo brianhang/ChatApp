@@ -36,7 +36,6 @@ export class MessageService {
   }
 
   public sendToUser(message: MessageDocument, user: UserDocument): void {
-    console.log(user.nickname + ' -> ' + message._id)
     user.emit('msg', this.getMessagePayload(message));
   }
 
@@ -104,7 +103,7 @@ export class MessageService {
         return;
       }
 
-      message.content = data.content;
+      message.content = content;
       message.save();
 
       // Replicate the change for all users in the room.
