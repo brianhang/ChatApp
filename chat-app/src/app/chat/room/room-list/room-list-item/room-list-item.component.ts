@@ -27,12 +27,16 @@ export class RoomListItemComponent {
   // An event for when the leave button is clicked.
   @Output() roomLeaveClick: EventEmitter<any>;
 
+  // An event for when a user's kick button was pressed.
+  @Output() kickClick: EventEmitter<User>;
+
   /**
    * Empty constructor for the RoomListItemComponent.
    */
   constructor(private roomService: RoomService) {
     this.roomClick = new EventEmitter<Room>();
     this.roomLeaveClick = new EventEmitter<any>();
+    this.kickClick = new EventEmitter<User>();
   }
 
   /**
@@ -50,8 +54,18 @@ export class RoomListItemComponent {
    *
    * @param event Information about the click event.
    */
-  protected onLeaveClick(event): void {
+  protected onLeaveClick(event: any): void {
     this.roomLeaveClick.emit(this.room);
+    event.stopPropagation();
+  }
+
+  /**
+   * Called when the user clicks the button to kick another user.
+   *
+   * @param target The desired user to kick.
+   */
+  protected onKickClick(event: any, user: User): void {
+    this.kickClick.emit(user);
     event.stopPropagation();
   }
 }

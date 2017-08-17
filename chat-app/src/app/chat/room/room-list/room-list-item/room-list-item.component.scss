@@ -4,7 +4,7 @@ $room-button-hover: rgba(255, 255, 255, 0.4);
 $room-button-active: rgba(255, 255, 255, 1);
 $room-text: #ffffff;
 $user-badge: rgba(255, 255, 255, 0.4);
-$user-background: rgba(0, 0, 0, 0.1);
+$user-background: #252525;
 
 .user-item {
   height: 32px;
@@ -20,6 +20,16 @@ $user-background: rgba(0, 0, 0, 0.1);
     border: none;
     outline: none;
     cursor: pointer;
+  }
+
+  .hover-only {
+    display: none;
+  }
+
+  &:hover {
+    .hover-only {
+      display: block;
+    }
   }
 }
 
@@ -43,6 +53,14 @@ button {
   &:active {
     color: $room-button-active;
   }
+}
+
+.user-buttons {
+  top: 2px;
+  right: 0;
+  position: absolute;
+  z-index: 99;
+  background-color: $user-background;
 }
 
 .room-buttons {
@@ -72,5 +90,15 @@ button {
     text-overflow: ellipsis;
     white-space: nowrap;
     display: block;
+  }
+
+  .hover-only {
+    display: none;
+  }
+
+  &:hover {
+    .hover-only {
+      display: block;
+    }
   }
 }

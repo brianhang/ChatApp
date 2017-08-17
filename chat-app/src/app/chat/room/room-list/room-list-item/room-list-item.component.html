@@ -5,8 +5,8 @@
   </button>
   <div class="room-buttons">
     <app-room-edit-button *ngIf="showEdit"></app-room-edit-button>
-    <button *ngIf="showLeave" class="room-button">
-      <i class="fa fa-sign-out" aria-hidden="true" (click)="onLeaveClick($event)"></i>
+    <button *ngIf="showLeave" class="room-button" (click)="onLeaveClick($event)">
+      <i class="fa fa-sign-out" aria-hidden="true"></i>
     </button>
   </div>
 </div>
@@ -17,5 +17,10 @@
       {{ user.nickname }}
       <i *ngIf="user.isTyping" class="fa fa-keyboard-o user-badge" aria-hidden="true"></i>
     </span>
+    <div class="user-buttons hover-only">
+      <button title="Kick from the room" *ngIf="showEdit" class="room-button" (click)="onKickClick($event, user)">
+        <i class="fa fa-minus" aria-hidden="true"></i>
+      </button>
+    </div>
   </button>
 </div>

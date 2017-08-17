@@ -68,4 +68,14 @@ export class RoomListComponent {
   protected onRoomLeaveClick(event): void {
     this.roomService.leave();
   }
+
+  /**
+   * Called when a user's kick button has been clicked. This will send a request
+   * to have that user kicked from the room.
+   *
+   * @param target The desired user to kick.
+   */
+  protected onKickClick(target: User): void {
+    this.roomService.kick(target);
+  }
 }

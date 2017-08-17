@@ -217,4 +217,13 @@ export class RoomService {
   public leave(): void {
     this.chatService.emit('roomLeave', undefined);
   }
+
+  /**
+   * Requests to have a user kicked from the room that the local user is in.
+   *
+   * @param target The desired user to kick.
+   */
+  public kick(target: User): void {
+    this.chatService.emit('roomOwnerKick', target._id);
+  }
 }

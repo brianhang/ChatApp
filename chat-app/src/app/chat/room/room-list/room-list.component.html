@@ -8,6 +8,7 @@
     [showLeave]="user && user.room && user.room._id === room._id"
     [showEdit]="user && user.room && user.room._id === room._id && user.room.owner === user._id"
     (roomClick)="onRoomClick($event)"
-    (roomLeaveClick)="onRoomLeaveClick($event)">
+    (roomLeaveClick)="onRoomLeaveClick($event)"
+    (kickClick)="onKickClick($event)">
   </app-room-list-item>
 </div>
