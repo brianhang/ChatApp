@@ -64,8 +64,7 @@ export class SignupComponent {
     // Send the desired credentials to the server.
     this.authService.signUp(username, password, username)
       .then(user => {
-        console.log(user);
-        this.router.navigate(['/chat']);
+        window.location.assign('/chat');
       })
       .catch(error => {
         this.busy = false;
