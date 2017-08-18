@@ -6,3 +6,20 @@
   margin-top: 10vh;
   max-width: 480px;
 }
+
+::-webkit-scrollbar-track
+{
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar
+{
+	width: 8px;
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 8px;
+	background-color: rgba(0, 0, 0, 0.3);
+}
