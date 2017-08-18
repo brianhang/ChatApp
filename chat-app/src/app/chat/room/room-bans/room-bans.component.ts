@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Room, RoomBan } from '../models/room';
+import { Room } from '../models/room';
 import { ChatService } from '../../chat/chat.service';
 import { BanService } from './ban.service';
 
