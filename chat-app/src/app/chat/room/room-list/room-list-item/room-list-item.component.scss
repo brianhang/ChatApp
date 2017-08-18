@@ -20,6 +20,8 @@ $user-background: #252525;
     border: none;
     outline: none;
     cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .hover-only {

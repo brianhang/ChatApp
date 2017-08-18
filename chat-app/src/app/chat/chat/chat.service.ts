@@ -26,6 +26,8 @@ export class ChatService {
       this._users.set(data._id, data);
     });
 
+    this.on('nickname', data => this.onNicknameChange(data));
+
     this.on('joined', data => {
       this._user = data;
       this._users.set(data._id, data);
@@ -73,5 +75,20 @@ export class ChatService {
    */
   public get user(): User {
     return this._user;
+  }
+
+  /**
+   * Called when a user has changed their nickname. This will replicate the
+   * change.
+   *
+   * @param data Information about the change.
+   */
+  private onNicknameChange(data: any): void {
+    const user = this.getUserById(data.userId);
+    const nickname = data.nickname;
+
+    if (user) {
+      user.nickname = nickname;
+    }
   }
 }
