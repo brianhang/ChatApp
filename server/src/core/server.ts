@@ -17,6 +17,7 @@ export class Server {
 
   // The users who are connected to this server.
   private _users: Map<string, UserDocument>;
+  private _userList: UserDocument[];
 
   private _userConnected: Subject<UserDocument>;
   private _userJoined: Subject<UserDocument>;
@@ -36,6 +37,7 @@ export class Server {
 
     // Set up the list of connected users.
     this._users = new Map<string, UserDocument>();
+    this._userList = [];
 
     // Set up subjects for user events.
     this._userConnected = new Subject<UserDocument>();
@@ -74,6 +76,8 @@ export class Server {
     });
 
     this._users.set(userId, user);
+    this._userList.push(user);
+
     user.socket = socket;
 
     UserSocketMap.set(userId, socket);
@@ -126,6 +130,7 @@ export class Server {
   private onUserDisconnected(user: UserDocument): void {
     this._userLeft.next(user);
     this.emit('userLeft', user._id);
+    this._userList = this._userList.filter(x => !user.equals(x));
   }
 
   /**
@@ -134,7 +139,7 @@ export class Server {
    * @return A list of users who are connected.
    */
   public get users(): UserDocument[] {
-    return Array.from(this._users.values());
+    return this._userList;
   }
   
   /**

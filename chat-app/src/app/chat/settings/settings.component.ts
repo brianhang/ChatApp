@@ -16,6 +16,8 @@ export class SettingsComponent {
   // The form group for the settings form.
   private form: FormGroup;
 
+  protected profilePicPath: string;
+
   /**
    * Constructor that sets up the settings form.
    *
@@ -33,7 +35,7 @@ export class SettingsComponent {
    * to the server.
    */
   protected onSubmit(event): void {
-    if (!this.form.valid) {
+    if (!this.form.valid && !this.profilePicPath) {
       return;
     }
 
@@ -41,7 +43,23 @@ export class SettingsComponent {
       this.chatService.emit('nickname', this.form.controls.nickname.value);
     }
 
+    if (this.profilePicPath) {
+      console.log('go!')
+      this.chatService.emit('profilePic', this.profilePicPath);
+    }
+
     this.activeModal.close();
+  }
+
+  protected onProfilePicChange(event): void {
+    const file = event.target.files[0];
+    const url = URL.createObjectURL(file);
+    const fileReader = new FileReader();
+    fileReader.onload = (e: any) => {
+      this.profilePicPath = e.target.result;
+    }
+
+    fileReader.readAsDataURL(file);
   }
 
   /**
