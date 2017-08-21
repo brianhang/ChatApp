@@ -59,6 +59,13 @@ export class Server {
       return;
     }
 
+    const userId = user._id.toHexString();
+    const oldUser = this._users.get(userId);
+
+    if (oldUser) {
+      oldUser.socket.disconnect(true);
+    }
+
     socket.on('disconnect', () => this.onUserDisconnected(user));
     (<any>socket).userId = user._id.toHexString();
 
@@ -66,10 +73,10 @@ export class Server {
       socket.on(event, (data: any) => listener(socket, data));
     });
 
-    this._users.set(user._id.toHexString(), user);
+    this._users.set(userId, user);
     user.socket = socket;
 
-    UserSocketMap.set(user._id.toHexString(), socket);
+    UserSocketMap.set(userId, socket);
 
     this._userConnected.next(user);
 

@@ -11,6 +11,7 @@ export class ChatService {
   private connected: boolean;
   private _users: Map<string, User>;
   private _user: User;
+  private _disconnected: boolean;
 
   /**
    * Constructor which sets up the socket to communicate with the chat server.
@@ -36,6 +37,8 @@ export class ChatService {
 
       console.log(this._users)
     });
+
+    this.on('disconnect', data => this._disconnected = true);
   }
 
   /**
@@ -90,5 +93,14 @@ export class ChatService {
     if (user) {
       user.nickname = nickname;
     }
+  }
+
+  /**
+   * Returns whether or not we are disconnected from the server.
+   *
+   * @return True if we disconnected from the server.
+   */
+  public get disconnected(): boolean {
+    return this._disconnected;
   }
 }

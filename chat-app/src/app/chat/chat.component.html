@@ -1,9 +1,11 @@
-<div *ngIf="loading">
-</div>
-
 <app-notify></app-notify>
 
-<div class="container-fluid">
+<div class="container page-small" *ngIf="disconnected">
+  <h1>Disconnected</h1>
+  <p>You have been disconnected from the chat. <a href="#">Refresh</a> this page to rejoin the chat.</p>
+</div>
+
+<div *ngIf="!disconnected" class="container-fluid">
   <ng-template #content>
     <div class="row">
       <nav class="bg-inverse text-white sidebar">

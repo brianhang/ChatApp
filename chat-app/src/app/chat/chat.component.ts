@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../authentication/authentication.service';
 import { NotifyService } from './notify/notify.service';
+import { ChatService } from './chat/chat.service';
 
 @Component({
   selector: 'app-chat-page',
@@ -13,7 +14,12 @@ export class ChatComponent implements OnInit {
 
   title = 'app';
 
-  constructor(private authService: AuthenticationService, private router: Router, private notifyService: NotifyService) {
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router,
+    private notifyService: NotifyService,
+    private chatService: ChatService
+  ) {
     this.loading = true;
   }
 
@@ -26,5 +32,9 @@ export class ChatComponent implements OnInit {
           this.router.navigate(['/login']);
         }
       });
+  }
+
+  protected get disconnected(): boolean {
+    return this.chatService.disconnected;
   }
 }
