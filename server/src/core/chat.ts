@@ -3,8 +3,6 @@ import { Server as HttpServer } from 'http';
 import { MessageService } from '../messaging/service';
 import { RoomService } from '../room/service';
 import { UserService } from '../user/service';
-//import { VideoService } from '../video/service';
-//import { VoiceService } from '../voice/service';
 
 import connectToDb from './database';
 
@@ -19,8 +17,6 @@ export class ChatServer {
   private messageService: MessageService;
   private roomService: RoomService;
   private userService: UserService;
-  //private videoService: VideoService;
-  //private voiceService: VoiceService;
 
   /**
    * Creates a server socket to receive messages from the users in the
@@ -49,7 +45,5 @@ export class ChatServer {
     this.messageService = new MessageService(this.server);
     this.roomService = new RoomService(this.server, this.messageService);
     this.userService = new UserService(this.server);
-    //this.videoService = new VideoService(this.server);
-    //this.voiceService = new VoiceService(this.server);
   }
 }

@@ -10,15 +10,11 @@ export const UserSocketMap = new Map<string, SocketIO.Socket>();
  * and its clients.
  */
 export class Server {
-  // Subjects for when users join and left.
-  //private _userJoined: Subject<User>;
-  //private _userLeft: Subject<User>;
-  //private _postUserJoined: Subject<User>;
-
   // The users who are connected to this server.
   private _users: Map<string, UserDocument>;
   private _userList: UserDocument[];
 
+  // Subjects for handling user events.
   private _userConnected: Subject<UserDocument>;
   private _userJoined: Subject<UserDocument>;
   private _userLeft: Subject<UserDocument>;
@@ -55,12 +51,14 @@ export class Server {
    * @param socket The socket that connected.
    */
   private onUserConnected(socket: SocketIO.Socket): void {
+    // Make sure the user is logged in.
     const user: UserDocument | undefined = socket.request.user;
 
     if (!user) {
       return;
     }
 
+    // Only allow one socket per user.
     const userId = user._id.toHexString();
     const oldUser = this._users.get(userId);
 
@@ -68,6 +66,7 @@ export class Server {
       oldUser.socket.disconnect(true);
     }
 
+    // Set up event handlers for this socket.
     socket.on('disconnect', () => this.onUserDisconnected(user));
     (<any>socket).userId = user._id.toHexString();
 
@@ -75,6 +74,7 @@ export class Server {
       socket.on(event, (data: any) => listener(socket, data));
     });
 
+    // Add the user to the list of users on the server.
     this._users.set(userId, user);
     this._userList.push(user);
 
@@ -82,15 +82,19 @@ export class Server {
 
     UserSocketMap.set(userId, socket);
 
+    // Indicate the user has connected.
     this._userConnected.next(user);
 
+    // Replicate the state of other users for this user.
     this._users.forEach(other => {
       user.emit('userData', other);
       other.emit('userData', user);
     });
 
+    // Tell the user that they are done loading the main chat state.
     socket.emit('joined', user);
 
+    // Indicate the user has fully joined.
     this._userJoined.next(user);
   }
 

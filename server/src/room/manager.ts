@@ -6,9 +6,20 @@ import { RoomDocument } from "./interfaces/room-document";
 import { RoomUtils } from './utils';
 import { UserDocument } from '../core/interfaces/user-document';
 
+/**
+ * The RoomManager class is a helper class for managing the state of rooms
+ * and the replicate of room state for users in the chat server.
+ */
 export class RoomManager {
+  // A list of rooms in the chat server.
   private _rooms: Map<string, Room>;
 
+  /**
+   * Constructor which sets up the room manage dependencies.
+   * 
+   * @param server The server to receive events from.
+   * @param utils Room utility functions.
+   */
   constructor(private server: Server, private utils: RoomUtils) {
     this._rooms = new Map<string, Room>();
   }

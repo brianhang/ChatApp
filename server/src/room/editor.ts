@@ -5,11 +5,32 @@ import { Rooms } from "./models/rooms";
 import { RoomDocument } from './interfaces/room-document';
 import { RoomManager } from './manager';
 
+/**
+ * The RoomEditorService handles user events for creating, editing, and
+ * deleting rooms in the chat server.
+ */
 export class RoomEditorService {
-  constructor(private server: Server, private roomService: RoomService, private roomManager: RoomManager) {
+  /**
+   * Constructor which sets up the service dependencies.
+   * 
+   * @param server The server to get events from.
+   * @param roomService The service for handling room data.
+   * @param roomManager The service for handling room state.
+   */
+  constructor(
+    private server: Server,
+    private roomService: RoomService,
+    private roomManager: RoomManager
+  ) {
     this.server.on('roomEdit', (user: UserDocument, data: any) => this.onRoomEdit(user, data));
   }
 
+  /**
+   * Called when a user wants to edit a room.
+   * 
+   * @param user The user that wants to requested the edit.
+   * @param data The changes that were made.
+   */
   private onRoomEdit(user: UserDocument, data: any): void {
     if (!data.roomId) {
       user.emit('roomEditResult', { status: false, message: 'Invalid room' });
@@ -28,7 +49,10 @@ export class RoomEditorService {
 
       // Make sure the user is the owner.
       if (!user.equals(room.owner)) {
-        user.emit('roomEditResult', { status: false, message: 'You are not allowed to modify this room'});
+        user.emit('roomEditResult', {
+          status: false,
+          message: 'You are not allowed to modify this room'
+        });
 
         return;
       }
@@ -59,27 +83,68 @@ export class RoomEditorService {
     });
   }
 
-  private onRoomDelete(user: UserDocument, room: RoomDocument): string | void {
+  /**
+   * Called when a user requests for a room to be deleted.
+   * 
+   * @param user The user that requested the deletion.
+   * @param room The room that should be deleted.
+   */
+  private onRoomDelete(user: UserDocument, room: RoomDocument): void {
     this.roomManager.deleteRoom(room);
   }
 
-  private onRoomNameEdit(user: UserDocument, room: RoomDocument, name: string): string | void {
+  /**
+   * Called after a user has requested to edit the name of a room.
+   * 
+   * @param user The user that made the edit.
+   * @param room The room that should be edited.
+   * @param name The new name of the room.
+   */
+  private onRoomNameEdit(
+    user: UserDocument,
+    room: RoomDocument,
+    name: string
+  ): string | void {
+    // Validate the name first.
     name = (name || '').toString().trim();
 
     if (name.length == 0) {
       return 'The room name can not be empty';
     }
 
+    // Then, actually update the room.
     this.roomManager.setRoomName(room, name);
   }
 
-  private onRoomDescriptionEdit(user: UserDocument, room: RoomDocument, description: string): string | void {
+  /**
+   * Called when a user requests to edit a room's description.
+   * 
+   * @param user The user that made the request.
+   * @param room The room that should be modified.
+   * @param description The new description for the room.
+   */
+  private onRoomDescriptionEdit(
+    user: UserDocument,
+    room: RoomDocument,
+    description: string
+  ): string | void {
     description = (description || '').toString().trim();
 
     this.roomManager.setRoomDescription(room, description);
   }
 
-  private onRoomPasswordEdit(user: UserDocument, room: RoomDocument, password: string): string | void {
+  /**
+   * Called when a user requests to edit a room's password.
+   * 
+   * @param user The user that made the request.
+   * @param room The room that should be modified.
+   * @param password The new password for the room.
+   */
+  private onRoomPasswordEdit(
+    user: UserDocument,
+    room: RoomDocument,
+    password: string
+  ): string | void {
     password = (password || '').toString();
 
     this.roomManager.setRoomPassword(room, password);

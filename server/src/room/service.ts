@@ -127,7 +127,11 @@ export class RoomService {
    * @param data Information about the join request.
    * @return An error message if an error occured.
    */
-  private checkJoinAuthorization(user: UserDocument, room: RoomDocument, data: any): string {
+  private checkJoinAuthorization(
+    user: UserDocument,
+    room: RoomDocument,
+    data: any
+  ): string {
     // Always allow the room owner in.
     if (user.equals(room.owner)) {
       return '';
