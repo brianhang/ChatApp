@@ -10,7 +10,7 @@ import { ChatService } from './chat/chat.service';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit {
-  protected loading: boolean;
+  public loading: boolean;
 
   title = 'app';
 
@@ -34,7 +34,7 @@ export class ChatComponent implements OnInit {
       });
   }
 
-  protected get disconnected(): boolean {
+  public get disconnected(): boolean {
     return this.chatService.disconnected;
   }
 }

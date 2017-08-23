@@ -9,11 +9,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  protected form: FormGroup;
+  public form: FormGroup;
 
-  protected busy: boolean;
+  public busy: boolean;
 
-  protected error: string;
+  public error: string;
 
   constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router) {
     this.form = this.formBuilder.group({
@@ -30,7 +30,7 @@ export class LoginComponent {
    *
    * @param event Information about the click event.
    */
-  protected onLogin(event): void {
+  public onLogin(event): void {
     if (!this.form.valid) {
       this.error = 'Please enter a valid username and password.';
 

@@ -22,7 +22,7 @@ export class SideoptionsComponent {
    *
    * @param event Information about the settings button click.
    */
-  protected openSettings(event): void {
+  public openSettings(event): void {
     this.modalService.open(SettingsComponent);
   }
 
@@ -32,7 +32,7 @@ export class SideoptionsComponent {
    *
    * @param event Information about the click event.
    */
-  protected onLogout(event): void {
+  public onLogout(event): void {
     this.router.navigate(['/logout']);
   }
 }

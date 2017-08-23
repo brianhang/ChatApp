@@ -22,11 +22,11 @@ export class MessageComponent {
   // How the message should be shown.
   // Default = normal Markdown
   // edit    = show as text area
-  protected edit: boolean;
+  public edit: boolean;
 
-  protected busy: boolean;
+  public busy: boolean;
 
-  protected form: FormGroup;
+  public form: FormGroup;
 
   constructor(private messageService: MessageService, private formBuilder: FormBuilder) {
     this.edit = false;
@@ -37,15 +37,15 @@ export class MessageComponent {
     });
   }
 
-  protected onClickDelete(event): void {
+  public onClickDelete(event): void {
     this.messageService.delete(this.message._id);
   }
 
-  protected onClickEdit(event): void {
+  public onClickEdit(event): void {
     this.edit = true;
   }
 
-  protected onEditSave(content: string): void {
+  public onEditSave(content: string): void {
     if (this.busy || !this.form.valid) {
       return;
     }
@@ -60,11 +60,11 @@ export class MessageComponent {
       .catch(err => this.busy = false);
   }
 
-  protected onEditCancel(event): void {
+  public onEditCancel(event): void {
     this.edit = false;
   }
 
-  protected get safeContent(): string {
+  public get safeContent(): string {
     return this.message.content
       .replace('<', '&lt;')
       .replace('>', '&gt;');

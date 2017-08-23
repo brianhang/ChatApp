@@ -25,7 +25,7 @@ export class RoomAddButtonComponent {
    *
    * @param event Information about the click event.
    */
-  protected onClick(event): void {
+  public onClick(event): void {
     this.modalService.open(RoomAddFormComponent)
     event.stopPropagation();
   }

@@ -17,7 +17,7 @@ import { TypingService } from '../typing/typing.service';
 })
 export class RoomComponent {
   // A list of messages that have been created in the chat server.
-  protected messages: Message[];
+  public messages: Message[];
 
   /**
    * Constructor that sets up the list of messages.
@@ -37,7 +37,7 @@ export class RoomComponent {
    *
    * @param content The text content that the user wants to send.
    */
-  protected onMessageEntered(content: string): void {
+  public onMessageEntered(content: string): void {
     this.messageService.send(content);
   }
 
@@ -46,14 +46,14 @@ export class RoomComponent {
    *
    * @param content The text content that the user has entered.
    */
-  protected onMessageChanged(content: any): void {
+  public onMessageChanged(content: any): void {
     this.typingService.setTyping(content.trim().length > 0);
   }
 
   /**
    * Called when the user stops typing in the message input.
    */
-  protected onUserStoppedTyping(event): void {
+  public onUserStoppedTyping(event): void {
     this.typingService.setTyping(false);
   }
 
@@ -62,7 +62,7 @@ export class RoomComponent {
    *
    * @return The local user.
    */
-  protected get user(): User {
+  public get user(): User {
     return this.chatService.user;
   }
 }

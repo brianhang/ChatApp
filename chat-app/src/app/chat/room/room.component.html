@@ -1,4 +1,4 @@
-<div *ngIf="user !== undefined && user.room !== undefined">
+<div *ngIf="user !== undefined && user.room !== undefined && user.room.id">
   <div id="roomInfo">
     <h4 id="roomTitle">{{ user.room.name }}</h4>
     <small>{{ user.room.description }}</small>

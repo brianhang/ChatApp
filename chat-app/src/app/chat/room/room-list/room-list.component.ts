@@ -16,7 +16,7 @@ import { RoomPasswordFormService } from '../room-password-form/room-password-for
 })
 export class RoomListComponent {
   // A list of rooms in the chat server that will be displayed.
-  protected rooms: Room[];
+  public rooms: Room[];
 
   /**
    * Constructor that sets up the listing of rooms.
@@ -44,7 +44,7 @@ export class RoomListComponent {
    *
    * @param room The room that was clicked on.
    */
-  protected onRoomClick(room: Room) {
+  public onRoomClick(room: Room) {
     if (room.hasPassword && room.owner !== this.chatService.user._id) {
       this.roomPasswordFormService.prompt()
         .then(password => this.roomService.join(room, password));
@@ -58,14 +58,14 @@ export class RoomListComponent {
    *
    * @return The local user.
    */
-  protected get user(): User {
+  public get user(): User {
     return this.chatService.user;
   }
 
   /**
    * Called when the user clicks the leave button.
    */
-  protected onRoomLeaveClick(event): void {
+  public onRoomLeaveClick(event): void {
     this.roomService.leave();
   }
 
@@ -75,7 +75,7 @@ export class RoomListComponent {
    *
    * @param target The desired user to kick.
    */
-  protected onKickClick(target: User): void {
+  public onKickClick(target: User): void {
     this.roomService.kick(target);
   }
 }

@@ -9,24 +9,24 @@ import { BanService } from './ban.service';
   styleUrls: ['./room-bans.component.scss']
 })
 export class RoomBansComponent {
-  @Input() protected room: Room;
+  @Input() public room: Room;
 
-  @Output() protected banClick: EventEmitter<string>;
+  @Output() public banClick: EventEmitter<string>;
 
   constructor(private banService: BanService) {
     this.banClick = new EventEmitter<string>();
     this.banService.requestBans();
   }
 
-  protected onBanClick(ban: string): void {
+  public onBanClick(ban: string): void {
     this.banService.unban(ban);
   }
 
-  protected onAddBan(ban: string): void {
+  public onAddBan(ban: string): void {
     this.banService.ban(ban);
   }
 
-  protected get bans(): string[] {
+  public get bans(): string[] {
     return this.banService.bans;
   }
 }

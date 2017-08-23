@@ -8,7 +8,7 @@ import { ToasterConfig } from 'angular2-toaster/angular2-toaster';
   styleUrls: ['./notify.component.scss']
 })
 export class NotifyComponent {
-  protected toasterConfig: ToasterConfig;
+  public toasterConfig: ToasterConfig;
 
   constructor(private notifyService: NotifyService) {
     this.toasterConfig = new ToasterConfig({

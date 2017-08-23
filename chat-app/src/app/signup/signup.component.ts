@@ -10,13 +10,13 @@ import { Router } from '@angular/router';
 })
 export class SignupComponent {
   // The sign up form.
-  protected form: FormGroup;
+  public form: FormGroup;
 
   // The error that will be displayed to the user.
-  protected error: string;
+  public error: string;
 
   // Whether or not the form should not be interacted with.
-  protected busy: boolean;
+  public busy: boolean;
 
   /**
    * Constructor which sets up the form.

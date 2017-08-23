@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class RoomPasswordFormComponent {
   @Input() submitCallback: Function;
 
-  protected form: FormGroup;
+  public form: FormGroup;
 
   constructor(private activeModal: NgbActiveModal, private formBuilder: FormBuilder) {
     this.form = this.formBuilder.group({
@@ -18,11 +18,11 @@ export class RoomPasswordFormComponent {
     });
   }
 
-  protected onClose(event): void {
+  public onClose(event): void {
     this.activeModal.close();
   }
 
-  protected onSubmit(event): void {
+  public onSubmit(event): void {
     this.submitCallback(this.form.controls.password.value);
     this.activeModal.close();
   }

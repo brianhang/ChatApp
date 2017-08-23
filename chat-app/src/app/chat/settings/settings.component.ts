@@ -14,9 +14,9 @@ import { User } from '../chat/models/user';
 })
 export class SettingsComponent {
   // The form group for the settings form.
-  private form: FormGroup;
+  public form: FormGroup;
 
-  protected profilePicPath: string;
+  public profilePicPath: string;
 
   /**
    * Constructor that sets up the settings form.
@@ -24,7 +24,7 @@ export class SettingsComponent {
    * @param activeModal Service for getting the settings modal.
    * @param formBuilder Service for creating the settings form.
    */
-  constructor(protected activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
+  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
     this.form = formBuilder.group({
       nickname: ['', Validators.compose([Validators.required, Validators.minLength(1)])]
     });
@@ -34,7 +34,7 @@ export class SettingsComponent {
    * Called when the save button has been pressed. This will submit the changes
    * to the server.
    */
-  protected onSubmit(event): void {
+  public onSubmit(event): void {
     if (!this.form.valid && !this.profilePicPath) {
       return;
     }
@@ -51,7 +51,7 @@ export class SettingsComponent {
     this.activeModal.close();
   }
 
-  protected onProfilePicChange(event): void {
+  public onProfilePicChange(event): void {
     const file = event.target.files[0];
     const url = URL.createObjectURL(file);
     const fileReader = new FileReader();
@@ -65,7 +65,7 @@ export class SettingsComponent {
   /**
    * Closes the modal.
    */
-  protected close(): void {
+  public close(): void {
     this.activeModal.close();
   }
 
@@ -74,7 +74,7 @@ export class SettingsComponent {
    *
    * @return The user that is logged in.
    */
-  protected get user(): User {
+  public get user(): User {
     return this.chatService.user;
   }
 }

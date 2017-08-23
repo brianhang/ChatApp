@@ -49,7 +49,7 @@ export class RoomListItemComponent {
    *
    * @param event Information about the click event.
    */
-  protected onClick(event: any) {
+  public onClick(event: any) {
     this.roomClick.emit(this.room);
   }
 
@@ -58,7 +58,7 @@ export class RoomListItemComponent {
    *
    * @param event Information about the click event.
    */
-  protected onLeaveClick(event: any): void {
+  public onLeaveClick(event: any): void {
     this.roomLeaveClick.emit(this.room);
     event.stopPropagation();
   }
@@ -68,7 +68,7 @@ export class RoomListItemComponent {
    *
    * @param target The desired user to kick.
    */
-  protected onKickClick(event: any, user: User): void {
+  public onKickClick(event: any, user: User): void {
     this.kickClick.emit(user);
     event.stopPropagation();
   }
@@ -78,7 +78,7 @@ export class RoomListItemComponent {
    *
    * @param target The desired user to ban.
    */
-  protected onBanClick(event: any, user: User): void {
+  public onBanClick(event: any, user: User): void {
     this.kickClick.emit(user);
     event.stopPropagation();
   }

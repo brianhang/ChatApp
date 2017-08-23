@@ -9,11 +9,11 @@
   },
   "scripts": {
     "postinstall": "cd chat-app && npm install && cd ../server && npm install",
-    "build": "cd chat-app && ng build",
-    "start:server": "cd server && npm run start",
-    "watch:server": "cd server && npm run watch",
+    "build": "cd chat-app && npm run build",
+    "start": "npm run build && npm run start:server",
+    "start:server": "cd server && npm run watch",
     "watch:client": "cd chat-app && npm run watch",
-    "watch": "concurrently \"npm run watch:server\" \"npm run watch:client\""
+    "watch": "concurrently \"npm run start:server\" \"npm run watch:client\""
   },
   "repository": {
     "type": "git",

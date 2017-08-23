@@ -10,10 +10,10 @@ import { Room } from '../models/room';
   styleUrls: ['./room-edit-form.component.scss']
 })
 export class RoomEditFormComponent {
-  protected room: Room;
-  protected form: FormGroup;
-  protected busy: boolean;
-  protected error: string;
+  public room: Room;
+  public form: FormGroup;
+  public busy: boolean;
+  public error: string;
 
   /**
    * Constructor that sets up the form and services.
@@ -22,7 +22,7 @@ export class RoomEditFormComponent {
    * @param formBuilder Service for validating the room create form.
    * @param chatService Service for requesting rooms on the server.
    */
-  constructor(protected activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
+  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
     this.room = this.chatService.user.room;
 
     if (!this.room) {
@@ -61,7 +61,7 @@ export class RoomEditFormComponent {
    *
    * @param event Information about the event that led to this submission.
    */
-  protected onSubmit(): void {
+  public onSubmit(event): void {
     if (this.busy || !this.room || !this.form.valid) {
       return;
     }
@@ -106,7 +106,7 @@ export class RoomEditFormComponent {
    *
    * @param event Information about the click event.
    */
-  protected onDeletePassword(event): void {
+  public onDeletePassword(event): void {
     this.form.controls.password.setValue('');
     this.form.controls.password.markAsDirty();
   }
@@ -117,7 +117,7 @@ export class RoomEditFormComponent {
    *
    * @param event Information about the delete button click event.
    */
-  protected onDelete(event): void {
+  public onDelete(event): void {
     if (this.busy || !this.room) {
       return;
     }
@@ -132,7 +132,7 @@ export class RoomEditFormComponent {
    *
    * @param event Information about the close button click event.
    */
-  protected onClose(event): void {
+  public onClose(event): void {
     this.activeModal.close();
   }
 }

@@ -14,9 +14,9 @@ import { ChatService } from '../../chat/chat.service';
   styleUrls: ['./room-add-form.component.scss']
 })
 export class RoomAddFormComponent  {
-  protected form: FormGroup;
-  protected busy: boolean;
-  protected error: string;
+  public form: FormGroup;
+  public busy: boolean;
+  public error: string;
 
   /**
    * Constructor that sets up the form and services.
@@ -25,7 +25,7 @@ export class RoomAddFormComponent  {
    * @param formBuilder Service for validating the room create form.
    * @param chatService Service for requesting rooms on the server.
    */
-  constructor(protected activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
+  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
     this.busy = false;
     this.error = '';
 
@@ -43,7 +43,7 @@ export class RoomAddFormComponent  {
    *
    * @param event Information about the event that led to this submission.
    */
-  protected onSubmit(): void {
+  public onSubmit(event): void {
     if (!this.form.valid) {
       return;
     }
@@ -86,7 +86,7 @@ export class RoomAddFormComponent  {
    *
    * @param event Information about the close button click event.
    */
-  protected onClose(event): void {
+  public onClose(event): void {
     this.activeModal.close();
   }
 }

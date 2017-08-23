@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RoomEditFormComponent } from '../room-edit-form/room-edit-form.component';
 
 @Component({
@@ -21,7 +21,7 @@ export class RoomEditButtonComponent {
    *
    * @param event Information about the click event.
    */
-  protected onClick(event): void {
+  public onClick(event): void {
     this.modalService.open(RoomEditFormComponent)
     event.stopPropagation();
   }
