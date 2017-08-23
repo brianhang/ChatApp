@@ -1,5 +1,5 @@
 .DS_STORE
-
+/static/
 /dist/
 chat-app/dist/
 

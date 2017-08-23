@@ -1,4 +1,9 @@
 import * as path from 'path';
+
+require('dotenv').config({
+  path: path.join(__dirname, '../app.env')
+});
+
 import * as http from 'http';
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
@@ -16,7 +21,7 @@ const passportSocketIo = require('passport.socketio');
 // Set up the express server.
 const router: express.Router = express.Router();
 const app: express.Server = express();
-const dist: string = '../../chat-app/dist';
+const dist: string = '../' + process.env.DIST_DIR || '../dist/';
 
 // Set up middleware
 app.use(bodyParser.json());
@@ -27,6 +32,7 @@ app.use(cookieParserMiddleware);
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/static', express.static(path.join(__dirname, '../' + process.env.STATIC_DIR)));
 app.use(express.static(path.join(__dirname, dist)));
 
 // Start up the chat server
@@ -59,4 +65,10 @@ const authentication = new AuthenticationService(app);
 
 app.get('/*', (req: any, res: any) => {
   res.sendFile(path.join(__dirname, dist + '/index.html'));
+});
+
+process.on('SIGINT', () => {
+  io.close();
+  server.close();
+  process.exit();
 });

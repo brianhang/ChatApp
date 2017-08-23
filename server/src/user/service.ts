@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Location of where the avatars should be saved.
-const avatars = '../../../chat-app/dist/avatars';
+const avatars = '../../' + process.env.STATIC_DIR + '/avatars';
 
 /**
  * The UserService handles events for user settings.
