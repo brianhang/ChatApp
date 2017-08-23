@@ -44,7 +44,6 @@ export class SettingsComponent {
     }
 
     if (this.profilePicPath) {
-      console.log('go!')
       this.chatService.emit('profilePic', this.profilePicPath);
     }
 

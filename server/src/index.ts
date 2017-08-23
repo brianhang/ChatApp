@@ -19,9 +19,9 @@ const passport = require('passport');
 const passportSocketIo = require('passport.socketio');
 
 // Set up the express server.
-const router: express.Router = express.Router();
-const app: express.Server = express();
-const dist: string = '../' + process.env.DIST_DIR || '../dist/';
+const router = express.Router();
+const app = express();
+const dist = '../' + (process.env.DIST_DIR || '../dist/');
 
 // Set up middleware
 app.use(bodyParser.json());
@@ -36,7 +36,7 @@ app.use('/static', express.static(path.join(__dirname, '../' + process.env.STATI
 app.use(express.static(path.join(__dirname, dist)));
 
 // Start up the chat server
-const port: number = 3000;
+const port = process.env.PORT || 3000;
 app.set('port', port);
 
 const server = http.createServer(app);
@@ -56,7 +56,7 @@ const chatServer: ChatServer = new ChatServer(io);
 chatServer.setup()
   .then(() => {
     chatServer.start();
-    console.log('Server started on port ' + port);
+    console.log(`Server started on port ${port}`);
   })
   .catch(err => console.error(err));
 
@@ -64,7 +64,7 @@ chatServer.setup()
 const authentication = new AuthenticationService(app);
 
 app.get('/*', (req: any, res: any) => {
-  res.sendFile(path.join(__dirname, dist + '/index.html'));
+  res.sendFile(path.join(__dirname, `${dist}/index.html`));
 });
 
 process.on('SIGINT', () => {

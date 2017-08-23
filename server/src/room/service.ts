@@ -97,7 +97,7 @@ export class RoomService {
 
       this.onUserJoinedRoom(user, room, oldRoom);
 
-      console.log(user.nickname + ' has joined ' + room.name);
+      console.log(`${user.nickname} has joined ${room.name}`);
     });
   }
 
@@ -108,7 +108,11 @@ export class RoomService {
    * @param room The room that the user joined.
    * @param oldRoom The last room the user was in.
    */
-  private onUserJoinedRoom(user: UserDocument, room: RoomDocument, oldRoom: RoomDocument | undefined): void {
+  private onUserJoinedRoom(
+    user: UserDocument,
+    room: RoomDocument,
+    oldRoom: RoomDocument | undefined
+  ): void {
     this.messageService.replicate(user, room);
 
     if (oldRoom && oldRoom._id) {

@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Location of where the avatars should be saved.
-const avatars = '../../' + process.env.STATIC_DIR + '/avatars';
+const avatars = `../../${process.env.STATIC_DIR}/avatars`;
 
 /**
  * The UserService handles events for user settings.
@@ -70,10 +70,10 @@ export class UserService {
     data = new Buffer(data, 'base64').toString('binary');
     
     // Write the image file.
-    const outPath = avatarsPath + '/' + user._id.toHexString() + '.png';
+    const outPath = `${avatarsPath}/${user._id.toHexString()}.png`;
     fs.writeFile(outPath, data, 'binary', (err) => {
       if (err) {
-        console.error('Failed to upload avatar for ' + (<any>user).username);
+        console.error(`Failed to upload avatar for ${(<any>user).username}`);
         console.error(err);
       }
     });
