@@ -104,20 +104,17 @@ export class MessageService {
   }
 
   /**
-   * Requests for more messages before the given date to be loaded.
+   * Requests for more messages before the given date to be loaded for the
+   * current room.
    *
    * @param date The date to look back from.
    * @param roomId The ID for which room to get messages for.
    * @return A promise after the older messages have been loaded.
    */
-  public requestOlderMessages(date: Date, roomId: string): Promise<void> {
+  public requestOlderMessages(date: Date): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.chatService.on('msgRequestOlderResult', () => resolve());
-
-      this.chatService.emit('msgRequestOlder', {
-        date: date.toUTCString(),
-        roomId: roomId
-      });
+      this.chatService.emit('msgRequestOlder', date.toUTCString());
     });
   }
 

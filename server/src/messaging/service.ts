@@ -244,12 +244,12 @@ export class MessageService {
    * @param user The user that requested older messages.
    * @param data Information about the request.
    */
-  public onUserRequestedOlderMessages(user: UserDocument, data: any): void {
+  public onUserRequestedOlderMessages(user: UserDocument, date: any): void {
     if (!user.room) {
       return;
     }
 
-    const date = new Date((data.date || '').toString());
+    date = new Date((date || '').toString());
 
     Messages.find({
       room: user.room,

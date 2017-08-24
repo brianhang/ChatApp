@@ -73,11 +73,9 @@ export class RoomComponent {
     }
 
     this.busy = true;
-
-    const roomId = this.user.room._id;
     const date = this.messages[0].time;
 
-    this.messageService.requestOlderMessages(date, roomId)
+    this.messageService.requestOlderMessages(date)
       .then(() => this.busy = false)
       .catch((err) => {
         console.error(`Failed to load old messages: ${err}`);
