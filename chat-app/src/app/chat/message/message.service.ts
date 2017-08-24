@@ -36,7 +36,8 @@ export class MessageService {
     this._messageDeleted = new Subject<string>();
     this._messageEdited = new Subject<Message>();
 
-    this.chatService.on('msg', data => this.onMessageReceived(data));
+    this.chatService.on('msg', data => this.onMessageReceived(data, false));
+    this.chatService.on('msgRev', data => this.onMessageReceived(data, true));
     this.chatService.on('msgEdit', data => this.onMessageEdited(data));
     this.chatService.on('msgDelete', data => this.onMessageDeleted(data));
   }
@@ -44,7 +45,7 @@ export class MessageService {
   /**
    * Called when a message has been received by the server.
    */
-  private onMessageReceived(data: MessageDto) {
+  private onMessageReceived(data: MessageDto, reverse: boolean) {
     const message = new Message();
     message._id = data._id;
     message.user = data.user;
@@ -53,7 +54,12 @@ export class MessageService {
     message.room = data.room;
     message.time = new Date(data.time);
 
-    this._messages.push(message);
+    if (reverse) {
+      this._messages.unshift(message);
+    } else {
+      this._messages.push(message);
+    }
+
     this._messageAdded.next(message);
   }
 
@@ -94,6 +100,24 @@ export class MessageService {
   public send(content: string): void {
     this.chatService.emit('msg', {
       content: content
+    });
+  }
+
+  /**
+   * Requests for more messages before the given date to be loaded.
+   *
+   * @param date The date to look back from.
+   * @param roomId The ID for which room to get messages for.
+   * @return A promise after the older messages have been loaded.
+   */
+  public requestOlderMessages(date: Date, roomId: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.chatService.on('msgRequestOlderResult', () => resolve());
+
+      this.chatService.emit('msgRequestOlder', {
+        date: date.toUTCString(),
+        roomId: roomId
+      });
     });
   }
 

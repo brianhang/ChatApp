@@ -35,6 +35,7 @@ import { RoomBansComponent } from './room/room-bans/room-bans.component';
 import { RoomPipe } from './room/room.pipe';
 import { TimeAgoPipe } from 'time-ago-pipe';
 import { NgxAutoScrollModule } from './ngx-auto-scroll/ngx-auto-scroll.module';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { NgxAutoScrollModule } from './ngx-auto-scroll/ngx-auto-scroll.module';
     BrowserAnimationsModule,
     ToasterModule,
     LoaderModule,
-    NgxAutoScrollModule
+    NgxAutoScrollModule,
+    InfiniteScrollModule
   ],
   exports: [
     ReactiveFormsModule

@@ -5,6 +5,7 @@ import { RoomPipe } from './room.pipe';
 import { ChatService } from '../chat/chat.service';
 import { User } from '../chat/models/user';
 import { TypingService } from '../typing/typing.service';
+import { VirtualScrollComponent } from 'angular2-virtual-scroll/dist/virtual-scroll';
 
 /**
  * The RoomComponent is where the user can see and send chat messages for a
@@ -18,6 +19,9 @@ import { TypingService } from '../typing/typing.service';
 export class RoomComponent {
   // A list of messages that have been created in the chat server.
   public messages: Message[];
+
+  // Whether or not more messages are being loaded.
+  public busy: boolean;
 
   /**
    * Constructor that sets up the list of messages.
@@ -55,6 +59,30 @@ export class RoomComponent {
    */
   public onUserStoppedTyping(event): void {
     this.typingService.setTyping(false);
+  }
+
+  /**
+   * Called when the user reached the top of the messages. This should request
+   * for earlier messages from the server.
+   *
+   * @param event Information about the scroll event.
+   */
+  public onScrolledUp(event): void {
+    if (this.busy) {
+      return;
+    }
+
+    this.busy = true;
+
+    const roomId = this.user.room._id;
+    const date = this.messages[0].time;
+
+    this.messageService.requestOlderMessages(date, roomId)
+      .then(() => this.busy = false)
+      .catch((err) => {
+        console.error(`Failed to load old messages: ${err}`);
+        this.busy = false;
+      });
   }
 
   /**

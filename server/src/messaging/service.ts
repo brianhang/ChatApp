@@ -6,7 +6,7 @@ import { Messages } from './models/messages';
 import { RoomDocument } from '../room/interfaces/room-document';
 
 // How far to look back for old messages.
-const HISTORY_LENGTH = 250;
+const HISTORY_LENGTH = 75;
 
 /**
  * The MessageService handles events involving user messages. This means it
@@ -25,6 +25,7 @@ export class MessageService {
     this.server.on('typing', (user: any, data: any) => this.onUserTypingStateChanged(user, data));
     this.server.on('msgEdit', (user: any, data: any) => this.onMessageEdit(user, data));
     this.server.on('msgDelete', (user: any, data: any) => this.onMessageDelete(user, data));
+    this.server.on('msgRequestOlder', (user: any, data: any) => this.onUserRequestedOlderMessages(user, data));
   }
 
   /**
@@ -67,8 +68,8 @@ export class MessageService {
    * @param message The desired message to send.
    * @param user The user that should receive the message data.
    */
-  public sendToUser(message: MessageDocument, user: UserDocument): void {
-    user.emit('msg', this.getMessagePayload(message));
+  public sendToUser(message: MessageDocument, user: UserDocument, reverse?: boolean): void {
+    user.emit(reverse ? 'msgRev' : 'msg', this.getMessagePayload(message));
   }
 
   /**
@@ -92,10 +93,10 @@ export class MessageService {
 
     // Load and send the appropriate messages.
     Messages.find(query)
-      .sort('time')
+      .sort({time: -1})
       .limit(HISTORY_LENGTH)
       .cursor()
-      .eachAsync((message: MessageDocument) => this.sendToUser(message, user));
+      .eachAsync((message: MessageDocument) => this.sendToUser(message, user, true));
   }
 
   /**
@@ -233,5 +234,33 @@ export class MessageService {
         isTyping: isTyping
       });
     });
+  }
+
+  /**
+   * Called when a user wants to see even older messages in a room. This will
+   * find the older messages and send them back. This is similar to the initial
+   * loading of messages for a user.
+   * 
+   * @param user The user that requested older messages.
+   * @param data Information about the request.
+   */
+  public onUserRequestedOlderMessages(user: UserDocument, data: any): void {
+    if (!user.room) {
+      return;
+    }
+
+    const date = new Date((data.date || '').toString());
+
+    Messages.find({
+      room: user.room,
+      time: {
+        $lt: date
+      }
+    })
+      .sort({time: -1})
+      .limit(HISTORY_LENGTH)
+      .cursor()
+      .eachAsync((message: MessageDocument) => this.sendToUser(message, user, true))
+      .then(() => user.emit('msgRequestOlderResult', undefined));
   }
 }

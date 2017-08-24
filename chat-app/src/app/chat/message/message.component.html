@@ -3,7 +3,7 @@
   <div class="media-body">
     <span class="nickname">{{ message.nickname }}</span> <small class="text-muted">{{ message.time | timeAgo }}</small>
     <div *ngIf="showOptions" class="message-options hover-only">
-      <button (click)="onClickEdit($event)" [disabled]="busy" *ngIf="edit">
+      <button (click)="onClickEdit($event)" [disabled]="busy" *ngIf="!edit">
         <i class="fa fa-pencil" aria-hidden="true"></i>
       </button>
       <button (click)="onClickDelete($event)" [disabled]="busy">
