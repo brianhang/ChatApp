@@ -15,6 +15,7 @@ export class Room {
 
     return new Promise((resolve, reject) => {
       Users.find({ room: this })
+        .lean()
         .cursor()
         .eachAsync((user: UserDocument) => users.push(user))
         .then(() => resolve(users));

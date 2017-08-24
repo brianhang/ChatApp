@@ -93,6 +93,7 @@ export class MessageService {
 
     // Load and send the appropriate messages.
     Messages.find(query)
+      .lean()
       .sort({time: -1})
       .limit(HISTORY_LENGTH)
       .cursor()
@@ -257,6 +258,7 @@ export class MessageService {
         $lt: date
       }
     })
+      .lean()
       .sort({time: -1})
       .limit(HISTORY_LENGTH)
       .cursor()
