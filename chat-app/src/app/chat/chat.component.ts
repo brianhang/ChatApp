@@ -27,7 +27,8 @@ export class ChatComponent implements OnInit {
     this.authService.getUser()
       .then(user => {
         if (user) {
-          this.loading = false;
+          this.chatService.connect()
+            .then(() => this.loading = false);
         } else {
           this.router.navigate(['/login']);
         }

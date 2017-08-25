@@ -12,6 +12,7 @@ export class ChatService {
   private _users: Map<string, User>;
   private _user: User;
   private _disconnected: boolean;
+  private events: Map<string, Function>;
 
   /**
    * Constructor which sets up the socket to communicate with the chat server.
@@ -19,26 +20,42 @@ export class ChatService {
   constructor() {
     this._users = new Map<string, User>();
     this._user = undefined;
-
-    this.socket = io();
+    this.events = new Map<string, Function>();
     this.connected = false;
+  }
 
-    this.on('userData', data => {
-      this._users.set(data._id, data);
+  /**
+   * Connects to the chat server.
+   */
+  public connect(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (this.connected) {
+        return;
+      }
+
+      this.socket = io();
+
+      this.events.forEach((listener, event) => {
+        this.socket.on(event, listener);
+      });
+
+      this.on('userData', data => {
+        this._users.set(data._id, data);
+      });
+
+      this.on('nickname', data => this.onNicknameChange(data));
+
+      this.on('joined', data => {
+        this._user = data;
+        this._users.set(data._id, data);
+
+        this.connected = true;
+
+        resolve();
+      });
+
+      this.on('disconnect', data => this._disconnected = true);
     });
-
-    this.on('nickname', data => this.onNicknameChange(data));
-
-    this.on('joined', data => {
-      this._user = data;
-      this._users.set(data._id, data);
-
-      this.connected = true;
-
-      console.log(this._users)
-    });
-
-    this.on('disconnect', data => this._disconnected = true);
   }
 
   /**
@@ -48,7 +65,11 @@ export class ChatService {
    * @param listener What to do when the event is fired.
    */
   public on(event: string, listener: Function): void {
-    this.socket.on(event, listener);
+    this.events.set(event, listener);
+
+    if (this.socket) {
+      this.socket.on(event, listener);
+    }
   }
 
   /**
@@ -58,7 +79,9 @@ export class ChatService {
    * @param data The data to send with the event.
    */
   public emit(event: string, data: any): void {
-    this.socket.emit(event, data);
+    if (this.socket) {
+      this.socket.emit(event, data);
+    }
   }
 
   /**
