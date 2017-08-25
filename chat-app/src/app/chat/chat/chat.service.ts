@@ -40,12 +40,15 @@ export class ChatService {
       });
 
       this.on('userData', data => {
+        data.room = undefined;
         this._users.set(data._id, data);
       });
 
       this.on('nickname', data => this.onNicknameChange(data));
 
       this.on('joined', data => {
+        data.room = undefined;
+
         this._user = data;
         this._users.set(data._id, data);
 
