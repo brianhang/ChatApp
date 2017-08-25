@@ -45,7 +45,9 @@ export class RoomService {
     // Load all rooms for the chat server and store it for later use.
     Rooms.find({})
       .cursor()
-      .eachAsync((room: RoomDocument) => this.manager.replicate(room, user));
+      .eachAsync((room: RoomDocument) => {
+        this.manager.replicate(room, user)
+      });
   }
 
   /**

@@ -91,11 +91,11 @@ export class Server {
       other.emit('userData', user);
     });
 
-    // Tell the user that they are done loading the main chat state.
-    socket.emit('joined', user);
-
     // Indicate the user has fully joined.
-    this._userJoined.next(user);
+    setTimeout(() => {
+      socket.emit('joined', user);
+      this._userJoined.next(user);
+    }, 500);
   }
 
   /**
@@ -132,9 +132,15 @@ export class Server {
    * @param socket The socket that disconnected.
    */
   private onUserDisconnected(user: UserDocument): void {
+    const userId = user._id.toHexString();
+
     this._userLeft.next(user);
-    this.emit('userLeft', user._id);
+
+    this._users.delete(userId);
+    UserSocketMap.delete(userId);
     this._userList = this._userList.filter(x => !user.equals(x));
+
+    this.emit('userLeft', userId);
   }
 
   /**
