@@ -8,10 +8,13 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {},
+  "dependencies": {
+    "amqplib": "^0.5.1"
+  },
   "devDependencies": {
+    "@types/amqplib": "^0.5.4",
+    "@types/node": "^8.0.25",
     "ts-node": "^3.3.0",
-    "typescript": "^2.4.2",
-    "@types/node": "^8.0.25"
+    "typescript": "^2.4.2"
   }
 }
