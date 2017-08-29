@@ -1,1 +1,5 @@
+.git
+.gitignore
+.v8flags*
+ts-node*
 node_modules

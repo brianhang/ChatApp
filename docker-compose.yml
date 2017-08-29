@@ -24,3 +24,10 @@ services:
       - /usr/app/node_modules
     depends_on:
       - rabbitmq
+  message-service:
+    build: message-service
+    volumes:
+      - ./message-service/:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - rabbitmq
