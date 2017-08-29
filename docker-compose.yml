@@ -1,33 +1,47 @@
 version: '3'
 services:
+  # Message broker
   rabbitmq:
     image: rabbitmq:3.6-management
     ports:
       - "15672:15672"
+
+  # Angular front end
   app:
     build: chat-app
     volumes:
       - ./chat-app/dist/:/data/www/
     ports:
       - "8080:80"
+
+  # Gateway service
+  gateway-service:
+    build: gateway-service
+    volumes:
+      - ./gateway-service/:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - rabbitmq
+
+  # Microservices
   user-service:
     build: user-service
     volumes:
       - ./user-service/:/usr/app/
       - /usr/app/node_modules
     depends_on:
-      - rabbitmq
+      - gateway-service
   room-service:
     build: room-service
     volumes:
       - ./room-service/:/usr/app/
       - /usr/app/node_modules
     depends_on:
-      - rabbitmq
+      - gateway-service
   message-service:
     build: message-service
     volumes:
       - ./message-service/:/usr/app/
       - /usr/app/node_modules
     depends_on:
-      - rabbitmq
+      - gateway-service
