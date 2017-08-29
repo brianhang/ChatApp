@@ -17,3 +17,10 @@ services:
       - /usr/app/node_modules
     depends_on:
       - rabbitmq
+  room-service:
+    build: room-service
+    volumes:
+      - ./room-service/:/usr/app/
+      - /usr/app/node_modules
+    depends_on:
+      - rabbitmq

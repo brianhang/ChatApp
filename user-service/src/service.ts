@@ -1,14 +1,13 @@
 import { Service, ServiceEvent } from './gateway/service';
 
-export class RoomService extends Service {
+export class UserService extends Service {
   onInit(): void {
-    this.gateway.send('user', 'test', 'ping');
   }
 
   @ServiceEvent()
   onTest(data: any) {
     setTimeout(() => {
-      this.gateway.send('user', 'test', 'ping');
+      this.gateway.send('room', 'test', 'pong');
     }, 1000);
     console.log(`${data}`);
   }
