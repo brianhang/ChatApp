@@ -41,6 +41,10 @@ export abstract class Service {
    * @param gateway The gateway to use for messaging.
    */
   constructor(protected gateway: Gateway) {
+    if (!this._listeners) {
+      return;
+    }
+
     this._listeners.forEach((key, event) => {
       this.gateway.on(event, (data: any) => {
         (<any>this)[key](data);
