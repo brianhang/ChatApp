@@ -23,7 +23,7 @@ export function ServiceEvent(nameOverride?: string): any {
     }
 
     // Add it to the list of listeners to set up during runtime.
-    target._listeners = target.listeners || new Map<string, Function>();
+    target._listeners = target.listeners || new Map<string, string>();
     target._listeners.set(event, key);
   }
 }
@@ -33,7 +33,7 @@ export function ServiceEvent(nameOverride?: string): any {
  * some helper things for setting up services.
  */
 export abstract class Service {
-  private _listeners: Map<string, Function>;
+  private _listeners: Map<string, string>;
 
   /**
    * A constructor that sets up the messaging gateway.
@@ -47,7 +47,7 @@ export abstract class Service {
 
     this._listeners.forEach((key, event) => {
       this.gateway.on(event, (data: any) => {
-        (<any>this)[event](data);
+        (<any>this)[key](data);
       });
     });
   }

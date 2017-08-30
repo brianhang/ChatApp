@@ -15,7 +15,7 @@ export interface Gateway {
   /**
    * Publishes a message.
    */
-  send(exchange: string, event: string, data: any): Gateway;
+  send(exchange: string, event: string, ...data: any[]): Gateway;
 
   /**
    * Subscribes to a particular message.

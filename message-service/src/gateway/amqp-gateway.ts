@@ -86,11 +86,13 @@ export class AmqpGateway implements Gateway {
    * @param event The name of the event to send.
    * @param data The data about the event.
    */
-  public send(exchange: string, event: string, data: any): Gateway {
+  public send(exchange: string, event: string, ...data: any[]): Gateway {
+    const routingKey = `${exchange}.${event}`;
+
     // Only send if there is a channel to send to and data to send.
-    if (this.channel && data !== undefined) {
-      data = JSON.stringify(data);
-      this.channel.publish(exchange, event, Buffer.from(data));
+    if (this.channel) {
+      let newData = JSON.stringify(data);
+      this.channel.publish(exchange, routingKey, Buffer.from(newData));
     }
 
     return this;
@@ -121,8 +123,10 @@ export class AmqpGateway implements Gateway {
    *                 has been triggered.
    */
   private addEventListener(event: string, callback: Function): void {
+    const queue = `${this.exchange}.${event}`;
+
     // Set up a queue for messages that match this event.
-    this.channel.assertQueue(event, { durable: false }, (err:any , ok: any) => {
+    this.channel.assertQueue(queue, { durable: false }, (err:any , ok: any) => {
       if (err) {
         console.error(`Failed to set up listener for ${event}: ${err}`);
 
@@ -130,10 +134,10 @@ export class AmqpGateway implements Gateway {
       }
 
       // Have the queue be a part of the exchange for our service.
-      this.channel.bindQueue(event, this.exchange, event);
+      this.channel.bindQueue(queue, this.exchange, queue);
 
       // Fire the callback every time a message matching the event is received.
-      this.channel.consume(event, message => {
+      this.channel.consume(queue, message => {
         // Convert the data from the message to JSON to pass to the callback.
         let data: any;
 
