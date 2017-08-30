@@ -3,6 +3,13 @@ import { User } from './models/user';
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
 
+/**
+ * A helper function to generate a JWT and to send it to the user.
+ * 
+ * @param user The user that this token is for.
+ * @param res The response object to send the token back.
+ * @param status An optional HTTP response code to use for the response.
+ */
 function generateTokenResponse(user: any, res: any, status?: number) {
   const token = jwt.sign({
     userId: user._id
@@ -17,6 +24,7 @@ function generateTokenResponse(user: any, res: any, status?: number) {
 module.exports = function(app: any) {
   app
     .get('/user', (req: any, res: any) => {
+      // Try to get the JWT token from the Authentication header.
       const authorization = req.get('Authorization');
 
       if (!authorization) {
@@ -39,19 +47,23 @@ module.exports = function(app: any) {
         });
       }
       
+      // Once we have the token, try to get the payload from it.
       const token = data[1];
 
       jwt.verify(token, secret, (err: any, decoded: any) => {
+        // If an error occured while doing so, send the error.
         if (err) {
           return res.status(401).json({
             message: err.message
           });
         }
 
+        // Otherwise, respond with the payload.
         res.status(200).json(decoded);
       });
     })
     .post('/register', (req: any, res: any) => {
+      // Validate the desired username and password.
       const username = req.body.username;
       const password = req.body.password;
       
@@ -67,12 +79,14 @@ module.exports = function(app: any) {
         })
       }
 
+      // Create a new user instance with the given username and password.
       const user = new User({
         username: username,
         nickname: username,
         password: password
       });
 
+      // Try to store the new user in the database.
       user.save((err) => {
         if (err) {
           // Check if the username was already in use.
@@ -87,10 +101,12 @@ module.exports = function(app: any) {
           });
         }
 
+        // Once the user is saved, send the JWT token to authenticate as them.
         generateTokenResponse(user, res, 201);
       });
     })
     .post('/login', (req: any, res: any) => {
+      // Validate the login details.
       const username: string = req.body.username;
       const password: string = req.body.password;
 
@@ -106,7 +122,9 @@ module.exports = function(app: any) {
         })
       }
 
+      // Try to find the user with the given username.
       User.findOne({ username: req.body.username }, (err, user) => {
+        // Send the error if the user could not be found.
         if (err) {
           return res.status(500).json({
             message: err.toString()
@@ -119,8 +137,10 @@ module.exports = function(app: any) {
           });
         }
 
+        // Check the given password is the correct password for this user.
         (<any>user).comparePassword(password)
           .then((success: boolean) => {
+            // If it is, then send the JWT token back to authenticate.
             if (success) {
               generateTokenResponse(user, res);
             } else {
