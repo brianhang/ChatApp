@@ -6,6 +6,24 @@ services:
     ports:
       - "15672:15672"
 
+  # Databases
+  db-auth:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27017:27017"
+    command: mongod --quiet
+  db-users:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27018:27017"
+    command: mongod --quiet
+
   # Angular front end
   app:
     build: chat-app
@@ -20,8 +38,15 @@ services:
     volumes:
       - ./gateway-service/:/usr/app/
       - /usr/app/node_modules
+    ports:
+      - "8082:80"
     depends_on:
       - rabbitmq
+      - db-auth
+    environment:
+      - MONGO_DB=mongodb://db-auth/users
+      - JWT_SECRET=secret!
+      - PORT=80
 
   # Microservices
   user-service:
@@ -31,6 +56,7 @@ services:
       - /usr/app/node_modules
     depends_on:
       - gateway-service
+      - db-users
   room-service:
     build: room-service
     volumes:
