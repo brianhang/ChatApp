@@ -33,8 +33,11 @@ export class ChatService {
         return;
       }
 
+      const token = localStorage.getItem('chat-app-jwt');
+
       this.socket = io({
-        path: '/gateway/socket.io'
+        path: '/gateway/socket.io',
+        query: `token=${token}`
       });
 
       this.events.forEach((listener, event) => {
@@ -85,6 +88,7 @@ export class ChatService {
    */
   public emit(event: string, data: any): void {
     if (this.socket) {
+
       this.socket.emit(event, data);
     }
   }
