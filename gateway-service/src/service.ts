@@ -18,7 +18,7 @@ export class GatewayService extends Service {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    require('./routes')(app);
+    require('./routes/authentication')(app);
 
     app.listen(process.env.PORT || 80, () => {
       console.log('Gateway API started...');

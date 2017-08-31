@@ -107,7 +107,7 @@ export class AuthenticationService {
    */
   public getUser(): Promise<(User | null)> {
     return new Promise((resolve, reject) => {
-      this.http.get('/auth')
+      this.http.get('http://localhost:8082/user')
         .map(res => res.json())
         .subscribe(
           (user: User | null) => {

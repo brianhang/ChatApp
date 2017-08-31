@@ -31,6 +31,8 @@ services:
       - ./chat-app/dist/:/data/www/
     ports:
       - "8080:80"
+    depends_on:
+      - gateway-service
 
   # Gateway service
   gateway-service:
