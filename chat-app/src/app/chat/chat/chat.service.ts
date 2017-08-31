@@ -33,7 +33,9 @@ export class ChatService {
         return;
       }
 
-      this.socket = io();
+      this.socket = io({
+        path: '/gateway/socket.io'
+      });
 
       this.events.forEach((listener, event) => {
         this.socket.on(event, listener);

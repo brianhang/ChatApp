@@ -1,8 +1,12 @@
 import { Service, ServiceEvent } from './gateway/service';
+import * as socket from 'socket.io';
 const expressJwt = require('express-jwt');
 
 export class GatewayService extends Service {
+  private io: SocketIO.Server;
+
   onInit(): void {
+    // Connect to the authentication database.
     const mongoose = require('mongoose');
     mongoose.Promise = global.Promise;
     mongoose.connect(process.env.MONGO_DB, {
@@ -11,6 +15,7 @@ export class GatewayService extends Service {
       useMongoClient: true
     });
 
+    // Set up the REST API end points.
     const express = require('express');
     const bodyParser = require('body-parser');
     const app = express();
@@ -20,8 +25,14 @@ export class GatewayService extends Service {
 
     require('./routes/authentication')(app);
 
-    app.listen(process.env.PORT || 80, () => {
-      console.log('Gateway API started...');
-    });
+    // Set up the server socket.
+    const httpServer = require('http').createServer(app);
+    this.io = socket(httpServer);
+    
+    this.io.on('connection', (socket) => {
+      console.log('Yay!');
+    })
+    
+    httpServer.listen(80);
   }
 }
