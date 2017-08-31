@@ -40,30 +40,44 @@ export class ChatService {
         query: `token=${token}`
       });
 
-      this.events.forEach((listener, event) => {
-        this.socket.on(event, listener);
-      });
-
-      this.on('userData', data => {
-        data.room = undefined;
-        this._users.set(data._id, data);
-      });
-
-      this.on('nickname', data => this.onNicknameChange(data));
-
-      this.on('joined', data => {
-        data.room = undefined;
-
-        this._user = data;
-        this._users.set(data._id, data);
-
-        this.connected = true;
-
-        resolve();
-      });
-
-      this.on('disconnect', data => this._disconnected = true);
+      this.socket.on('connect', () => this.onSocketConnected(resolve, reject));
     });
+  }
+
+  /**
+   * Called when the socket connection has been established. This will set up
+   * the socket client.
+   *
+   * @param resolve Resolve the connection promise.
+   * @param reject Raise an error in the connection process.
+   */
+  private onSocketConnected(resolve: Function, reject: Function) {
+    this.events.forEach((listener, event) => {
+      this.socket.on(event, listener);
+    });
+
+    this.on('userData', data => {
+      data.room = undefined;
+      this._users.set(data._id, data);
+    });
+
+    this.on('nickname', data => this.onNicknameChange(data));
+
+    this.on('joined', data => {
+      data.room = undefined;
+
+      this._user = data;
+      this._users.set(data._id, data);
+
+      console.log(data);
+
+      this.connected = true;
+      resolve();
+    });
+
+    this.on('logout', reject);
+
+    this.on('disconnect', data => this._disconnected = true);
   }
 
   /**

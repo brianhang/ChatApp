@@ -1,10 +1,15 @@
 import { Service, ServiceEvent } from './gateway/service';
 import * as socket from 'socket.io';
+import { User } from './models/user';
+
 const expressJwt = require('express-jwt');
 
 export class GatewayService extends Service {
-  private io: SocketIO.Server;
-  private users: Map<string, SocketIO.Socket>;
+  public io: SocketIO.Server;
+  public sockets: Map<string, SocketIO.Socket>;
+  public users: Map<SocketIO.Socket, string>;
+
+  private listeners = new Map<string, any>();
 
   onInit(): void {
     // Connect to the authentication database.
@@ -27,39 +32,79 @@ export class GatewayService extends Service {
     require('./routes/authentication')(app);
 
     // Set up the server socket.
-    this.users = new Map<string, SocketIO.Socket>();
+    this.sockets = new Map<string, SocketIO.Socket>();
+    this.users = new Map<SocketIO.Socket, string>();
 
     const httpServer = require('http').createServer(app);
     this.io = socket(httpServer);
 
     // Add authentication middleware for sockets.
-    require('./socket-authentication')(this.io, this.users);
+    require('./socket-authentication')(this);
 
     this.io.on('connection', socket => this.onUserConnected(socket));
     
+    // Set up service routes.
+    require('./routes/user.ts')(this);
+    require('./routes/room.ts')(this);
+    require('./routes/message.ts')(this);
+
     httpServer.listen(80);
   }
 
   public onUserConnected(socket: SocketIO.Socket): void {
+    console.log('Got connection');
+    this.listeners.forEach((listener, event) => {
+      socket.on(event, listener);
+    });
+
     socket.on('disconnect', () => {
       this.onUserDisconnected(socket);
     });
-  }
 
-  public onUserDisconnected(socket: SocketIO.Socket): void {
-    this.users.forEach((other, key) => {
-      if (socket == other) {
-        this.users.delete(key);
+    const userId = this.users.get(socket);
+
+    if (!userId) {
+      socket.emit('logout');
+
+      return;
+    }
+
+    User.findById(userId, { password: 0 }, (err, user) => {
+      if (err) {
+        console.error(`Failed to load user data for ${userId}: ${err}`);
+      }
+
+      if (user) {
+        socket.emit('joined', user);
+      } else {
+        socket.emit('logout');
       }
     });
   }
 
-  public sendToUser(userId: string, event: string, ...args: any[]): void {
-    const client = this.users.get(userId);
+  public onUserDisconnected(socket: SocketIO.Socket): void {
+    const userId = this.users.get(socket);
 
-    if (client) {
-      client.emit(event, args);
+    if (userId) {
+      this.users.delete(socket);
+      this.sockets.delete(userId);
     }
+  }
+
+  public sendToUser(userId: string, event: string, ...args: any[]): void {
+    const socket = this.sockets.get(userId);
+
+    if (socket) {
+      socket.emit(event, args);
+    }
+  }
+
+  public on(event: string, listener: any): void {
+    this.listeners.set(event, listener);
+
+    this.sockets.forEach(socket => {
+      socket.on(event, listener);
+    });
   }
 
   @ServiceEvent()

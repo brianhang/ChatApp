@@ -1,13 +1,11 @@
 import * as socket from 'socket.io';
+import { GatewayService } from './service';
 
 const secret = process.env.JWT_SECRET;
 const jwt = require('jsonwebtoken');
 
-module.exports = function(
-  io: SocketIO.Server,
-  users: Map<string, SocketIO.Socket>
-): void {
-  io.use((socket, next) => {
+module.exports = function(service: GatewayService): void {
+  service.io.use((socket, next) => {
     const token = socket.handshake.query.token;
 
     if (typeof(token) !== 'string') {
@@ -21,7 +19,8 @@ module.exports = function(
       }
 
       // Store the user who just connected.
-      users.set(decoded.userId, socket);
+      service.sockets.set(decoded.userId, socket);
+      service.users.set(socket, decoded.userId);
 
       next();
     });
