@@ -18,9 +18,17 @@ module.exports = function(service: GatewayService): void {
         return next(new Error(err));
       }
 
+      const userId = decoded.userId;
+      const oldSocket = service.sockets.get(userId);
+
+      // Only allow a single connection per user.
+      if (oldSocket) {
+        oldSocket.disconnect(true);
+      }
+
       // Store the user who just connected.
-      service.sockets.set(decoded.userId, socket);
-      service.users.set(socket, decoded.userId);
+      service.sockets.set(userId, socket);
+      service.users.set(socket, userId);
 
       next();
     });
