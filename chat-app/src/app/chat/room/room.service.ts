@@ -67,6 +67,7 @@ export class RoomService {
    * @param data Data about a particular room.
    */
   private loadRoomData(data: any): void {
+    console.log(data);
     if (!data) {
       return;
     }
@@ -76,6 +77,10 @@ export class RoomService {
     room.hasPassword = data.hasPassword;
 
     this.addRoom(room);
+
+    if (!data.users) {
+      return;
+    }
 
     data.users.forEach(userId => {
       const user = this.chatService.getUserById(userId);

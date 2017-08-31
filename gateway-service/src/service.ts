@@ -69,7 +69,7 @@ export class GatewayService extends Service {
   public onUserConnected(socket: SocketIO.Socket): void {
     // Add listners for the new socket.
     this.listeners.forEach((listener, event) => {
-      socket.on(event, listener);
+      socket.on(event, this.getListener(socket, listener));
     });
 
     socket.on('disconnect', () => {
@@ -140,7 +140,7 @@ export class GatewayService extends Service {
     this.listeners.set(event, listener);
 
     this.sockets.forEach(socket => {
-      socket.on(event, listener);
+      socket.on(event, this.getListener(socket, listener));
     });
   }
 
@@ -155,5 +155,31 @@ export class GatewayService extends Service {
   @ServiceEvent()
   public onSendToUser(userId: string, event: string, ...args: any[]): void {
     this.sendToUser(userId, event, ...args);
+  }
+
+  /**
+   * Called when another service wants to broadcast an event to every connected
+   * user on the server. This will delegate to the actual server socket
+   * broadcast method.
+   */
+  @ServiceEvent()
+  public onBroadcast(event: string, ...args: any[]): void {
+    console.log(event, args);
+    this.io.emit(event, ...args);
+  }
+
+  /**
+   * Helper method to get the user ID from a socket and to create a new
+   * listener that takes in the user ID in addition to the event data.
+   * 
+   * @param socket The socket to get the listener for.
+   * @param listener The old listener.
+   */
+  private getListener(socket: SocketIO.Socket, listener: any): any {
+    const userId = this.users.get(socket);
+
+    return function(...args: any[]) {
+      listener(userId, ...args);
+    }
   }
 }

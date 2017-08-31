@@ -147,7 +147,7 @@ export class AmqpGateway implements Gateway {
           data = undefined;
         }
 
-        callback(data);
+        callback(...data);
       }, { noAck: true });
     });
   }
