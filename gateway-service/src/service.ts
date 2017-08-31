@@ -4,11 +4,20 @@ import { User } from './models/user';
 
 const expressJwt = require('express-jwt');
 
+/**
+ * The GatewayService acts as the single end point between the microservices
+ * and the front end. This will handle all data moving between the services
+ * and the front end.
+ */
 export class GatewayService extends Service {
+  // The server's socket.
   public io: SocketIO.Server;
+
+  // Invertible map for user to socket.
   public sockets: Map<string, SocketIO.Socket>;
   public users: Map<SocketIO.Socket, string>;
 
+  // Listeners for events from client sockets.
   private listeners = new Map<string, any>();
 
   onInit(): void {
@@ -51,8 +60,14 @@ export class GatewayService extends Service {
     httpServer.listen(80);
   }
 
+  /**
+   * Called when a socket client has connected to the server. This will set
+   * up the main listeners for the socket.
+   * 
+   * @param socket The socket that has connected.
+   */
   public onUserConnected(socket: SocketIO.Socket): void {
-    console.log('Got connection');
+    // Add listners for the new socket.
     this.listeners.forEach((listener, event) => {
       socket.on(event, listener);
     });
@@ -61,6 +76,9 @@ export class GatewayService extends Service {
       this.onUserDisconnected(socket);
     });
 
+    // Authenticate the user from the socket. If the user could not be
+    // authenticated, then disconnect the socket. Otherwise, indicate to the
+    // user that a successful connection has been made.
     const userId = this.users.get(socket);
 
     if (!userId) {
@@ -82,6 +100,12 @@ export class GatewayService extends Service {
     });
   }
 
+  /**
+   * Called when a user disconnects from the server. This will do a cleanup of
+   * the user/socket maps.
+   * 
+   * @param socket The socket that just disconnected.
+   */
   public onUserDisconnected(socket: SocketIO.Socket): void {
     const userId = this.users.get(socket);
 
@@ -91,6 +115,13 @@ export class GatewayService extends Service {
     }
   }
 
+  /**
+   * Sends an event to the socket of the user corresponding to the given ID.
+   * 
+   * @param userId The ID of the desired user to send an event to.
+   * @param event The name of the event.
+   * @param args Data about the event.
+   */
   public sendToUser(userId: string, event: string, ...args: any[]): void {
     const socket = this.sockets.get(userId);
 
@@ -99,6 +130,12 @@ export class GatewayService extends Service {
     }
   }
 
+  /**
+   * Sets up a listener for all sockets connected to the server.
+   * 
+   * @param event The name of the event to listen for.
+   * @param listener What to do when this event occurs.
+   */
   public on(event: string, listener: any): void {
     this.listeners.set(event, listener);
 
@@ -107,6 +144,14 @@ export class GatewayService extends Service {
     });
   }
 
+  /**
+   * Called when another service wants to send data back to a user. This will
+   * delegate to the sendToUser helper method.
+   * 
+   * @param userId The ID of the desired user to send to.
+   * @param event The name of the event to send.
+   * @param args Data about the event.
+   */
   @ServiceEvent()
   public onSendToUser(userId: string, event: string, ...args: any[]): void {
     this.sendToUser(userId, event, ...args);
