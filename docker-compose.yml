@@ -23,6 +23,22 @@ services:
     ports:
       - "27018:27017"
     command: mongod --quiet
+  db-rooms:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27019:27017"
+    command: mongod --quiet
+  db-messages:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - "27020:27017"
+    command: mongod --quiet
 
   # Angular front end
   app:
@@ -66,6 +82,7 @@ services:
       - /usr/app/node_modules
     depends_on:
       - gateway-service
+      - db-rooms
   message-service:
     build: message-service
     volumes:
@@ -73,3 +90,4 @@ services:
       - /usr/app/node_modules
     depends_on:
       - gateway-service
+      - db-messages
