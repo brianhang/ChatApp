@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import { User } from './models/user';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
@@ -33,14 +33,14 @@ export class AuthenticationService {
       };
 
       // Log in with the given credentials.
-      this.http.post('/auth/login', credentials)
+      this.http.post('/gateway/login', credentials)
         .map((res: Response) => res.json())
         .subscribe(
-          (user: User) => {
+          (data: any) => {
             // Resolve if we got a user back (now logged in), reject otherwise.
-            if (user) {
-              this._user = user;
-              resolve(user);
+            if (data.message === 'success' && data.token) {
+              localStorage.setItem('chat-app-jwt', data.token);
+              resolve();
             } else {
               reject('You have provided an invalid username or password.');
             }
@@ -68,27 +68,24 @@ export class AuthenticationService {
     return new Promise((resolve, reject) => {
       const signUpData = {
         username: username,
-        password: password,
-        nickname: nickname
+        password: password
       };
 
       // Send the credentials to the server.
-      this.http.post('/auth/signup', signUpData)
+      this.http.post('/gateway/register', signUpData)
         .map((res: Response) => res.json())
         .subscribe(
           (data) => {
             // Sign in if we have the account and resolve. Otherwise, reject with
             // the error message.
-            console.log(data);
-            if (data.message === 'success' && data.user) {
-              this._user = data.user;
-              resolve(data.user);
+            if (data.message === 'success' && data.token) {
+              localStorage.setItem('chat-app-jwt', data.token);
+              resolve();
             } else {
               reject(data.message);
             }
           },
           (error) => {
-            console.log(error)
             if (error.error && error.error.message) {
               reject(error.error.message);
             } else {
@@ -107,7 +104,21 @@ export class AuthenticationService {
    */
   public getUser(): Promise<(User | null)> {
     return new Promise((resolve, reject) => {
-      this.http.get('http://localhost:8082/user')
+      const token = localStorage.getItem('chat-app-jwt');
+
+      if (!token || token.length === 0) {
+        resolve(null);
+
+        return;
+      }
+
+      const headers = new Headers();
+      headers.append('Accept', 'application/json');
+      headers.append('Authorization', `Bearer ${token}`);
+
+      const options = new RequestOptions({ headers: headers });
+
+      this.http.get('/gateway/user', options)
         .map(res => res.json())
         .subscribe(
           (user: User | null) => {
@@ -123,7 +134,7 @@ export class AuthenticationService {
    */
   public logout(): void {
     this._user = undefined;
-    this.http.post('/auth/logout', { message: 'bye' })
-      .subscribe(() => window.location.assign('/login'));
+    localStorage.setItem('chat-app-jwt', '');
+    window.location.assign('/login');
   }
 }
