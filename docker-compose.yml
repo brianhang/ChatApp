@@ -5,6 +5,8 @@ services:
     image: rabbitmq:3.6-management
     ports:
       - "15672:15672"
+    logging:
+      driver: "none"
 
   # Databases
   db-auth:
@@ -14,6 +16,8 @@ services:
       - MONGO_LOG_DIR=/dev/null
     ports:
       - "27017:27017"
+    logging:
+      driver: "none"
     command: mongod --quiet
   db-users:
     image: mongo:latest
@@ -22,6 +26,8 @@ services:
       - MONGO_LOG_DIR=/dev/null
     ports:
       - "27018:27017"
+    logging:
+      driver: "none"
     command: mongod --quiet
   db-rooms:
     image: mongo:latest
@@ -30,6 +36,8 @@ services:
       - MONGO_LOG_DIR=/dev/null
     ports:
       - "27019:27017"
+    logging:
+      driver: "none"
     command: mongod --quiet
   db-messages:
     image: mongo:latest
@@ -38,6 +46,8 @@ services:
       - MONGO_LOG_DIR=/dev/null
     ports:
       - "27020:27017"
+    logging:
+      driver: "none"
     command: mongod --quiet
 
   # Angular front end
@@ -47,6 +57,8 @@ services:
       - ./chat-app/dist/:/data/www/
     ports:
       - "8080:80"
+    logging:
+      driver: "none"
     depends_on:
       - gateway-service
 
