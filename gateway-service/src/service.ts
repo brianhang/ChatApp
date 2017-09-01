@@ -87,12 +87,29 @@ export class GatewayService extends Service {
       return;
     }
 
-    Users.findById(userId, { password: 0 }, (err, user) => {
+    const publicFieldsFilter = { password: 0 };
+
+    Users.findById(userId, publicFieldsFilter, (err, user) => {
       if (err) {
         console.error(`Failed to load user data for ${userId}: ${err}`);
       }
 
       if (user) {
+        this.users.forEach(otherId => {
+          if (userId === otherId) {
+            return;
+          }
+
+          Users.findById(otherId, publicFieldsFilter, (err, other) => {
+            if (err || !other) {
+              return;
+            }
+
+            this.sendToUser(userId, 'userData', other);
+            this.sendToUser(otherId, 'userData', user);
+          });
+        });
+
         this.gateway.publish('userConnected', userId);
         socket.emit('joined', user);
       } else {

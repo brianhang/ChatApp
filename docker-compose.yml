@@ -72,6 +72,8 @@ services:
     volumes:
       - ./user-service/:/usr/app/
       - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-users/users
     depends_on:
       - gateway-service
       - db-users
@@ -80,6 +82,8 @@ services:
     volumes:
       - ./room-service/:/usr/app/
       - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-rooms/rooms
     depends_on:
       - gateway-service
       - db-rooms
@@ -88,6 +92,8 @@ services:
     volumes:
       - ./message-service/:/usr/app/
       - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-messages/messages
     depends_on:
       - gateway-service
       - db-messages

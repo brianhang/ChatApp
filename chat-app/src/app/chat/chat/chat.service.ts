@@ -57,8 +57,11 @@ export class ChatService {
     });
 
     this.on('userData', data => {
-      data.room = undefined;
-      this._users.set(data._id, data);
+      const oldData = this._users.get(data._id);
+      const newData = Object.assign(oldData || {}, data);
+
+      this._users.set(data._id, newData);
+      console.log(this._users);
     });
 
     this.on('nickname', data => this.onNicknameChange(data));
@@ -137,6 +140,7 @@ export class ChatService {
     const nickname = data.nickname;
 
     if (user) {
+      console.log('nickname to ' + nickname);
       user.nickname = nickname;
     }
   }
