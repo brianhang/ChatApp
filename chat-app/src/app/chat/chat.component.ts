@@ -33,6 +33,10 @@ export class ChatComponent implements OnInit {
         } else {
           this.router.navigate(['/login']);
         }
+      })
+      .catch(err => {
+        console.error(err);
+        this.router.navigate(['/logout']);
       });
   }
 
