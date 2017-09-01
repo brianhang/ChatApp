@@ -128,6 +128,8 @@ export class GatewayService extends Service {
     const userId = this.users.get(socket);
 
     if (userId) {
+      this.gateway.publish('userDisconnected', userId);
+
       this.users.delete(socket);
       this.sockets.delete(userId);
     }

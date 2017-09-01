@@ -42,4 +42,9 @@ export class UserService extends Service {
       this.gateway.send('gateway', 'sendToUser', userId, 'userData', user);
     });
   }
+
+  @ServiceSubscription()
+  public onUserDisconnected(userId: string): void {
+    this.users.delete(userId);
+  }
 }
