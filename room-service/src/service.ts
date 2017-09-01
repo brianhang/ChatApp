@@ -34,4 +34,19 @@ export class RoomService extends Service {
         this.manager.replicate(room, userId);
       });
   }
+
+  @ServiceSubscription()
+  public onUserDisconnected(userId: string): void {
+
+  }
+
+  @ServiceEvent()
+  public onJoinRoom(userId: string, roomId: string, password?: string): void {
+
+  }
+
+  @ServiceEvent()
+  public onLeaveRoom(UserId: string): void {
+
+  }
 }

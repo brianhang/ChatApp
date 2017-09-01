@@ -4,4 +4,5 @@ export interface Room {
   password: string;
   ownerId: string;
   bans: string[];
+  users: string[];
 }
