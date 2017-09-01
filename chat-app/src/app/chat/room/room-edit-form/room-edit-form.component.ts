@@ -93,7 +93,6 @@ export class RoomEditFormComponent {
       changes.password = this.form.controls.password.value;
     }
 
-    console.log(changes);
     // Submit the changes
     this.busy = true;
     this.chatService.emit('roomEdit', changes);

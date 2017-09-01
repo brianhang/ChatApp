@@ -67,7 +67,6 @@ export class RoomService {
    * @param data Data about a particular room.
    */
   private loadRoomData(data: any): void {
-    console.log(data);
     if (!data) {
       return;
     }

@@ -148,7 +148,6 @@ export class GatewayService extends Service {
     const socket = this.sockets.get(userId);
 
     if (socket) {
-      console.log(`Sending ${event}`);
       socket.emit(event, ...args);
     }
   }
@@ -187,7 +186,6 @@ export class GatewayService extends Service {
    */
   @ServiceEvent()
   public onBroadcast(event: string, ...args: any[]): void {
-    console.log(event, args);
     this.io.emit(event, ...args);
   }
 

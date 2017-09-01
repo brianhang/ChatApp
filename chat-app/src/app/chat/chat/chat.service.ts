@@ -61,7 +61,6 @@ export class ChatService {
       const newData = Object.assign(oldData || {}, data);
 
       this._users.set(data._id, newData);
-      console.log(this._users);
     });
 
     this.on('nickname', data => this.onNicknameChange(data));
@@ -71,8 +70,6 @@ export class ChatService {
 
       this._user = data;
       this._users.set(data._id, data);
-
-      console.log(data);
 
       this.connected = true;
       resolve();
@@ -140,7 +137,6 @@ export class ChatService {
     const nickname = data.nickname;
 
     if (user) {
-      console.log('nickname to ' + nickname);
       user.nickname = nickname;
     }
   }

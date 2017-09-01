@@ -31,7 +31,6 @@ export class RoomService extends Service {
       .lean()
       .cursor()
       .eachAsync(room => {
-        console.log(room._id);
         this.manager.replicate(room, userId);
       });
   }
