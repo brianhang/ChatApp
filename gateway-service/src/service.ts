@@ -127,7 +127,7 @@ export class GatewayService extends Service {
     const socket = this.sockets.get(userId);
 
     if (socket) {
-      socket.emit(event, args);
+      socket.emit(event, ...args);
     }
   }
 
