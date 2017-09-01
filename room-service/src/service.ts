@@ -1,4 +1,4 @@
-import { Service, ServiceEvent } from './gateway/service';
+import { Service, ServiceEvent, ServiceSubscription } from './gateway/service';
 
 export class RoomService extends Service {
   onInit(): void {
@@ -9,5 +9,10 @@ export class RoomService extends Service {
     console.log('OKAY')
     console.log(data)
     this.gateway.send('gateway', 'broadcast', 'roomData', data);
+  }
+
+  @ServiceSubscription()
+  public onUserConnected(userId: string): void {
+    console.log(userId);
   }
 }

@@ -1,6 +1,8 @@
 import { Gateway } from './gateway';
 import * as amqp from 'amqplib/callback_api';
 
+const GLOBAL_EXCHANGE = '_';
+
 /**
  * The AmqpGateway class handles communication with a message queue that
  * follows the AMQP standards.
@@ -11,6 +13,7 @@ export class AmqpGateway implements Gateway {
 
   // The listeners that have been set up.
   private events: Map<string, Function>;
+  private subscriptions: Map<string, Function>;
 
   // The exchange to use for messages.
   private exchange: string;
@@ -22,6 +25,7 @@ export class AmqpGateway implements Gateway {
    */
   constructor(private queueUrl: string) {
     this.events = new Map<string, Function>();
+    this.subscriptions = new Map<string, Function>();
   }
 
   /**
@@ -66,14 +70,18 @@ export class AmqpGateway implements Gateway {
 
             // Add all listeners to this channel.
             this.channel.assertExchange(this.exchange, 'direct');
+            this.channel.assertExchange(GLOBAL_EXCHANGE, 'fanout');
 
             this.events.forEach((callback, event) => {
-              this.addEventListener(event, callback);
+              this.addEventListener(this.exchange, event, callback);
+            });
+
+            this.subscriptions.forEach((callback, event) => {
+              this.addEventListener(GLOBAL_EXCHANGE, event, callback);
             });
 
             // Indicate we are done setting up the gateway.
             resolve();
-            console.log('Connected to message queue!');
           });
         });
       }, delay || 0);
@@ -86,13 +94,13 @@ export class AmqpGateway implements Gateway {
    * @param event The name of the event to send.
    * @param data The data about the event.
    */
-  public send(exchange: string, event: string, ...data: any[]): Gateway {
-    const routingKey = `${exchange}.${event}`;
+  public send(service: string, event: string, ...data: any[]): Gateway {
+    const routingKey = `${service}.${event}`;
 
     // Only send if there is a channel to send to and data to send.
     if (this.channel) {
       let newData = JSON.stringify(data);
-      this.channel.publish(exchange, routingKey, Buffer.from(newData));
+      this.channel.publish(service, routingKey, Buffer.from(newData));
     }
 
     return this;
@@ -108,7 +116,41 @@ export class AmqpGateway implements Gateway {
     this.events.set(event, callback);
 
     if (this.channel) {
-      this.addEventListener(event, callback);
+      this.addEventListener(this.exchange, event, callback);
+    }
+
+    return this;
+  }
+
+  /**
+   * Publishes an event to any service that is subscribed to this event.
+   * 
+   * @param event 
+   * @param data 
+   */
+  publish(event: string, ...data: any[]): Gateway {
+    const routingKey = `${GLOBAL_EXCHANGE}.${event}`;
+
+    // Only send if there is a channel to send to and data to send.
+    if (this.channel) {
+      let newData = JSON.stringify(data);
+      this.channel.publish(GLOBAL_EXCHANGE, routingKey, Buffer.from(newData));
+    }
+
+    return this;
+  }
+
+  /**
+   * Subscribes to an event that could have originated from any service.
+   * 
+   * @param event 
+   * @param callback 
+   */
+  subscribe(event: string, callback: Function): Gateway {
+    this.subscriptions.set(event, callback);
+
+    if (this.channel) {
+      this.addEventListener(GLOBAL_EXCHANGE, event, callback);
     }
 
     return this;
@@ -122,11 +164,11 @@ export class AmqpGateway implements Gateway {
    * @param callback The function to call after the event we are listening for
    *                 has been triggered.
    */
-  private addEventListener(event: string, callback: Function): void {
+  private addEventListener(exchange: string, event: string, callback: Function): void {
     const queue = `${this.exchange}.${event}`;
 
     // Set up a queue for messages that match this event.
-    this.channel.assertQueue(queue, { durable: false }, (err:any , ok: any) => {
+    this.channel.assertQueue(queue, { durable: false }, (err: any, ok: any) => {
       if (err) {
         console.error(`Failed to set up listener for ${event}: ${err}`);
 
@@ -134,7 +176,7 @@ export class AmqpGateway implements Gateway {
       }
 
       // Have the queue be a part of the exchange for our service.
-      this.channel.bindQueue(queue, this.exchange, queue);
+      this.channel.bindQueue(queue, exchange, queue);
 
       // Fire the callback every time a message matching the event is received.
       this.channel.consume(queue, message => {
@@ -147,7 +189,11 @@ export class AmqpGateway implements Gateway {
           data = undefined;
         }
 
-        callback(...data);
+        if (data) {
+          callback(...data);
+        } else {
+          callback();
+        }
       }, { noAck: true });
     });
   }

@@ -93,6 +93,7 @@ export class GatewayService extends Service {
       }
 
       if (user) {
+        this.gateway.publish('userConnected', userId);
         socket.emit('joined', user);
       } else {
         socket.emit('logout');
