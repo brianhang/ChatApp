@@ -1,4 +1,5 @@
-import { User } from '../models/user';
+import { UserDocument } from '../interfaces/user-document';
+import { Users } from '../models/user';
 
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
@@ -80,14 +81,11 @@ module.exports = function(app: any) {
       }
 
       // Create a new user instance with the given username and password.
-      const user = new User({
+      Users.create({
         username: username,
         nickname: username,
         password: password
-      });
-
-      // Try to store the new user in the database.
-      user.save((err) => {
+      }, (err: any, user: UserDocument) => {
         if (err) {
           // Check if the username was already in use.
           if (err.code === 11000) {
@@ -123,7 +121,7 @@ module.exports = function(app: any) {
       }
 
       // Try to find the user with the given username.
-      User.findOne({ username: req.body.username }, (err, user) => {
+      Users.findOne({ username: req.body.username }, (err: any, user: UserDocument) => {
         // Send the error if the user could not be found.
         if (err) {
           return res.status(500).json({

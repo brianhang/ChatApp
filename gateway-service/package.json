@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/amqplib": "^0.5.4",
     "amqplib": "^0.5.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.2",

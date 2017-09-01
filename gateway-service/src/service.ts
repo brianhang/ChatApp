@@ -1,6 +1,6 @@
 import { Service, ServiceEvent } from './gateway/service';
 import * as socket from 'socket.io';
-import { User } from './models/user';
+import { Users } from './models/user';
 
 const expressJwt = require('express-jwt');
 
@@ -87,7 +87,7 @@ export class GatewayService extends Service {
       return;
     }
 
-    User.findById(userId, { password: 0 }, (err, user) => {
+    Users.findById(userId, { password: 0 }, (err, user) => {
       if (err) {
         console.error(`Failed to load user data for ${userId}: ${err}`);
       }

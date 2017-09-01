@@ -1,4 +1,6 @@
 import { Schema, model } from 'mongoose';
+import { UserDocument } from '../interfaces/user-document';
+
 const bcrypt = require('bcrypt-nodejs');
 
 // The number of rounds to use for salt generation.
@@ -62,4 +64,4 @@ schema.method('comparePassword', function(this: any, password: string): Promise<
   });
 });
 
-export const User = model('User', schema);
+export const Users = model<UserDocument>('User', schema);
