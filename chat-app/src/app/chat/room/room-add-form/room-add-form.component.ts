@@ -54,11 +54,11 @@ export class RoomAddFormComponent  {
     const password = this.form.controls.password.value;
 
     this.chatService.on('roomAdd', (data) => {
-      const room = data.room;
+      const created = data.status;
       const message = data.message;
 
       // Close the form after the room has been created.
-      if (room) {
+      if (created) {
         this.busy = false;
         this.activeModal.close();
 

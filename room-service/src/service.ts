@@ -1,18 +1,38 @@
 import { Service, ServiceEvent, ServiceSubscription } from './gateway/service';
+import { Rooms } from './models/rooms';
+import { RoomDocument } from './interfaces/room-document';
+import { RoomManager } from "./manager";
+import { Gateway } from './gateway/gateway';
 
 export class RoomService extends Service {
-  onInit(): void {
+  public readonly manager: RoomManager;
+
+  constructor(public readonly gateway: Gateway) {
+    super(gateway);
+    this.manager = new RoomManager(this.gateway);
   }
 
-  @ServiceEvent()
-  public onAdd(userId: string, data: any): void {
-    console.log('OKAY')
-    console.log(data)
-    this.gateway.send('gateway', 'broadcast', 'roomData', data);
+  onInit(): void {
+    // Connect to the authentication database.
+    const mongoose = require('mongoose');
+    mongoose.Promise = global.Promise;
+    mongoose.connect(process.env.MONGO_DB, {
+      keepAlive: true,
+      reconnectTries: 100,
+      useMongoClient: true
+    });
+
+    require('./editor')(this);
   }
 
   @ServiceSubscription()
   public onUserConnected(userId: string): void {
-    console.log(userId);
+    Rooms.find({})
+      .lean()
+      .cursor()
+      .eachAsync(room => {
+        console.log(room._id);
+        this.manager.replicate(room, userId);
+      });
   }
 }

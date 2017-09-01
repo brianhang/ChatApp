@@ -50,7 +50,9 @@ export class GatewayService extends Service {
     // Add authentication middleware for sockets.
     require('./socket-authentication')(this);
 
-    this.io.on('connection', socket => this.onUserConnected(socket));
+    this.io.on('connection', socket => {
+      setTimeout(() => this.onUserConnected(socket), 500)
+    });
     
     // Set up service routes.
     require('./routes/user.ts')(this);
@@ -109,8 +111,8 @@ export class GatewayService extends Service {
             this.sendToUser(otherId, 'userData', user);
           });
         });
-
         this.gateway.publish('userConnected', userId);
+
         socket.emit('joined', user);
       } else {
         socket.emit('logout');
@@ -146,6 +148,7 @@ export class GatewayService extends Service {
     const socket = this.sockets.get(userId);
 
     if (socket) {
+      console.log(`Sending ${event}`);
       socket.emit(event, ...args);
     }
   }
