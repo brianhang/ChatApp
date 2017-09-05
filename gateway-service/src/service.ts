@@ -55,9 +55,9 @@ export class GatewayService extends Service {
     });
     
     // Set up service routes.
-    require('./routes/user.ts')(this);
-    require('./routes/room.ts')(this);
-    require('./routes/message.ts')(this);
+    require('./routes/user')(this);
+    require('./routes/room')(this);
+    require('./routes/message')(this);
 
     httpServer.listen(80);
   }

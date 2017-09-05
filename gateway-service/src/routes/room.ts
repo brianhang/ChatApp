@@ -13,6 +13,6 @@ module.exports = function(service: GatewayService): void {
   });
 
   service.on('roomLeave', (userId: string, data: any) => {
-    service.gateway.send('room', 'roomJoin', userId);
+    service.gateway.send('room', 'roomLeave', userId);
   });
 }

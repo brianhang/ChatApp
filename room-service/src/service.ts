@@ -7,6 +7,7 @@ import { Gateway } from './gateway/gateway';
 export class RoomService extends Service {
   public readonly manager: RoomManager;
 
+
   constructor(public readonly gateway: Gateway) {
     super(gateway);
     this.manager = new RoomManager(this.gateway);
@@ -37,16 +38,67 @@ export class RoomService extends Service {
 
   @ServiceSubscription()
   public onUserDisconnected(userId: string): void {
-
+    this.manager.setUserRoom(userId, undefined);
   }
 
   @ServiceEvent()
-  public onJoinRoom(userId: string, roomId: string, password?: string): void {
+  public onRoomJoin(userId: string, roomId: string, password?: string): void {
+    // Validate the room ID.
+    if (typeof(roomId) !== 'string') {
+      return;
+    }
 
+    // Make sure this room is not the one the user is already in.
+    if (this.manager.getUserRoomId(userId) === roomId) {
+      return;
+    }
+
+    // Try to get information about the room the user wants to join.
+    Rooms.findById(roomId, (err, room) => {
+      // Make sure the room exists.
+      if (err) {
+        this.notify(userId, roomId, err, 'error');
+
+        return;
+      }
+
+      if (!room) {
+        this.notify(userId, roomId, 'Room not found', 'error');
+
+        return;
+      }
+      console.log(room);
+
+      // Make sure the password is correct, if there is one.
+      if (room.password && room.password.length > 0 &&
+          room.password !== password) {
+        this.notify(userId, roomId, 'Incorrect password', 'error');
+
+        return;
+      }
+
+      // Update the user's room state.
+      this.manager.setUserRoom(userId, room);
+    });
   }
 
   @ServiceEvent()
-  public onLeaveRoom(UserId: string): void {
+  public onRoomLeave(userId: string): void {
+    this.manager.setUserRoom(userId, undefined);
+  }
 
+  /**
+   * Helper method to send a notification to a user.
+   */
+  private notify(userId: string, title: string, message: string, type: string) {
+    this.gateway.send(
+      'gateway',
+      'sendToUser',
+      userId,
+      'alert',
+      title,
+      message,
+      type
+    );
   }
 }
