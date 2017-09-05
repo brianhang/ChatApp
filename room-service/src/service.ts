@@ -63,16 +63,16 @@ export class RoomService extends Service {
       }
 
       if (!room) {
-        this.notify(userId, roomId, 'Room not found', 'error');
+        this.notify(userId, 'Oh no!', 'Room not found', 'error');
 
         return;
       }
-      console.log(room);
 
       // Make sure the password is correct, if there is one.
-      if (room.password && room.password.length > 0 &&
+      if ((<any>room).ownerId.toHexString() !== userId &&
+          room.password && room.password.length > 0 &&
           room.password !== password) {
-        this.notify(userId, roomId, 'Incorrect password', 'error');
+        this.notify(userId, 'Oh no!', 'Incorrect password', 'error');
 
         return;
       }
@@ -90,15 +90,11 @@ export class RoomService extends Service {
   /**
    * Helper method to send a notification to a user.
    */
-  private notify(userId: string, title: string, message: string, type: string) {
-    this.gateway.send(
-      'gateway',
-      'sendToUser',
-      userId,
-      'alert',
-      title,
-      message,
-      type
-    );
+  private notify(userId: string, title: string, body: string, type: string) {
+    this.gateway.send('gateway', 'sendToUser', userId, 'notice', {
+      title: title,
+      body: body,
+      type: type
+    });
   }
 }
