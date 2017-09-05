@@ -158,12 +158,14 @@ export class GatewayService extends Service {
    * @param event The name of the event to listen for.
    * @param listener What to do when this event occurs.
    */
-  public on(event: string, listener: any): void {
+  public on(event: string, listener: any): GatewayService {
     this.listeners.set(event, listener);
 
     this.sockets.forEach(socket => {
       socket.on(event, this.getListener(socket, listener));
     });
+
+    return this;
   }
 
   /**

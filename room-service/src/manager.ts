@@ -36,6 +36,16 @@ export class RoomManager {
   }
 
   /**
+   * Deletes a room permanently.
+   * 
+   * @param roomId The ID of the room that should be deleted.
+   */
+  public delete(roomId: string): void {
+    this.gateway.send('gateway', 'broadcast', 'roomDelete', roomId);
+    Rooms.findByIdAndRemove(roomId);
+  }
+
+  /**
    * Replicates the current state of the given room to the user corresponding
    * to the given user ID.
    * 
@@ -81,9 +91,43 @@ export class RoomManager {
   }
 
   /**
+   * Sets the name of a room and replicates the name change.
+   * 
+   * @param room The desired room to change.
+   * @param name The new name for the room.
+   */
+  public update(room: RoomDocument, field: string, value: any): void {
+    (<any>room)[field] = value;
+    room.save();
+
+    // Hide the actual password.
+    if (field === 'password') {
+      field = 'hasPassword';
+      value = value ? value.length > 0 : false;
+    }
+
+    this.gateway.send('gateway', 'broadcast', 'roomEdit', {
+      roomId: room._id.toHexString(),
+      field: field,
+      value: value
+    });
+  }
+
+  /**
    * Returns the ID of which room the user is in.
    */
   public getUserRoomId(userId: string): string | undefined {
     return this.users.get(userId);
+  }
+
+  /**
+   * Helper method to send a notification to a user.
+   */
+  private notify(userId: string, title: string, body: string, type: string) {
+    this.gateway.send('gateway', 'sendToUser', userId, 'notice', {
+      title: title,
+      body: body,
+      type: type
+    });
   }
 }

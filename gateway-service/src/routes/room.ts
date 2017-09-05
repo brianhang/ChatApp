@@ -15,4 +15,20 @@ module.exports = function(service: GatewayService): void {
   service.on('roomLeave', (userId: string, data: any) => {
     service.gateway.send('room', 'roomLeave', userId);
   });
+
+  service.on('roomEdit', (userId: string, data: any) => {
+    service.gateway.send('room', 'edit', userId, data);
+  });
+
+  service.on('roomBans', (userId: string, data: any) => {
+    service.gateway.send('room', 'bans', userId, data);
+  });
+
+  service.on('roomOwnerBan', (userId: string, data: any) => {
+    service.gateway.send('room', 'ban', userId, data);
+  });
+
+  service.on('roomOwnerKick', (userId: string, data: any) => {
+    service.gateway.send('room', 'kick', userId, data);
+  });
 }
