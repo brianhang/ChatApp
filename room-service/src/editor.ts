@@ -6,7 +6,9 @@ import { NAME_MAX_LENGTH, DESC_MAX_LENGTH } from './constants';
 
 module.exports = function (service: RoomService): void {
   service.gateway
-    // Handles room creation requests from users.
+    /**
+     * Handles room creation requests from users.
+     */
     .on('add', async (userId: string, data: any) => {
       /**
        * Helper function to send a room not created response back.
@@ -47,6 +49,10 @@ module.exports = function (service: RoomService): void {
         status: true
       });
     })
+
+    /**
+     * Handles room settings changes.
+     */
     .on('edit', async (userId: string, changes: any) => {
       function result(status: boolean, message?: string): void {
         service.gateway.send('gateway', 'sendToUser', userId, 'roomEditResult', {
@@ -90,21 +96,49 @@ module.exports = function (service: RoomService): void {
       // Indicate the changes have been made.
       result(err === undefined, err);
     })
-    .on('ban', (userId: string, data: any) => {
-      // Get which room the user is in.
-      // Make sure the user is allowed to edit that room.
-      // 
 
+    /**
+     * Handles room owner ban requests.
+     */
+    .on('ban', async (userId: string, data: any) => {
+      // Get the room to edit.
+      const room = await getWorkingRoom(userId);
+      const target = data.target;
+      const set = !!data.set;
+
+      if (typeof(target) !== 'string') {
+        return;
+      }
+
+      if (set) {
+        room.bans.push(target);
+        ejectUserFromRoom(data.targetId, room);
+      } else {
+        room.bans = room.bans.filter(ban => ban !== target);
+      }
+
+      room.save();
+      service.gateway.send('gateway', 'sendToUser', userId, 'roomBans', room.bans);
     })
-    .on('bans', (userId: string) => {
-      // Get which room the user is in.
-      // Make sure the user is allowed to edit that room.
 
+    /**
+     * Handles room owner requests for the bans in a room.
+     */
+    .on('bans', async (userId: string) => {
+      // Get the room to edit.
+      const room = await getWorkingRoom(userId);
+
+      service.gateway.send('gateway', 'sendToUser', userId, 'roomBans', room.bans);
     })
-    .on('kick', (userId: string, targetId: string) => {
-      // Get which room the user is in.
-      // Make sure the user is allowed to edit that room.
 
+    /**
+     * Handles room owner requests to kick a user.
+     */
+    .on('kick', async (userId: string, targetId: string) => {
+      // Get the room to edit.
+      const room = await getWorkingRoom(userId);
+
+      ejectUserFromRoom(targetId, room);
     });
 
   /**
@@ -149,5 +183,16 @@ module.exports = function (service: RoomService): void {
         resolve(room);
       });
     });
+  }
+
+  /**
+   * Ejects the given user from the room if the user is in the room.
+   */
+  function ejectUserFromRoom(targetId: string, room: RoomDocument): void {
+    const targetRoomId = service.manager.getUserRoomId(targetId);
+
+    if (targetRoomId === room._id.toHexString()) {
+      service.manager.setUserRoom(targetId, undefined);
+    }
   }
 }

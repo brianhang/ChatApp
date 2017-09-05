@@ -42,7 +42,23 @@ export class RoomService extends Service {
   }
 
   @ServiceEvent()
-  public onRoomJoin(userId: string, roomId: string, password?: string): void {
+  public onRoomJoin(
+    userId: string,
+    roomId: string,
+    username: string,
+    password?: string
+  ): void {
+    /**
+     * Helper function to send an error to the user.
+     */
+    const fail = (message: string) => {
+      this.gateway.send('gateway', 'sendToUser', userId, 'notice', {
+        title: 'Unable to join!',
+        body: message,
+        type: 'error'
+      });
+    }
+
     // Validate the room ID.
     if (typeof(roomId) !== 'string') {
       return;
@@ -57,24 +73,23 @@ export class RoomService extends Service {
     Rooms.findById(roomId, (err, room) => {
       // Make sure the room exists.
       if (err) {
-        this.notify(userId, roomId, err, 'error');
-
-        return;
+        return fail(err);
       }
 
       if (!room) {
-        this.notify(userId, 'Oh no!', 'Room not found', 'error');
-
-        return;
+        return fail('Room not found');
+      }
+      
+      // Make sure the user is not banned.
+      if (room.bans.find(ban => ban === username)) {
+        return fail('You are banned from this rom');
       }
 
       // Make sure the password is correct, if there is one.
       if ((<any>room).ownerId.toHexString() !== userId &&
           room.password && room.password.length > 0 &&
           room.password !== password) {
-        this.notify(userId, 'Oh no!', 'Incorrect password', 'error');
-
-        return;
+        return fail('Incorrect password');
       }
 
       // Update the user's room state.
@@ -85,16 +100,5 @@ export class RoomService extends Service {
   @ServiceEvent()
   public onRoomLeave(userId: string): void {
     this.manager.setUserRoom(userId, undefined);
-  }
-
-  /**
-   * Helper method to send a notification to a user.
-   */
-  private notify(userId: string, title: string, body: string, type: string) {
-    this.gateway.send('gateway', 'sendToUser', userId, 'notice', {
-      title: title,
-      body: body,
-      type: type
-    });
   }
 }
