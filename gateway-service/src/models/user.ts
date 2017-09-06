@@ -49,7 +49,7 @@ schema.statics.hashPassword = function(password: string): Promise<string> {
       });
     });
   });
-}
+};
 
 schema.method('comparePassword', function(this: any, password: string): Promise<boolean> {
   return new Promise((resolve, reject) => {

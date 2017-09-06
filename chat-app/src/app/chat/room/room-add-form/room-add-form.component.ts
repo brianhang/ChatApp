@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ChatService } from '../../chat/chat.service';
 
@@ -25,7 +25,11 @@ export class RoomAddFormComponent  {
    * @param formBuilder Service for validating the room create form.
    * @param chatService Service for requesting rooms on the server.
    */
-  constructor(public activeModal: NgbActiveModal, private formBuilder: FormBuilder, private chatService: ChatService) {
+  constructor(
+    public activeModal: NgbActiveModal,
+    private formBuilder: FormBuilder,
+    private chatService: ChatService
+  ) {
     this.busy = false;
     this.error = '';
 

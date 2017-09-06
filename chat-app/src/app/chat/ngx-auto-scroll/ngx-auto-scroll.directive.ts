@@ -28,14 +28,17 @@ import { AfterContentInit, Directive, ElementRef, HostListener, Input, OnDestroy
   selector: '[ngx-auto-scroll]',
 })
 export class NgxAutoScroll implements AfterContentInit, OnDestroy {
-  @Input('lock-y-offset') public lockYOffset: number = 10;
-  @Input('observe-attributes') public observeAttributes: string = 'false';
+  @Input('lock-y-offset') public lockYOffset: number;
+  @Input('observe-attributes') public observeAttributes: string;
 
   private nativeElement: HTMLElement;
-  private isLocked: boolean = false;
+  private isLocked: boolean;
   private mutationObserver: MutationObserver;
 
   constructor(element: ElementRef) {
+    this.isLocked = false;
+    this.lockYOffset = 10;
+    this.observeAttributes = 'false';
     this.nativeElement = element.nativeElement;
   }
 

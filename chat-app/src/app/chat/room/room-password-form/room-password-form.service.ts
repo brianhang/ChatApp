@@ -11,7 +11,7 @@ export class RoomPasswordFormService {
       const ref = this.modalService.open(RoomPasswordFormComponent);
       ref.componentInstance.submitCallback = function(password: string) {
         resolve(password);
-      }
+      };
     });
   }
 }

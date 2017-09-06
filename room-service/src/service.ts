@@ -57,7 +57,7 @@ export class RoomService extends Service {
         body: message,
         type: 'error'
       });
-    }
+    };
 
     // Validate the room ID.
     if (typeof(roomId) !== 'string') {

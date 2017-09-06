@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChatService } from '../chat/chat.service';
 import { User } from '../chat/models/user';
 
@@ -56,7 +56,7 @@ export class SettingsComponent {
     const fileReader = new FileReader();
     fileReader.onload = (e: any) => {
       this.profilePicPath = e.target.result;
-    }
+    };
 
     fileReader.readAsDataURL(file);
   }

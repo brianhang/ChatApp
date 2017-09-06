@@ -21,4 +21,4 @@ module.exports = function(service: GatewayService): void {
   service.on('msgRequestOlder', (userId: string, data: any) => {
     service.gateway.send('message', 'requestOlder', userId, data);
   });
-}
+};

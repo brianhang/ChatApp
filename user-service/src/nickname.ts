@@ -48,6 +48,6 @@ module.exports = function (service: UserService): void {
           nickname: nickname
         });
       }
-    )
+    );
   });
-}
+};

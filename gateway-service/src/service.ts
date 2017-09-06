@@ -51,7 +51,7 @@ export class GatewayService extends Service {
     require('./socket-authentication')(this);
 
     this.io.on('connection', socket => {
-      setTimeout(() => this.onUserConnected(socket), 500)
+      setTimeout(() => this.onUserConnected(socket), 500);
     });
 
     // Set up service routes.
@@ -201,6 +201,6 @@ export class GatewayService extends Service {
 
     return function(...args: any[]) {
       listener(userId, ...args);
-    }
+    };
   }
 }

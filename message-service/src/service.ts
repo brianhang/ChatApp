@@ -107,7 +107,7 @@ export class MessageService extends Service {
 
       // Then send it so users can see it.
       this.broadcast(message);
-    })
+    });
   }
 
   @ServiceEvent()
@@ -125,7 +125,7 @@ export class MessageService extends Service {
     // Helper function to send an edit response back.
     const result = (err?: string) => {
       this.gateway.send('gateway', 'sendToUser', userId, 'msgEditResult', err);
-    }
+    };
 
     // Make sure the new message content is okay.
     const messageId = data.messageId;

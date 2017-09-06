@@ -40,8 +40,8 @@ export function ServiceEvent(nameOverride?: string): any {
     // Add it to the list of listeners to set up during runtime.
     target._listeners = target._listeners || new Map<string, string>();
     target._listeners.set(event, key);
-  }
-}
+  };
+};
 
 /**
  * The ServiceEvent decorator subscribes this service to a particular
@@ -66,7 +66,7 @@ export function ServiceSubscription(nameOverride?: string): any {
     target._subscriptions = target._subscriptions || new Map<string, string>();
     target._subscriptions.set(event, key);
   }
-}
+};
 
 /**
  * The Service is a base service that is connected to a gateway. This adds
@@ -121,4 +121,4 @@ export abstract class Service {
 
     return serviceMatch[1].toLowerCase();
   }
-}
+};

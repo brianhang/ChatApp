@@ -63,4 +63,4 @@ module.exports = function(service: GatewayService): void {
   service.on('roomOwnerKick', (userId: string, data: any) => {
     service.gateway.send('room', 'kick', userId, data);
   });
-}
+};

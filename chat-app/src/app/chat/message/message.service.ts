@@ -175,7 +175,7 @@ export class MessageService {
     this.chatService.emit('msgEdit', {
       messageId: messageId,
       content: content
-    })
+    });
 
     return promise;
   }

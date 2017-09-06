@@ -32,4 +32,4 @@ module.exports = function(service: GatewayService): void {
       next();
     });
   });
-}
+};

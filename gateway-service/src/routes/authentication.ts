@@ -77,7 +77,7 @@ module.exports = function(app: any) {
       if (!password || password.length < 1) {
         return res.status(400).json({
           message: 'invalid password'
-        })
+        });
       }
 
       // Create a new user instance with the given username and password.
@@ -152,6 +152,6 @@ module.exports = function(app: any) {
               message: compareErr.toString()
             });
           });
-      })
+      });
     });
 };

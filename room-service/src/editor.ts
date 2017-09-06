@@ -195,4 +195,4 @@ module.exports = function (service: RoomService): void {
       service.manager.setUserRoom(targetId, undefined);
     }
   }
-}
+};
