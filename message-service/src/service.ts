@@ -8,6 +8,7 @@ export class MessageService extends Service {
   // A map from users to the room they are in.
   private users: Map<string, string>;
 
+  // Cache for the times user joined rooms.
   private lastRequest: Map<string, Map<string, Date>>;
 
   onInit(): void {
@@ -55,6 +56,7 @@ export class MessageService extends Service {
   @ServiceSubscription()
   public onUserDisconnected(userId: string): void {
     this.users.delete(userId);
+    this.lastRequest.delete(userId);
   }
 
   @ServiceEvent()
@@ -235,7 +237,7 @@ export class MessageService extends Service {
   private sendNewMessages(userId: string): void {
     // Get which room the user is in.
     const roomId = this.users.get(userId);
-    console.log(roomId);
+
     if (!roomId) {
       return;
     }
@@ -250,7 +252,7 @@ export class MessageService extends Service {
       requestTimeStore = new Map<string, Date>();
       this.lastRequest.set(userId, requestTimeStore);
     }
-    console.log(date);
+
     requestTimeStore.set(roomId, new Date());
 
     // Find messages that the user has not seen yet and send it over.

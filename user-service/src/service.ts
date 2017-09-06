@@ -55,7 +55,6 @@ export class UserService extends Service {
     userId: string,
     data: any
   ): void {
-    console.log(source, replyTo, userId, data);
     Users.findById(userId)
       .lean()
       .select('nickname')
@@ -63,7 +62,7 @@ export class UserService extends Service {
         if (err) {
           return;
         }
-        console.log(data)
+
         this.gateway.send(source, replyTo, userId, {
           nickname: user.nickname,
           data: data

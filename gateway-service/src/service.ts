@@ -111,9 +111,8 @@ export class GatewayService extends Service {
             this.sendToUser(otherId, 'userData', user);
           });
         });
-        console.log('connected');
-        this.gateway.publish('userConnected', userId);
 
+        this.gateway.publish('userConnected', userId);
         socket.emit('joined', user);
       } else {
         socket.emit('logout');
@@ -177,7 +176,6 @@ export class GatewayService extends Service {
    */
   @ServiceEvent()
   public onSendToUser(userId: string, event: string, ...args: any[]): void {
-    console.log(event, args);
     this.sendToUser(userId, event, ...args);
   }
 
