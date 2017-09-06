@@ -75,18 +75,18 @@ module.exports = function (service: RoomService): void {
 
       // Update each key.
       if (typeof(changes.name) === 'string') {
-        changes.name = changes.name.trim().substring(0, NAME_MAX_LENGTH);
+        const name = changes.name.trim().substring(0, NAME_MAX_LENGTH);
 
-        if (changes.name.length < 1) {
+        if (name.length < 1) {
           err = 'Room name too short';
         } else {
-          service.manager.update(room, 'name', changes.name);
+          service.manager.update(room, 'name', name);
         }
       }
 
       if (!err && typeof(changes.description) === 'string') {
-        changes.description = changes.name.trim().substring(0, DESC_MAX_LENGTH);
-        service.manager.update(room, 'name', changes.name);
+        const description = changes.description.trim().substring(0, DESC_MAX_LENGTH);
+        service.manager.update(room, 'description', description);
       }
 
       if (!err && typeof(changes.password) === 'string') {
