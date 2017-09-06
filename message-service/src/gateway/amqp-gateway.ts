@@ -20,7 +20,7 @@ export class AmqpGateway implements Gateway {
 
   /**
    * Constructor which sets which queue to send/receive messages from.
-   * 
+   *
    * @param queueUrl Where the queue is located.
    */
   constructor(private queueUrl: string) {
@@ -30,39 +30,34 @@ export class AmqpGateway implements Gateway {
 
   /**
    * Connects to the AMQP message queue set by the constructor.
-   * 
+   *
    * @param exchange The name of the exchange to bind to.
    * @param delay An optional delay for when to connect in milliseconds.
    * @return A promise that is called after the connection has been made.
    */
-  public connect(exchange: string, delay?: number): Promise<void> {
+  public connect(exchange: string, delay: number = 0): Promise<void> {
     this.exchange = exchange;
-
-    // Default the delay to no delay.
-    if (!delay) {
-      delay = 0;
-    }
 
     return new Promise<void>((resolve: Function, reject: Function) => {
       setTimeout(() => {
         amqp.connect(this.queueUrl, (err, connection) => {
           // Retry later if we could not connect this time.
           if (err) {
-            const newDelay = delay! + 500;
+            const newDelay = delay + 500;
 
             console.log(`Failed to connect to message queue! ${err}`);
             console.log(`Trying again in ${newDelay / 1000} seconds...`);
 
             this.connect(exchange, newDelay)
               .then(() => resolve())
-              .catch((err) => reject(err));
+              .catch(connectErr => reject(connectErr));
 
             return;
           }
 
           // If we connected, store the channel.
-          connection.createChannel((err, channel) => {
-            if (err) {
+          connection.createChannel((channelErr, channel) => {
+            if (channelErr) {
               throw new Error(`Failed to create channel: ${err}`);
             }
 
@@ -84,13 +79,13 @@ export class AmqpGateway implements Gateway {
             resolve();
           });
         });
-      }, delay || 0);
+      }, delay);
     });
   }
 
   /**
    * Sends various data to the queue.
-   * 
+   *
    * @param event The name of the event to send.
    * @param data The data about the event.
    */
@@ -99,7 +94,7 @@ export class AmqpGateway implements Gateway {
 
     // Only send if there is a channel to send to and data to send.
     if (this.channel) {
-      let newData = JSON.stringify(data);
+      const newData = JSON.stringify(data);
       this.channel.publish(service, routingKey, Buffer.from(newData));
     }
 
@@ -108,7 +103,7 @@ export class AmqpGateway implements Gateway {
 
   /**
    * Sets the listener for a certain event.
-   * 
+   *
    * @param event The name of the event to listen for.
    * @param callback A function that will be called once the event is triggered.
    */
@@ -124,16 +119,16 @@ export class AmqpGateway implements Gateway {
 
   /**
    * Publishes an event to any service that is subscribed to this event.
-   * 
-   * @param event 
-   * @param data 
+   *
+   * @param event The name of the event to publish.
+   * @param data The data about the event.
    */
   publish(event: string, ...data: any[]): Gateway {
     const routingKey = `${GLOBAL_EXCHANGE}.${event}`;
 
     // Only send if there is a channel to send to and data to send.
     if (this.channel) {
-      let newData = JSON.stringify(data);
+      const newData = JSON.stringify(data);
       this.channel.publish(GLOBAL_EXCHANGE, routingKey, Buffer.from(newData));
     }
 
@@ -142,9 +137,9 @@ export class AmqpGateway implements Gateway {
 
   /**
    * Subscribes to an event that could have originated from any service.
-   * 
-   * @param event 
-   * @param callback 
+   *
+   * @param event
+   * @param callback
    */
   subscribe(event: string, callback: Function): Gateway {
     this.subscriptions.set(event, callback);
@@ -159,7 +154,7 @@ export class AmqpGateway implements Gateway {
   /**
    * A helper method to set up a callback for a certain event. An event is
    * really the result of routing keys in the message queue.
-   * 
+   *
    * @param queue The name of the event to listen for.
    * @param callback The function to call after the event we are listening for
    *                 has been triggered.
@@ -183,7 +178,7 @@ export class AmqpGateway implements Gateway {
         if (!message) {
           return;
         }
-        
+
         const routingKey = `${exchange}.${event}`;
 
         if (message.fields && message.fields.routingKey !== routingKey) {
@@ -194,7 +189,7 @@ export class AmqpGateway implements Gateway {
         let data: any;
 
         try {
-          data = JSON.parse(message!.content.toString());
+          data = JSON.parse(message.content.toString());
         } catch (ex) {
           data = undefined;
         }

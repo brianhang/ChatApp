@@ -4,7 +4,7 @@ import { UserDocument } from './interfaces/user-document';
 
 export class UserService extends Service {
   private users = new Map<string, UserDocument>();
-    
+
   public onInit(): void {
     // Connect to the authentication database.
     const mongoose = require('mongoose');

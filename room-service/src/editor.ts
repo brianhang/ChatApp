@@ -28,7 +28,7 @@ module.exports = function (service: RoomService): void {
       }
 
       name = name.trim();
-      
+
       if (name.length < 1) {
         return fail('Your room name can not be empty.');
       }
@@ -71,7 +71,7 @@ module.exports = function (service: RoomService): void {
         return result(true);
       }
 
-      let err: string | undefined = undefined;
+      let err: string | undefined;
 
       // Update each key.
       if (typeof(changes.name) === 'string') {
@@ -143,7 +143,7 @@ module.exports = function (service: RoomService): void {
 
   /**
    * Retrieves the room that should be used for editting.
-   * 
+   *
    * @param userId The user that wants to edit a room.
    */
   function getWorkingRoom(userId: string): Promise<RoomDocument> {

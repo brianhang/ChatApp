@@ -1,4 +1,3 @@
-import * as socket from 'socket.io';
 import { GatewayService } from './service';
 
 const secret = process.env.JWT_SECRET;

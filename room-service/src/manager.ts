@@ -12,7 +12,7 @@ export class RoomManager {
   /**
    * Creates a room and replicates the state of the new room to all connected
    * users.
-   * 
+   *
    * @param data The data to create a room with.
    */
   public create(data: any): Promise<RoomDocument> {
@@ -37,7 +37,7 @@ export class RoomManager {
 
   /**
    * Deletes a room permanently.
-   * 
+   *
    * @param roomId The ID of the room that should be deleted.
    */
   public delete(roomId: string): void {
@@ -58,7 +58,7 @@ export class RoomManager {
   /**
    * Replicates the current state of the given room to the user corresponding
    * to the given user ID.
-   * 
+   *
    * @param room The room that should be replicated.
    * @param userId The desired user to replicate the room for.
    */
@@ -66,9 +66,9 @@ export class RoomManager {
     const payload: any = getRoomPayload(room);
     payload.users = [];
 
-    this.users.forEach((roomId, userId) => {
+    this.users.forEach((roomId, roomUserId) => {
       if (roomId === room._id.toHexString()) {
-        payload.users.push(userId);
+        payload.users.push(roomUserId);
       }
     });
 
@@ -78,7 +78,7 @@ export class RoomManager {
   /*
    * Updates which room the user is in and replicates the room state of the user
    * after the update.
-   * 
+   *
    * @param userId The ID of the user to update.
    * @param room The room to move the user to. If null, then the user just
    *             leaves the room they are in.
@@ -105,7 +105,7 @@ export class RoomManager {
 
   /**
    * Sets the name of a room and replicates the name change.
-   * 
+   *
    * @param room The desired room to change.
    * @param name The new name for the room.
    */

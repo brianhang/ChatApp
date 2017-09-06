@@ -1,5 +1,5 @@
 import { Service, ServiceEvent } from './gateway/service';
-import * as socket from 'socket.io';
+import * as socketIo from 'socket.io';
 import { Users } from './models/user';
 
 const expressJwt = require('express-jwt');
@@ -45,7 +45,7 @@ export class GatewayService extends Service {
     this.users = new Map<SocketIO.Socket, string>();
 
     const httpServer = require('http').createServer(app);
-    this.io = socket(httpServer);
+    this.io = socketIo(httpServer);
 
     // Add authentication middleware for sockets.
     require('./socket-authentication')(this);
@@ -53,7 +53,7 @@ export class GatewayService extends Service {
     this.io.on('connection', socket => {
       setTimeout(() => this.onUserConnected(socket), 500)
     });
-    
+
     // Set up service routes.
     require('./routes/user')(this);
     require('./routes/room')(this);
@@ -65,7 +65,7 @@ export class GatewayService extends Service {
   /**
    * Called when a socket client has connected to the server. This will set
    * up the main listeners for the socket.
-   * 
+   *
    * @param socket The socket that has connected.
    */
   public onUserConnected(socket: SocketIO.Socket): void {
@@ -102,8 +102,8 @@ export class GatewayService extends Service {
             return;
           }
 
-          Users.findById(otherId, publicFieldsFilter, (err, other) => {
-            if (err || !other) {
+          Users.findById(otherId, publicFieldsFilter, (findErr, other) => {
+            if (findErr || !other) {
               return;
             }
 
@@ -123,7 +123,7 @@ export class GatewayService extends Service {
   /**
    * Called when a user disconnects from the server. This will do a cleanup of
    * the user/socket maps.
-   * 
+   *
    * @param socket The socket that just disconnected.
    */
   public onUserDisconnected(socket: SocketIO.Socket): void {
@@ -139,7 +139,7 @@ export class GatewayService extends Service {
 
   /**
    * Sends an event to the socket of the user corresponding to the given ID.
-   * 
+   *
    * @param userId The ID of the desired user to send an event to.
    * @param event The name of the event.
    * @param args Data about the event.
@@ -154,7 +154,7 @@ export class GatewayService extends Service {
 
   /**
    * Sets up a listener for all sockets connected to the server.
-   * 
+   *
    * @param event The name of the event to listen for.
    * @param listener What to do when this event occurs.
    */
@@ -169,7 +169,7 @@ export class GatewayService extends Service {
   /**
    * Called when another service wants to send data back to a user. This will
    * delegate to the sendToUser helper method.
-   * 
+   *
    * @param userId The ID of the desired user to send to.
    * @param event The name of the event to send.
    * @param args Data about the event.
@@ -192,7 +192,7 @@ export class GatewayService extends Service {
   /**
    * Helper method to get the user ID from a socket and to create a new
    * listener that takes in the user ID in addition to the event data.
-   * 
+   *
    * @param socket The socket to get the listener for.
    * @param listener The old listener.
    */

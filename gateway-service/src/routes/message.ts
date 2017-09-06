@@ -1,5 +1,5 @@
 import { GatewayService } from '../service';
-import { Users } from "../models/user";
+import { Users } from '../models/user';
 
 module.exports = function(service: GatewayService): void {
   service.on('msg', (userId: string, data: any) => {

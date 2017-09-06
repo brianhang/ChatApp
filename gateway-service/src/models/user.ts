@@ -40,9 +40,9 @@ schema.statics.hashPassword = function(password: string): Promise<string> {
       }
 
       // Then hash the password with the salt.
-      bcrypt.hash(password, salt, null, (err: any, res: any) => {
-        if (err) {
-          reject(err);
+      bcrypt.hash(password, salt, null, (hashErr: any, res: any) => {
+        if (hashErr) {
+          reject(hashErr);
         } else {
           resolve(res);
         }

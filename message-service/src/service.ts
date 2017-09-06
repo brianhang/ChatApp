@@ -32,7 +32,7 @@ export class MessageService extends Service {
   ): void {
     const event = reverse ? 'msgRev' : 'msg';
     const payload = getMessagePayload(message);
-    
+
     this.gateway.send('gateway', 'sendToUser', userId, event, payload);
   }
 
@@ -83,7 +83,7 @@ export class MessageService extends Service {
         'appendNickname',
         'message',
         'send',
-        userId, 
+        userId,
         data
       );
 
@@ -160,8 +160,8 @@ export class MessageService extends Service {
         content: message.content
       };
 
-      for (let userId of this.users.keys()) {
-        this.gateway.send('gateway', 'sendToUser', userId, 'msgEdit', payload);
+      for (const recipientId of this.users.keys()) {
+        this.gateway.send('gateway', 'sendToUser', recipientId, 'msgEdit', payload);
       }
 
       // Finally, indicate the message was successfully updated.
@@ -187,12 +187,12 @@ export class MessageService extends Service {
         }
 
         // Replicate the deletion of the message.
-        this.users.forEach((roomId, userId) => {
+        this.users.forEach((roomId, roomUserId) => {
           if (roomId === message.room.toHexString()) {
             this.gateway.send(
               'gateway',
               'sendToUser',
-              userId,
+              roomUserId,
               'msgDelete',
               messageId
             );
@@ -242,8 +242,8 @@ export class MessageService extends Service {
       return;
     }
 
-    // Then try to find the last time the user joined that room 
-    let date: Date | undefined = undefined;
+    // Then try to find the last time the user joined that room
+    let date: Date | undefined;
     let requestTimeStore = this.lastRequest.get(userId);
 
     if (requestTimeStore) {
@@ -256,7 +256,7 @@ export class MessageService extends Service {
     requestTimeStore.set(roomId, new Date());
 
     // Find messages that the user has not seen yet and send it over.
-    let query: any = { room: roomId };
+    const query: any = { room: roomId };
 
     if (date) {
       query.time = { $gte: date };

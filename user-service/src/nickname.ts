@@ -5,7 +5,7 @@ module.exports = function (service: UserService): void {
   /**
    * Helper function to return a valid nickname if possible. Otherwise, null
    * is returned.
-   * 
+   *
    * @param nickname The nickname to validate.
    */
   function validateName(nickname: string): string | null {

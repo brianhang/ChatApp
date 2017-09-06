@@ -1,7 +1,7 @@
 import { Service, ServiceEvent, ServiceSubscription } from './gateway/service';
 import { Rooms } from './models/rooms';
 import { RoomDocument } from './interfaces/room-document';
-import { RoomManager } from "./manager";
+import { RoomManager } from './manager';
 import { Gateway } from './gateway/gateway';
 
 export class RoomService extends Service {
@@ -79,7 +79,7 @@ export class RoomService extends Service {
       if (!room) {
         return fail('Room not found');
       }
-      
+
       // Always allow the room owner in.
       if ((<any>room).ownerId.toHexString() === userId) {
         this.manager.setUserRoom(userId, room);

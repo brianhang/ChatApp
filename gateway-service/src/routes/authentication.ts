@@ -6,7 +6,7 @@ const secret = process.env.JWT_SECRET;
 
 /**
  * A helper function to generate a JWT and to send it to the user.
- * 
+ *
  * @param user The user that this token is for.
  * @param res The response object to send the token back.
  * @param status An optional HTTP response code to use for the response.
@@ -47,7 +47,7 @@ module.exports = function(app: any) {
           message: 'missing token'
         });
       }
-      
+
       // Once we have the token, try to get the payload from it.
       const token = data[1];
 
@@ -67,7 +67,7 @@ module.exports = function(app: any) {
       // Validate the desired username and password.
       const username = req.body.username;
       const password = req.body.password;
-      
+
       if (!username || username.length < 1) {
         return res.status(400).json({
           message: 'invalid username'
@@ -147,9 +147,9 @@ module.exports = function(app: any) {
               })
             }
           })
-          .catch((err: any) => {
+          .catch((compareErr: any) => {
             res.status(500).json({
-              message: err.toString()
+              message: compareErr.toString()
             });
           });
       })

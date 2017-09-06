@@ -1,8 +1,8 @@
-import { Gateway } from "./gateway";
+import { Gateway } from './gateway';
 
 /**
  * Helper function to get the lowerCamelCased word after "on".
- * 
+ *
  * @param key The string to get an event name from.
  */
 function getEventName(key: string): string {
@@ -78,7 +78,7 @@ export abstract class Service {
 
   /**
    * A constructor that sets up the messaging gateway.
-   * 
+   *
    * @param gateway The gateway to use for messaging.
    */
   constructor(public readonly gateway: Gateway) {
@@ -113,7 +113,12 @@ export abstract class Service {
    */
   private getServiceName(): string {
     const servicePattern = /([\w_]+)Service/;
+    const serviceMatch = this.constructor.name.match(servicePattern);
 
-    return this.constructor.name.match(servicePattern)![1].toLowerCase();
+    if (!serviceMatch) {
+      throw new Error(`${this.constructor.name} is not a valid service name`);
+    }
+
+    return serviceMatch[1].toLowerCase();
   }
 }
