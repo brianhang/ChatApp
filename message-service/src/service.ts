@@ -8,8 +8,11 @@ export class MessageService extends Service {
   // A map from users to the room they are in.
   private users: Map<string, string>;
 
+  private lastRequest: Map<string, Map<string, Date>>;
+
   onInit(): void {
     this.users = new Map<string, string>();
+    this.lastRequest = new Map<string, Map<string, Date>>();
 
     // Connect to the message database.
     const mongoose = require('mongoose');
@@ -43,7 +46,15 @@ export class MessageService extends Service {
   @ServiceSubscription()
   public onUserChangedRoom(userId: string, roomId: string): void {
     this.users.set(userId, roomId);
-    console.log(userId, roomId);
+
+    if (roomId) {
+      this.sendNewMessages(userId);
+    }
+  }
+
+  @ServiceSubscription()
+  public onUserDisconnected(userId: string): void {
+    this.users.delete(userId);
   }
 
   @ServiceEvent()
@@ -58,14 +69,21 @@ export class MessageService extends Service {
     // Redirect through the user service to add the nickname data.
     if (!data.nickname) {
       // Make sure the message content is worth sending.
-      data.content = (data.content || '').toString().strip();
+      data.content = (data.content || '').toString().trim();
 
       if (data.content.length < 1) {
         return;
       }
 
       // Then ask the user service for the user's nickname.
-      this.gateway.send('user', 'appendNickname', userId, data);
+      this.gateway.send(
+        'user',
+        'appendNickname',
+        'message',
+        'send',
+        userId, 
+        data
+      );
 
       return;
     }
@@ -73,7 +91,7 @@ export class MessageService extends Service {
     // Isolate the nickname and original data.
     const nickname = data.nickname;
     data = data.data;
-    console.log(nickname, data.content, roomId);
+
     // Finally, create and store the message.
     Messages.create({
       user: userId,
@@ -96,7 +114,7 @@ export class MessageService extends Service {
 
     this.gateway.send('gateway', 'broadcast', 'typing', {
       userId: userId,
-      typing: typing
+      isTyping: typing
     });
   }
 
@@ -212,5 +230,41 @@ export class MessageService extends Service {
           'msgRequestOlderResult'
         );
       });
+  }
+
+  private sendNewMessages(userId: string): void {
+    // Get which room the user is in.
+    const roomId = this.users.get(userId);
+    console.log(roomId);
+    if (!roomId) {
+      return;
+    }
+
+    // Then try to find the last time the user joined that room 
+    let date: Date | undefined = undefined;
+    let requestTimeStore = this.lastRequest.get(userId);
+
+    if (requestTimeStore) {
+      date = requestTimeStore.get(roomId);
+    } else {
+      requestTimeStore = new Map<string, Date>();
+      this.lastRequest.set(userId, requestTimeStore);
+    }
+    console.log(date);
+    requestTimeStore.set(roomId, new Date());
+
+    // Find messages that the user has not seen yet and send it over.
+    let query: any = { room: roomId };
+
+    if (date) {
+      query.time = { $gte: date };
+    }
+
+    Messages.find(query)
+      .lean()
+      .sort({ time: -1 })
+      .limit(HISTORY_LENGTH)
+      .cursor()
+      .eachAsync(message => this.sendToUser(message, userId, true));
   }
 }

@@ -3,15 +3,7 @@ import { Users } from "../models/user";
 
 module.exports = function(service: GatewayService): void {
   service.on('msg', (userId: string, data: any) => {
-    Users.findById(userId)
-      .select('username')
-      .exec((err, user) => {
-        if (err || !user) {
-          return;
-        }
-
-        service.gateway.send('message', 'send', userId, user.username, data);
-      });
+    service.gateway.send('message', 'send', userId, data);
   });
 
   service.on('typing', (userId: string, data: any) => {

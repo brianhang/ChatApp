@@ -90,8 +90,7 @@ export class RoomManager {
       });
     }
 
-    // TODO: figure out why this causes infinite loops
-    //this.gateway.publish('userChangedRoom', userId, roomId);
+    this.gateway.publish('userChangedRoom', userId, roomId);
   }
 
   /**

@@ -47,4 +47,27 @@ export class UserService extends Service {
   public onUserDisconnected(userId: string): void {
     this.users.delete(userId);
   }
+
+  @ServiceEvent()
+  public onAppendNickname(
+    source: string,
+    replyTo: string,
+    userId: string,
+    data: any
+  ): void {
+    console.log(source, replyTo, userId, data);
+    Users.findById(userId)
+      .lean()
+      .select('nickname')
+      .exec((err, user: UserDocument) => {
+        if (err) {
+          return;
+        }
+        console.log(data)
+        this.gateway.send(source, replyTo, userId, {
+          nickname: user.nickname,
+          data: data
+        });
+      });
+  }
 }
