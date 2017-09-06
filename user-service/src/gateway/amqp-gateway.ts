@@ -180,6 +180,16 @@ export class AmqpGateway implements Gateway {
 
       // Fire the callback every time a message matching the event is received.
       this.channel.consume(queue, message => {
+        if (!message) {
+          return;
+        }
+        
+        const routingKey = `${exchange}.${event}`;
+
+        if (message.fields && message.fields.routingKey !== routingKey) {
+          return;
+        }
+
         // Convert the data from the message to JSON to pass to the callback.
         let data: any;
 
