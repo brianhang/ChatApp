@@ -80,16 +80,16 @@ export class RoomService extends Service {
         return fail('Room not found');
       }
       
-      // Make sure the user is not banned.
-      if (room.bans.find(ban => ban === username)) {
-        return fail('You are banned from this rom');
-      }
-
       // Make sure the password is correct, if there is one.
       if ((<any>room).ownerId.toHexString() !== userId &&
           room.password && room.password.length > 0 &&
           room.password !== password) {
         return fail('Incorrect password');
+      }
+
+      // Make sure the user is not banned.
+      if (room.bans.find(ban => ban === username)) {
+        return fail('You are banned from this rom');
       }
 
       // Update the user's room state.

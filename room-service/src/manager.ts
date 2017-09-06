@@ -75,19 +75,23 @@ export class RoomManager {
    */
   public setUserRoom(userId: string, room?: RoomDocument): void {
     // Update the server side room state.
-    this.users.set(userId, room ? room._id.toHexString() : undefined);
+    const roomId = room ? room._id.toHexString() : undefined;
+    this.users.set(userId, roomId);
 
     // Update the room state on the client side.
     if (room) {
       this.gateway.send('gateway', 'broadcast', 'roomJoin', {
         userId: userId,
-        roomId: room._id
+        roomId: roomId
       });
     } else {
       this.gateway.send('gateway', 'broadcast', 'roomLeave', {
         userId: userId
       });
     }
+
+    // TODO: figure out why this causes infinite loops
+    //this.gateway.publish('userChangedRoom', userId, roomId);
   }
 
   /**
