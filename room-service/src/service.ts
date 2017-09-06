@@ -80,9 +80,15 @@ export class RoomService extends Service {
         return fail('Room not found');
       }
       
+      // Always allow the room owner in.
+      if ((<any>room).ownerId.toHexString() === userId) {
+        this.manager.setUserRoom(userId, room);
+
+        return;
+      }
+
       // Make sure the password is correct, if there is one.
-      if ((<any>room).ownerId.toHexString() !== userId &&
-          room.password && room.password.length > 0 &&
+      if (room.password && room.password.length > 0 &&
           room.password !== password) {
         return fail('Incorrect password');
       }
