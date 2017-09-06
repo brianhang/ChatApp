@@ -65,7 +65,7 @@ export function ServiceSubscription(nameOverride?: string): any {
     // Add it to the list of listeners to set up during runtime.
     target._subscriptions = target._subscriptions || new Map<string, string>();
     target._subscriptions.set(event, key);
-  }
+  };
 };
 
 /**

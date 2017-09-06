@@ -117,7 +117,7 @@ module.exports = function(app: any) {
       if (!password || password.length < 1) {
         return res.status(400).json({
           message: 'invalid password'
-        })
+        });
       }
 
       // Try to find the user with the given username.
