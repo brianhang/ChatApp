@@ -144,7 +144,7 @@ module.exports = function(app: any) {
             } else {
               res.status(401).json({
                 message: 'auth failed'
-              })
+              });
             }
           })
           .catch((compareErr: any) => {
