@@ -3,6 +3,7 @@
 /dist/
 chat-app/dist/
 
+typings
 ts-node*
 .v8flag*
 bazel-*
