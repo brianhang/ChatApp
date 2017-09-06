@@ -41,7 +41,17 @@ export class RoomManager {
    * @param roomId The ID of the room that should be deleted.
    */
   public delete(roomId: string): void {
+    // Replicate the room deletion on the client.
     this.gateway.send('gateway', 'broadcast', 'roomDelete', roomId);
+
+    // Eject everyone from the room so they do not remain in a deleted room.
+    this.users.forEach((userRoomId, userId) => {
+      if (userRoomId === roomId) {
+        this.setUserRoom(userId, undefined);
+      }
+    });
+
+    // Then, actually remove the room.
     Rooms.findByIdAndRemove(roomId);
   }
 
