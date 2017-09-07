@@ -26,6 +26,8 @@ export class ChatService {
 
   /**
    * Connects to the chat server.
+   *
+   * @return A promise that is called after the connection has been made.
    */
   public connect(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
@@ -51,21 +53,24 @@ export class ChatService {
    * @param resolve Resolve the connection promise.
    * @param reject Raise an error in the connection process.
    */
-  private onSocketConnected(resolve: Function, reject: Function) {
+  private onSocketConnected(resolve: Function, reject: Function): void {
+    // Set up listeners for events that may have been created before connecting.
     this.events.forEach((listener, event) => {
       this.socket.on(event, listener);
     });
 
+    // Event for getting data about other connected users.
     this.on('userData', data => {
       const oldData = this._users.get(data._id);
       const newData = Object.assign(oldData || {}, data);
 
       this._users.set(data._id, newData);
-      console.log(this._users);
     });
 
+    // Event for user nickname changes.
     this.on('nickname', data => this.onNicknameChange(data));
 
+    // Event for when the local user has finished loading.
     this.on('joined', data => {
       data.room = undefined;
 
@@ -73,12 +78,11 @@ export class ChatService {
       this._users.set(data._id, data);
 
       this.connected = true;
-      console.log(this._users);
       resolve();
     });
 
+    // Event for leaving the chat room.
     this.on('logout', reject);
-
     this.on('disconnect', data => this._disconnected = true);
   }
 

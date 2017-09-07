@@ -28,7 +28,10 @@ export class MessageComponent {
 
   public form: FormGroup;
 
-  constructor(private messageService: MessageService, private formBuilder: FormBuilder) {
+  constructor(
+    private messageService: MessageService,
+    private formBuilder: FormBuilder,
+  ) {
     this.edit = false;
     this.busy = false;
 
@@ -66,6 +69,10 @@ export class MessageComponent {
 
   public get safeContent(): string {
     return this.message.content
+      .replace('&', '&amp;')
+      .replace('"', '&quot;')
+      .replace('\'', '&#x27;')
+      .replace('/', '&#x2F;')
       .replace('<', '&lt;')
       .replace('>', '&gt;');
   }
