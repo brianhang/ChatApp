@@ -14,6 +14,8 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - auth-volume:/data/db
     ports:
       - "27017:27017"
     logging:
@@ -24,6 +26,8 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - users-volume:/data/db
     ports:
       - "27018:27017"
     logging:
@@ -34,6 +38,8 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - rooms-volume:/data/db
     ports:
       - "27019:27017"
     logging:
@@ -44,6 +50,8 @@ services:
     environment:
       - MONGO_DATA_DIR=/data/db
       - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - messages-volume:/data/db
     ports:
       - "27020:27017"
     logging:
@@ -113,3 +121,10 @@ services:
     depends_on:
       - gateway-service
       - db-messages
+
+# Storage for the databases
+volumes:
+  auth-volume:
+  users-volume:
+  rooms-volume:
+  messages-volume:
