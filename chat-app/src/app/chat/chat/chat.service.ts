@@ -33,32 +33,53 @@ export class ChatService {
         return;
       }
 
-      this.socket = io();
+      const token = localStorage.getItem('chat-app-jwt');
 
-      this.events.forEach((listener, event) => {
-        this.socket.on(event, listener);
+      this.socket = io({
+        path: '/gateway/socket.io',
+        query: `token=${token}`
       });
 
-      this.on('userData', data => {
-        data.room = undefined;
-        this._users.set(data._id, data);
-      });
-
-      this.on('nickname', data => this.onNicknameChange(data));
-
-      this.on('joined', data => {
-        data.room = undefined;
-
-        this._user = data;
-        this._users.set(data._id, data);
-
-        this.connected = true;
-
-        resolve();
-      });
-
-      this.on('disconnect', data => this._disconnected = true);
+      this.socket.on('connect', () => this.onSocketConnected(resolve, reject));
     });
+  }
+
+  /**
+   * Called when the socket connection has been established. This will set up
+   * the socket client.
+   *
+   * @param resolve Resolve the connection promise.
+   * @param reject Raise an error in the connection process.
+   */
+  private onSocketConnected(resolve: Function, reject: Function) {
+    this.events.forEach((listener, event) => {
+      this.socket.on(event, listener);
+    });
+
+    this.on('userData', data => {
+      const oldData = this._users.get(data._id);
+      const newData = Object.assign(oldData || {}, data);
+
+      this._users.set(data._id, newData);
+      console.log(this._users);
+    });
+
+    this.on('nickname', data => this.onNicknameChange(data));
+
+    this.on('joined', data => {
+      data.room = undefined;
+
+      this._user = data;
+      this._users.set(data._id, data);
+
+      this.connected = true;
+      console.log(this._users);
+      resolve();
+    });
+
+    this.on('logout', reject);
+
+    this.on('disconnect', data => this._disconnected = true);
   }
 
   /**
@@ -83,6 +104,7 @@ export class ChatService {
    */
   public emit(event: string, data: any): void {
     if (this.socket) {
+
       this.socket.emit(event, data);
     }
   }

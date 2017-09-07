@@ -10,6 +10,7 @@ export interface MessageDto {
   content: string;
   room: string;
   time: string;
+  icon: string;
 }
 
 export class Message {
@@ -27,6 +28,9 @@ export class Message {
 
   // The room that this messaged was posted in.
   public room: string;
+
+  // The icon to display next to the message.
+  public icon: string;
 
   // The time this message was created.
   public time: Date;

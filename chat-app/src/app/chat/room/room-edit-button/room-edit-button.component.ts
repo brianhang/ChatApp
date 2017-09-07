@@ -22,7 +22,7 @@ export class RoomEditButtonComponent {
    * @param event Information about the click event.
    */
   public onClick(event): void {
-    this.modalService.open(RoomEditFormComponent)
+    this.modalService.open(RoomEditFormComponent);
     event.stopPropagation();
   }
 }

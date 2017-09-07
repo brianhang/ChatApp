@@ -3,6 +3,9 @@
 /dist/
 chat-app/dist/
 
+typings
+ts-node*
+.v8flag*
 bazel-*
 e2e_test.*
 node_modules

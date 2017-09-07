@@ -1,0 +1,130 @@
+version: '3'
+services:
+  # Message broker
+  rabbitmq:
+    image: rabbitmq:3.6-management
+    ports:
+      - "15672:15672"
+    logging:
+      driver: "none"
+
+  # Databases
+  db-auth:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - auth-volume:/data/db
+    ports:
+      - "27017:27017"
+    logging:
+      driver: "none"
+    command: mongod --quiet
+  db-users:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - users-volume:/data/db
+    ports:
+      - "27018:27017"
+    logging:
+      driver: "none"
+    command: mongod --quiet
+  db-rooms:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - rooms-volume:/data/db
+    ports:
+      - "27019:27017"
+    logging:
+      driver: "none"
+    command: mongod --quiet
+  db-messages:
+    image: mongo:latest
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - messages-volume:/data/db
+    ports:
+      - "27020:27017"
+    logging:
+      driver: "none"
+    command: mongod --quiet
+
+  # Angular front end
+  app:
+    build: chat-app
+    volumes:
+      - ./chat-app/dist/:/data/www/
+    ports:
+      - "8080:80"
+    logging:
+      driver: "none"
+    depends_on:
+      - gateway-service
+
+  # Gateway service
+  gateway-service:
+    build: gateway-service
+    volumes:
+      - ./gateway-service/:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8082:80"
+    depends_on:
+      - rabbitmq
+      - db-auth
+    environment:
+      - MONGO_DB=mongodb://db-auth/users
+      - MESSAGE_QUEUE=amqp://rabbitmq
+      - JWT_SECRET=secret!
+      - PORT=80
+
+  # Microservices
+  user-service:
+    build: user-service
+    volumes:
+      - ./user-service/:/usr/app/
+      - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-users/users
+      - MESSAGE_QUEUE=amqp://rabbitmq
+    depends_on:
+      - gateway-service
+      - db-users
+  room-service:
+    build: room-service
+    volumes:
+      - ./room-service/:/usr/app/
+      - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-rooms/rooms
+      - MESSAGE_QUEUE=amqp://rabbitmq
+    depends_on:
+      - gateway-service
+      - db-rooms
+  message-service:
+    build: message-service
+    volumes:
+      - ./message-service/:/usr/app/
+      - /usr/app/node_modules
+    environment:
+      - MONGO_DB=mongodb://db-messages/messages
+      - MESSAGE_QUEUE=amqp://rabbitmq
+    depends_on:
+      - gateway-service
+      - db-messages
+
+# Storage for the databases
+volumes:
+  auth-volume:
+  users-volume:
+  rooms-volume:
+  messages-volume:

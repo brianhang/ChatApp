@@ -15,7 +15,11 @@ export class LoginComponent {
 
   public error: string;
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {
     this.form = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required, Validators.minLength(1)])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(1)])]
@@ -23,6 +27,10 @@ export class LoginComponent {
 
     this.error = '';
     this.busy = false;
+
+    if (localStorage.getItem('chat-app-jwt')) {
+      this.onLoggedIn();
+    }
   }
 
   /**
@@ -45,11 +53,18 @@ export class LoginComponent {
 
     this.authService.login(username, password)
       .then(user => {
-        this.router.navigate(['/chat']);
+        this.onLoggedIn();
       })
       .catch(error => {
         this.busy = false;
         this.error = 'You have provided an invalid username or password.';
       });
+  }
+
+  /**
+   * Called after the user has been logged in.
+   */
+  private onLoggedIn(): void {
+    this.router.navigate(['/chat']);
   }
 }

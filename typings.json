@@ -1,5 +1,0 @@
-{
-  "dependencies": {
-    "passport": "registry:npm/passport#0.3.0+20161028163825"
-  }
-}

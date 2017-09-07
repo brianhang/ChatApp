@@ -7,19 +7,57 @@
   </div>
 
   <form [formGroup]="form">
-    <div class="form-group" [ngClass]="{'has-danger': !form.controls.username.valid && form.controls.username.dirty}">
+    <div class="form-group">
       <label class="form-control-label" for="usernameInput">Username:</label>
-      <input id="usernameInput" type="text" class="form-control" formControlName="username" required autofocus>
+      <input id="usernameInput"
+             type="text"
+             class="form-control"
+             formControlName="username"
+             required
+             autofocus
+             [class.is-invalid]="!form.controls.username.valid && form.controls.username.dirty">
+      <div class="invalid-feedback">
+        Please provide a valid username.
+      </div>
     </div>
 
-    <div class="form-group" [ngClass]="{'has-danger': !form.controls.password.valid && form.controls.password.dirty}">
+    <div class="form-group">
+      <label class="form-control-label" for="emailInput">E-mail Address:</label>
+      <input id="emailInput"
+             type="email"
+             class="form-control"
+             formControlName="email"
+             required
+             [class.is-invalid]="!form.controls.email.valid && form.controls.email.dirty">
+      <div class="invalid-feedback">
+        Please provide a valid e-mail address.
+      </div>
+    </div>
+
+    <div class="form-group" [ngClass]="{'is-invalid': !form.controls.password.valid && form.controls.password.dirty}">
       <label class="form-control-label" for="passwordInput">Password:</label>
-      <input id="passwordInput" type="password" class="form-control" formControlName="password">
+      <input id="passwordInput"
+             type="password"
+             class="form-control"
+             formControlName="password"
+             required
+             [class.is-invalid]="!form.controls.password.valid && form.controls.password.dirty">
+      <div class="invalid-feedback">
+        Please provide a valid password.
+      </div>
     </div>
 
-    <div class="form-group" [ngClass]="{'has-danger': !form.controls.confirm.valid && form.controls.confirm.dirty}">
+    <div class="form-group" [ngClass]="{'is-invalid': !form.controls.confirm.valid && form.controls.confirm.dirty}">
       <label class="form-control-label" for="confirmInput">Confirm Password:</label>
-      <input id="confirmInput" type="password" class="form-control" formControlName="confirm">
+      <input id="confirmInput"
+             type="password"
+             class="form-control"
+             formControlName="confirm"
+             required
+             [class.is-invalid]="!form.controls.confirm.valid && form.controls.confirm.dirty">
+      <div class="invalid-feedback">
+        Your password confirmation does not match the password above.
+      </div>
     </div>
 
     <button type="submit" class="btn btn-block btn-primary" (click)="onSubmit($event)" [disabled]="busy">

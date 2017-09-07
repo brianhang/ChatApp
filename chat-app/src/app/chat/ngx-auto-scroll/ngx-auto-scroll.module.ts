@@ -10,3 +10,4 @@ import { NgxAutoScroll } from './ngx-auto-scroll.directive';
   ]
 })
 export class NgxAutoScrollModule { }
+

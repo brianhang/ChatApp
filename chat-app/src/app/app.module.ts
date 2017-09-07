@@ -19,7 +19,7 @@ import { SignupComponent } from './signup/signup.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 import { LogoutModule } from './logout/logout.module';
-import { LogoutComponent } from './logout/logout.component'
+import { LogoutComponent } from './logout/logout.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'chat', pathMatch: 'full' },

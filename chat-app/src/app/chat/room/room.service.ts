@@ -77,6 +77,10 @@ export class RoomService {
 
     this.addRoom(room);
 
+    if (!data.users) {
+      return;
+    }
+
     data.users.forEach(userId => {
       const user = this.chatService.getUserById(userId);
 

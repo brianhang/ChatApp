@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ChatService } from '../chat/chat.service';
 import { User } from '../chat/models/user';
 
@@ -15,8 +15,6 @@ import { User } from '../chat/models/user';
 export class SettingsComponent {
   // The form group for the settings form.
   public form: FormGroup;
-
-  public profilePicPath: string;
 
   /**
    * Constructor that sets up the settings form.
@@ -35,7 +33,7 @@ export class SettingsComponent {
    * to the server.
    */
   public onSubmit(event): void {
-    if (!this.form.valid && !this.profilePicPath) {
+    if (!this.form.valid) {
       return;
     }
 
@@ -43,22 +41,7 @@ export class SettingsComponent {
       this.chatService.emit('nickname', this.form.controls.nickname.value);
     }
 
-    if (this.profilePicPath) {
-      this.chatService.emit('profilePic', this.profilePicPath);
-    }
-
     this.activeModal.close();
-  }
-
-  public onProfilePicChange(event): void {
-    const file = event.target.files[0];
-    const url = URL.createObjectURL(file);
-    const fileReader = new FileReader();
-    fileReader.onload = (e: any) => {
-      this.profilePicPath = e.target.result;
-    }
-
-    fileReader.readAsDataURL(file);
   }
 
   /**
