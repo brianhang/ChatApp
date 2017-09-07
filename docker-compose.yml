@@ -75,6 +75,7 @@ services:
       - db-auth
     environment:
       - MONGO_DB=mongodb://db-auth/users
+      - MESSAGE_QUEUE=amqp://rabbitmq
       - JWT_SECRET=secret!
       - PORT=80
 
@@ -86,6 +87,7 @@ services:
       - /usr/app/node_modules
     environment:
       - MONGO_DB=mongodb://db-users/users
+      - MESSAGE_QUEUE=amqp://rabbitmq
     depends_on:
       - gateway-service
       - db-users
@@ -96,6 +98,7 @@ services:
       - /usr/app/node_modules
     environment:
       - MONGO_DB=mongodb://db-rooms/rooms
+      - MESSAGE_QUEUE=amqp://rabbitmq
     depends_on:
       - gateway-service
       - db-rooms
@@ -106,6 +109,7 @@ services:
       - /usr/app/node_modules
     environment:
       - MONGO_DB=mongodb://db-messages/messages
+      - MESSAGE_QUEUE=amqp://rabbitmq
     depends_on:
       - gateway-service
       - db-messages
