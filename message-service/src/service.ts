@@ -99,6 +99,7 @@ export class MessageService extends Service {
       user: userId,
       nickname: nickname,
       content: data.content,
+      icon: data.icon,
       room: roomId
     }, (err: any, message: MessageDocument) => {
       if (err || !message) {

@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { UserDocument } from '../interfaces/user-document';
+import * as crypto from 'crypto';
 
 const bcrypt = require('bcrypt-nodejs');
 
@@ -8,6 +9,7 @@ const SALT_ROUNDS = 10;
 
 const schema = new Schema({
   username: { type: String, required: true, index: { unique: true } },
+  email: { type: String, required: true, index: { unique: true }},
   password: { type: String, required: true }
 });
 
@@ -61,6 +63,16 @@ schema.method('comparePassword', function(this: any, password: string): Promise<
       resolve(res);
     });
   });
+});
+
+schema.virtual('gravatarId').get(function(this: UserDocument) {
+  if (!this.email) {
+    return '';
+  }
+
+  return crypto.createHash('md5')
+    .update(this.email)
+    .digest('hex');
 });
 
 export const Users = model<UserDocument>('User', schema);

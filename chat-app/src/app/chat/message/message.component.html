@@ -1,5 +1,5 @@
 <div class="message media">
-  <div class="d-flex mr-3 profile-picture" alt="" [ngStyle]="{'background-image': 'url(\'/static/avatars/' + message.user + '.png\''}"></div>
+  <div *ngIf="message.icon" class="d-flex mr-3 profile-picture" alt="" [ngStyle]="{'background-image': 'url(' + message.icon + ')'}"></div>
   <div class="media-body">
     <span class="nickname">{{ message.nickname }}</span> <small class="text-muted">{{ message.time | timeAgo }}</small>
     <div *ngIf="showOptions" class="message-options hover-only">

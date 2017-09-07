@@ -5,5 +5,6 @@ export interface Message {
   room: any;
   nickname: string;
   content: string;
+  icon: string;
   time: Date;
 }

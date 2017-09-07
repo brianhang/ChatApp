@@ -1,6 +1,11 @@
 import { UserDocument } from '../interfaces/user-document';
 import { Users } from '../models/user';
 
+let EMAIL_PATTERN: any = '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]' +
+                         '+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' +
+                         '\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$';
+EMAIL_PATTERN = new RegExp(EMAIL_PATTERN);
+
 const jwt = require('jsonwebtoken');
 const secret = process.env.JWT_SECRET;
 
@@ -65,12 +70,19 @@ module.exports = function(app: any) {
     })
     .post('/register', (req: any, res: any) => {
       // Validate the desired username and password.
-      const username = req.body.username;
-      const password = req.body.password;
+      const username: string = req.body.username;
+      const email: string = req.body.email;
+      const password: string = req.body.password;
 
       if (!username || username.length < 1) {
         return res.status(400).json({
           message: 'invalid username'
+        });
+      }
+
+      if (!email || !EMAIL_PATTERN.test(email)) {
+        return res.status(400).json({
+          message: 'invalid email'
         });
       }
 
@@ -83,6 +95,7 @@ module.exports = function(app: any) {
       // Create a new user instance with the given username and password.
       Users.create({
         username: username,
+        email: email.toLowerCase().trim(),
         nickname: username,
         password: password
       }, (err: any, user: UserDocument) => {

@@ -6,6 +6,7 @@ const schema = new Schema({
   room: { type: Schema.Types.ObjectId, required: true },
   nickname: { type: String, required: true },
   content: { type: String, required: true },
+  icon: { type: String },
   time: { type: Date, default: Date.now }
 });
 

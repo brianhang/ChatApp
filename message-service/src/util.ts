@@ -7,6 +7,7 @@ export function getMessagePayload(message: MessageDocument): Object {
     nickname: message.nickname,
     content: message.content,
     room: message.room,
+    icon: message.icon,
     time: message.time.toUTCString()
   };
 }

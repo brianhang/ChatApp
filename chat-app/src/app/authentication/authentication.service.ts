@@ -59,7 +59,12 @@ export class AuthenticationService {
    * @param nickname The desired nickname. By default it is the username.
    * @return A promise that contains a user the client signed up as.
    */
-  public signUp(username: string, password: string, nickname?: string): Promise<User> {
+  public signUp(
+    username: string,
+    email: string,
+    password: string,
+    nickname?: string
+  ): Promise<User> {
     // Default the nickname to the username.
     if (!nickname) {
       nickname = username;
@@ -68,6 +73,7 @@ export class AuthenticationService {
     return new Promise((resolve, reject) => {
       const signUpData = {
         username: username,
+        email: email,
         password: password
       };
 

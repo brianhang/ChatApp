@@ -1,6 +1,8 @@
 import { Service, ServiceEvent } from './gateway/service';
 import * as socketIo from 'socket.io';
 import { Users } from './models/user';
+import { UserDocument } from './interfaces/user-document';
+import * as crypto from 'crypto';
 
 const expressJwt = require('express-jwt');
 
@@ -96,7 +98,12 @@ export class GatewayService extends Service {
         console.error(`Failed to load user data for ${userId}: ${err}`);
       }
 
+      let userData: any;
+
       if (user) {
+        userData = user.toObject({ virtuals: true });
+        userData.email = undefined;
+
         this.users.forEach(otherId => {
           if (userId === otherId) {
             return;
@@ -107,13 +114,16 @@ export class GatewayService extends Service {
               return;
             }
 
-            this.sendToUser(userId, 'userData', other);
-            this.sendToUser(otherId, 'userData', user);
+            const otherData: any = other.toObject({ virtuals: true });
+            otherData.email = undefined;
+
+            this.sendToUser(userId, 'userData', otherData);
+            this.sendToUser(otherId, 'userData', userData);
           });
         });
 
         this.gateway.publish('userConnected', userId);
-        socket.emit('joined', user);
+        socket.emit('joined', userData);
       } else {
         socket.emit('logout');
       }

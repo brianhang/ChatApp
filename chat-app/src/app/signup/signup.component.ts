@@ -3,6 +3,11 @@ import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl } from
 import { AuthenticationService } from '../authentication/authentication.service';
 import { Router } from '@angular/router';
 
+let EMAIL_PATTERN: any = '^(([^<>()\\[\\]\\\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@"]' +
+                         '+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}' +
+                         '\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$';
+EMAIL_PATTERN = new RegExp(EMAIL_PATTERN);
+
 @Component({
   selector: 'app-sign-up',
   templateUrl: './signup.component.html',
@@ -24,12 +29,17 @@ export class SignupComponent {
    * @param formBuilder Builder for the sign up form.
    * @param authService Service for signing up the user.
    */
-  constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthenticationService,
+    private router: Router
+  ) {
     this.error = '';
     this.busy = false;
 
     this.form = this.formBuilder.group({
       username: ['', Validators.compose([Validators.required, Validators.minLength(1)])],
+      email: ['', Validators.compose([Validators.required, Validators.pattern(EMAIL_PATTERN)])],
       password: ['', Validators.compose([Validators.required, Validators.minLength(1)])],
       confirm: ['', Validators.compose([Validators.required, Validators.minLength(1)])]
     });
@@ -42,6 +52,7 @@ export class SignupComponent {
    */
   onSubmit(event): void {
     const username = this.form.controls.username.value;
+    const email = this.form.controls.email.value;
     const password = this.form.controls.password.value;
     const confirm = this.form.controls.confirm.value;
 
@@ -62,7 +73,7 @@ export class SignupComponent {
     this.busy = true;
 
     // Send the desired credentials to the server.
-    this.authService.signUp(username, password, username)
+    this.authService.signUp(username, email, password, username)
       .then(user => {
         window.location.assign('/chat');
       })
