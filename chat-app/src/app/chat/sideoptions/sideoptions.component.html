@@ -1,4 +1,14 @@
-<div class="d-flex justify-content-around" role="group">
-  <button title="User settings" class="btn btn-secondary bg-dark text-white" href="#" (click)="openSettings($event)"><i class="fa fa-cog" aria-hidden="true"></i></button>
-  <button title="Log out" class="btn btn-secondary bg-dark text-white" href="#" (click)="onLogout($event)"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
+<div class="btn-group btn-group-justified" role="group">
+  <button title="User settings"
+          class="btn btn-outline-light btn-hover-dark"
+          href="#"
+          (click)="openSettings($event)">
+    <i class="fa fa-cog" aria-hidden="true"></i>
+  </button>
+  <button title="Log out"
+          class="btn btn-outline-light btn-hover-dark"
+          href="#"
+          (click)="onLogout($event)">
+    <i class="fa fa-sign-out" aria-hidden="true"></i>
+  </button>
 </div>
